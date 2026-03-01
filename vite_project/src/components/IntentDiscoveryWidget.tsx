@@ -6,6 +6,7 @@ import { IntentDiscovery } from "./IntentDiscovery.tsx";
 import { OptionPreferenceStateProvider } from "../state/OptionPreference/OptionPreferenceStateProvider.tsx";
 import { LastIntentDisplay } from "./Intent/LastIntentDisplay.tsx";
 import { useIntent } from "../hooks/domain/useLastIntent.tsx";
+import { AttributeLayer } from "./AttributeLayer.tsx";
 
 type Props = {
     config: ResolvedIntentDiscoveryConfig
@@ -22,6 +23,7 @@ export const IntentDiscoveryWidget = ({ config }: Props) => {
 
     return (
         <OptionPreferenceStateProvider>
+            <AttributeLayer categoryData={categoryData} intent={intent} />
             <IntentDiscovery
                 config={config.data}
                 categoryData={categoryData}

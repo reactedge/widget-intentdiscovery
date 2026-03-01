@@ -1,11 +1,11 @@
-import {useOptionPreferenceState} from "../../state/OptionPreference/useOptionPreferenceState.ts";
-import type {OptionSelection} from "../../state/OptionPreference/type.ts";
-import {getOptionLabel} from "../../lib/option-match.ts";
-import type {MagentoCategory} from "../../types/infra/magento/category.types.ts";
-import {useFindProduct} from "../../hooks/domain/useFindProduct.tsx";
-import {ErrorState} from "../global/ErrorState.tsx";
-import {Spinner} from "../global/Spinner.tsx";
-import {activity} from "../../activity";
+import { useOptionPreferenceState } from "../../state/OptionPreference/useOptionPreferenceState.ts";
+import type { OptionSelection } from "../../state/OptionPreference/type.ts";
+import { getOptionLabel } from "../../lib/option-match.ts";
+import type { MagentoCategory } from "../../types/infra/magento/category.types.ts";
+import { useFindProduct } from "../../hooks/domain/useFindProduct.tsx";
+import { ErrorState } from "../global/ErrorState.tsx";
+import { Spinner } from "../global/Spinner.tsx";
+import { activity } from "../../activity";
 
 interface StepFinderProps {
     categoryData: MagentoCategory
@@ -31,7 +31,7 @@ export const ResultMatch = ({ categoryData }: StepFinderProps) => {
             {optionState.optionSelection.map((option: OptionSelection) => (
                 <span key={option.value}>
                     <label>{option.attributeLabel}</label>
-                    <span>{getOptionLabel(option)}</span>
+                    <span>{getOptionLabel(option)} {option.value}</span>
                 </span>
             ))}
         </div>

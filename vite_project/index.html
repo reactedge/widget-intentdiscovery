@@ -33,6 +33,18 @@
         <button onclick="ReactEdgeIntent.emit({ type: 'filter_select', attribute: 'size', value: 'M' })">
             Simulate Filter Size M
         </button>
+
+        <button onclick="ReactEdgeIntent.emit({ type: 'filter_select', attribute: 'style_general', value: '124' })">
+            Simulate Filter Style General Soft Shell
+        </button>
+
+        <button onclick="ReactEdgeIntent.emit({ type: 'filter_select', attribute: 'climate', value: '204' })">
+            Simulate Filter Climate Indoor
+        </button>
+
+        <button onclick="ReactEdgeIntent.emit({ type: 'filter_select', attribute: 'material', value: '36' })">
+            Simulate Filter Material Mesh
+        </button>
     </div>
 
     <intentdiscovery-widget data-contract="/cdn/uk.json" />

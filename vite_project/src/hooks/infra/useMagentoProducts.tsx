@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import {useSystemState} from "../../state/System/useSystemState.ts";
-import {getError} from "../../lib/error.ts";
-import {useOptionSelectionFilter} from "../domain/useOptionSelectionFilter.tsx";
-import type {MagentoCategory} from "../../types/infra/magento/category.types.ts";
+import { useSystemState } from "../../state/System/useSystemState.ts";
+import { getError } from "../../lib/error.ts";
+import { useOptionSelectionFilter } from "../domain/useOptionSelectionFilter.tsx";
+import type { MagentoCategory } from "../../types/infra/magento/category.types.ts";
 
 type ProductsResponse = {
     products: any
@@ -33,14 +33,11 @@ export function useMagentoProducts(categoryData: MagentoCategory) {
     const { graphqlClient } = useSystemState()
 
     const filter = useOptionSelectionFilter(categoryData)
-    console.log('filter useMagentoProducts', filter)
     const load = async () => {
         if (!filter) return;
 
         setLoading(true);
         setError(null);
-
-        console.log('load useMagentoProducts', filter)
 
         try {
             const result = await graphqlClient<ProductsResponse>(
@@ -56,7 +53,6 @@ export function useMagentoProducts(categoryData: MagentoCategory) {
     };
 
     useEffect(() => {
-        console.log('useEffect useMagentoProducts', filter)
         load();
     }, [filter]);
 

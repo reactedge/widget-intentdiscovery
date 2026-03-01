@@ -1,16 +1,10 @@
 import {unescapeHtml} from "../../lib/string.ts";
 import {useFindAttributeOptionsByCode} from "../../hooks/domain/useFindAttributeOptionsByCode.tsx";
-import {getNextPreferenceStep} from "../../types/domain/magento/attribute.ts";
 import {useOptionPreferenceState} from "../../state/OptionPreference/useOptionPreferenceState.ts";
-import type {IntentDiscoveryDataConfig} from "../../domain/intent-discovery.types.ts";
 import type {MagentoCategory} from "../../types/infra/magento/category.types.ts";
 import {Spinner} from "../global/Spinner.tsx";
 import {ErrorState} from "../global/ErrorState.tsx";
 
-type Option = {
-    value: string;
-    label: string;
-};
 
 interface StepFinderProps {
     optionCode: string

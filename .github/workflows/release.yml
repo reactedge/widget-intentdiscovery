@@ -31,7 +31,7 @@ jobs:
       - name: Verify artifact exists
         run: |
           VERSION=$(node -p "require('./vite_project/package.json').version")
-          test -f "www/widget-usp@${VERSION}.iife.js"
+          test -f "www/widget-intentdiscovery@${VERSION}.iife.js"
 
       - name: Setup SSH
         run: |
@@ -50,8 +50,8 @@ jobs:
         run: |
           VERSION=$(node -p "require('./vite_project/package.json').version")        
           ssh ${{ secrets.WIDGET_SSH_USER }}@${{ secrets.WIDGET_SSH_HOST }} \
-            "mkdir -p /var/www/widgets/usp"
+            "mkdir -p /var/www/widgets/intentdiscovery"
           rsync -av \
             --chown=www-data:www-data \
-            www/widget-usp@${VERSION}.iife.js* \
-            ${{ secrets.WIDGET_SSH_USER }}@${{ secrets.WIDGET_SSH_HOST }}:/var/www/widgets/usp/
+            www/widget-intentdiscovery@${VERSION}.iife.js* \
+            ${{ secrets.WIDGET_SSH_USER }}@${{ secrets.WIDGET_SSH_HOST }}:/var/www/widgets/intentdiscovery/
