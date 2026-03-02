@@ -10,6 +10,9 @@ export interface ReactEdgeRuntimeIntegrations {
     readonly magentoGraphql: {
         readonly api: string;
     };
+    readonly intentApi?: {
+        readonly baseUrl: string;
+    };
 }
 
 /* -------------------- */

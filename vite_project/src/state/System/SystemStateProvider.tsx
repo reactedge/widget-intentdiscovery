@@ -3,6 +3,7 @@ import {LocalSystemStateContext} from "./SystemState.tsx";
 import {createGraphqlClient} from "../../lib/graphql.ts";
 import type {ReactEdgeRuntimeIntegrations} from "../../domain/intent-discovery.types.ts";
 import {createIntentEngine} from "../../integration/intent/IntentEngine.ts";
+import type {AiRecommendationRequest} from "../../hooks/infra/useAiRecommendations.tsx";
 
 interface SystemStateProviderProps {
     children: ReactNode;
@@ -15,6 +16,9 @@ export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ childr
     if (!config?.magentoGraphql?.api) {
         throw new Error('GraphQL client cannot be created without API endpoint');
     }
+    if (!config?.intentApi?.baseUrl) {
+        throw new Error('intentApi endpoint is required');
+    }
 
     const graphqlClient = useMemo(
         () => createGraphqlClient(config.magentoGraphql.api),
@@ -26,6 +30,26 @@ export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ childr
         () => createIntentEngine(),
         []
     );
+
+    const intentApiClient = useMemo(() => {
+        const baseUrl = config.intentApi?.baseUrl ?? "";
+
+        return {
+            suggest: async (payload: AiRecommendationRequest) => {
+                const response = await fetch(`${baseUrl}/intent/suggest`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Intent API request failed");
+                }
+
+                return response.json();
+            }
+        };
+    }, [config.intentApi?.baseUrl]);
 
     const [intentState, setIntentState] = useState(
         intentEngine.getState()
@@ -50,6 +74,7 @@ export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ childr
         <LocalStateProvider
             value={{
                 graphqlClient,
+                intentApiClient,
                 intentEngine,
                 intentState
             }}

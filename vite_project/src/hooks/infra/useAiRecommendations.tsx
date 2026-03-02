@@ -37,6 +37,7 @@ export function useAiRecommendations(
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<Error | null>(null)
     const optionLabelMap = useOptionLabelMap(attributeData);
+    const { intentApiClient } = useSystemState();
 
     const load = useCallback(async () => {
         if (!intentState || !attributeData?.length || !productData?.length) return
@@ -51,22 +52,10 @@ export function useAiRecommendations(
                 optionLabelMap
             );
 
-            const response = await fetch("http://localhost:3003/intent/suggest", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-            })
-
-            if (!response.ok) {
-                throw new Error("Failed to fetch AI recommendations")
-            }
-
-            const json: AiRecommendationResponse = await response.json()
-
+            const json = await intentApiClient.suggest(payload);
             activity('ai-recommendations', 'Ai recommendations API ran', json);
 
             setData(json)
-
         } catch (err: unknown) {
             activity('ai-recommendations', 'Ai recommendations Error', {
                 error: (err as Error).message

@@ -59,7 +59,10 @@ class OpenaiAgent {
             return parsed;
         }
         catch (e) {
-            return [];
+            return {
+                message: "Unable to generate AI recommendations.",
+                suggestions: []
+            };
         }
     };
 }

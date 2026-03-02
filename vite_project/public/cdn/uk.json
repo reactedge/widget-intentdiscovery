@@ -49,6 +49,8 @@
       "material": "Let's decide on the material upfront, shall we?",
       "size": "Let's decide on the size now?",
       "price": "Let's narrow the price range?",
+      "pattern": "Do you have a preference for the pattern?",
+      "color": "Do you have a preference for the color?",
       "result": "Here are your best matches"
     },
     "ai": {
@@ -58,5 +60,8 @@
       "maxProductsForAnalysis": 40
     }
   },
-  "translations": {}
+  "translations": {},
+  "integrations": {
+    "require": ["magentoGraphql", "intentApi"]
+  }
 }

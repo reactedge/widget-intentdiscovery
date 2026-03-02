@@ -8,7 +8,8 @@ class IntentHandler {
         try {
             const payload = req.body;
             if (!payload?.products?.length) {
-                res.json([]);
+                res.json({ suggestions: [], message: "No products to evaluate." });
+                return;
             }
             const candidates = (0, scoring_1.preScoreProducts)(payload, 12);
             const modelInput = {

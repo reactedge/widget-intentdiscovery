@@ -76,6 +76,10 @@ export function readIntegrationConfig(): ReactEdgeRuntimeConfig {
         throw new Error(`${WIDGET_ID}: magentoGraphql missing in reactedge-runtime`);
     }
 
+    if (!config.integrations?.intentApi?.baseUrl) {
+        throw new Error(`${WIDGET_ID}: intentApi baseUrl missing in reactedge-runtime`);
+    }
+
     return config;
 }
 
@@ -88,13 +92,14 @@ export function resolveIntentDiscoveryConfig(
         widget.integration?.requires?.includes('magentoGraphql') &&
         !runtime.integrations?.magentoGraphql?.api
     ) {
-        throw new Error(`[${WIDGET_ID}] googleMaps integration required but not configured`);
+        throw new Error(`[${WIDGET_ID}] magentoGraphql integration required but not configured`);
     }
 
     return {
         data: widget.data,
         integrations: {
-            magentoGraphql: runtime.integrations?.magentoGraphql
+            magentoGraphql: runtime.integrations?.magentoGraphql,
+            intentApi: runtime.integrations.intentApi
         },
         translations: widget.translations
     };

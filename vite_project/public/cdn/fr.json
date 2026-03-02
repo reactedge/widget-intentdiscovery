@@ -6,6 +6,6 @@
 
   },
   "integrations": {
-    "require": ["magentoGraphql"]
+    "require": ["magentoGraphql", "intentApi"]
   }
 }
