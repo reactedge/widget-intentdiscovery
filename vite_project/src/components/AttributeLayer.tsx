@@ -1,31 +1,42 @@
+import { useState } from "react";
 import type { MagentoCategory } from "../types/infra/magento/category.types.ts";
-import { useFindAttributeLayer } from "../hooks/domain/useFindAttributeLayer.tsx";
-import { Spinner } from "./global/Spinner.tsx";
-import { ErrorState } from "./global/ErrorState.tsx";
-import { SelectedPreferences } from "./SelectedPreferences.tsx";
+import { useActiveAttributeState } from "../state/ActiveAttribute/useActiveAttributeState.ts";
+import { useSelectedPreferences } from "./selectedPreferencesUtils";
+import type {IntentDiscoveryDataConfig} from "../domain/intent-discovery.types.ts";
+import {useSystemState} from "../state/System/useSystemState.ts";
+import {getExcludedAttributes} from "../lib/attributes.ts";
+import type {MagentoAggregation, MagentoProducts} from "../hooks/infra/useProductAttributeLayer.tsx";
 
 type Props = {
+    config: IntentDiscoveryDataConfig;
     categoryData: MagentoCategory;
-    intent?: Record<string, any>;
+    attributeLayerData: MagentoProducts
 };
 
-export const AttributeLayer = ({ categoryData, intent }: Props) => {
-    const { attributeLayerData, attributeLayerLoading, attributeLayerError } =
-        useFindAttributeLayer(categoryData);
+export const AttributeLayer = ({ config, attributeLayerData }: Props) => {
+    const { setActiveAttributeCode } = useActiveAttributeState();
+    const {intentState} = useSystemState()
+    const excludeCodes = getExcludedAttributes(config.attributes)
 
-    if (attributeLayerLoading) return <Spinner />;
-    if (attributeLayerError) return <ErrorState />;
-    if (!attributeLayerData) return null;
+    const { valueFor: prefValue } =
+        useSelectedPreferences(attributeLayerData, intentState);
+
+    const [showAll, setShowAll] = useState(false);
+
+    const allAttributes = (attributeLayerData?.aggregations || []).filter(
+        (attr: MagentoAggregation) => !excludeCodes?.includes(attr.attribute_code)
+    );
+    const visibleAttributes = showAll ? allAttributes : allAttributes.slice(0, 4);
 
     const isAttributeSelected = (attributeCode: string): boolean => {
         // Check if attribute is in attributeScore
-        if (intent?.attributeScore && attributeCode in intent.attributeScore) {
+        if (intentState?.attributeScore && attributeCode in intentState.attributeScore) {
             return true;
         }
 
         // Check if this is the price attribute and priceAffinity has been set
-        if (attributeCode === 'price' && intent?.priceAffinity &&
-            Object.keys(intent.priceAffinity).length > 0) {
+        if (attributeCode === 'price' && intentState?.priceAffinity &&
+            Object.keys(intentState.priceAffinity).length > 0) {
             return true;
         }
 
@@ -34,18 +45,35 @@ export const AttributeLayer = ({ categoryData, intent }: Props) => {
 
     return (
         <>
-            <SelectedPreferences categoryData={categoryData} intent={intent} />
+            {/*<SelectedPreferences categoryData={categoryData} intent={intent} />*/}
             <div className="finder">
                 <div className="step-finder">
-                    {attributeLayerData?.aggregations?.map((attr: any) => (
-                        <div key={attr.attribute_code} className="choice-tile">
+                    {visibleAttributes.map((attr: MagentoAggregation) => (
+                        <div
+                            key={attr.attribute_code}
+                            className="choice-tile"
+                            onClick={() => setActiveAttributeCode(attr.attribute_code)}
+                        >
                             <span
                                 className={`choice-tile__label ${isAttributeSelected(attr.attribute_code) ? 'choice-tile__label--selected' : ''}`}
                             >
                                 {attr.label}
                             </span>
+                            {prefValue(attr.attribute_code) && (
+                                <span className="choice-tile__info">
+                                    {prefValue(attr.attribute_code)}
+                                </span>
+                            )}
                         </div>
                     ))}
+                    {allAttributes.length > 4 && (
+                        <button
+                            className="choice-tile choice-tile--view-all"
+                            onClick={() => setShowAll(prev => !prev)}
+                        >
+                            {showAll ? "Show less" : "View all"}
+                        </button>
+                    )}
                 </div>
             </div>
         </>

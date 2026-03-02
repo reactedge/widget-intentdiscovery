@@ -1,22 +1,40 @@
-import {useOptionPreferenceState} from "../../state/OptionPreference/useOptionPreferenceState.ts";
 import type {MagentoCategory} from "../../types/infra/magento/category.types.ts";
 import {categoryLayereIds} from "../../lib/category.ts";
 import {useMemo} from "react";
+import {useSystemState} from "../../state/System/useSystemState.ts";
+import {intentToFilter} from "../../lib/option-match.ts";
+
+type FilterValue =
+    | { eq: string | number }
+    | { in: (string | number)[] };
+
+export type MagentoProductFilter = Record<string, FilterValue>;
 
 export function useOptionSelectionFilter(categoryData?: MagentoCategory) {
-    const { optionState } = useOptionPreferenceState();
+    const { intentState } = useSystemState();
+
+    const categoryIds = useMemo(
+        () => categoryLayereIds(categoryData),
+        [categoryData?.id]
+    );
+
+    const intentFilter = useMemo(
+        () => intentToFilter(intentState),
+        [intentState]
+    );
 
     return useMemo(() => {
-        const filter: any = {
+        const filter: MagentoProductFilter = {
             category_id: {
-                in: categoryLayereIds(categoryData)
+                in: categoryIds
             }
         };
 
-        optionState.optionSelection.forEach(selection => {
-            filter[selection.code] = { eq: selection.value };
+        Object.entries(intentFilter).forEach(([attribute, value]) => {
+            filter[attribute] = { eq: value };
         });
 
         return filter;
-    }, [categoryData, optionState.optionSelection]);
+
+    }, [categoryIds, intentFilter]);
 }

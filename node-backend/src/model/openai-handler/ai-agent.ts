@@ -1,99 +1,73 @@
 import {OpenAI} from "openai";
 import {config} from "../../config";
-
-interface FieldsInput {
-    title: string;
-    keywords: string;
-    description: string;
-}
-
-interface FieldsInclude {
-    title: boolean;
-    keywords: boolean;
-    description: boolean;
-}
+import {AiRecommendationResponse} from "../../types/intent-context";
 
 const openai = new OpenAI({ apiKey: config.openai.apiKey });
 
-export class OpenaiAgent {
-    createPrompt = (pageUrl: string, pageContent: string, fields: FieldsInput, include: FieldsInclude) => {
-        const safeContent = pageContent.replace(/<[^>]*>/g, '').slice(0, 5000);
-
-        return `You are an expert SEO assistant. A web page was fetched from the following URL: ${pageUrl}
-                
-                Below is its HTML content:
-                ---
-                ${safeContent} <!-- Truncate to avoid token overflow -->
-                ---
-                
-                Existing metadata:
-                - Title: "${fields.title}"
-                - Keywords: "${fields.keywords}"
-                - Description: "${fields.description}"
-                
-                Instructions:
-                Please suggest improved ${[
-             include.title ? 'title' : '',
-             include.keywords ? 'keywords' : '',
-             include.description ? 'description' : '',
-         ]
-             .filter(Boolean)
-             .join(', ')} based on the page content and existing metadata.
-                
-                Respond in strict JSON:
-                {
-                  "title": "Improved title",
-                  "keywords": ["list", "of", "keywords"],
-                  "description": "Improved description"
-                }`;
+const SuggestionSchema = {
+    name: "AiRecommendationResponse",
+    strict: true,
+    schema: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+            message: { type: "string" },
+            suggestions: {
+                type: "array",
+                maxItems: 5,
+                items: {
+                    type: "object",
+                    additionalProperties: false,
+                    properties: {
+                        title: { type: "string" },
+                        confidence: { type: "number", minimum: 0, maximum: 1 },
+                        reason: { type: "string" }
+                    },
+                    required: ["title", "confidence", "reason"]
+                }
+            }
+        },
+        required: ["message", "suggestions"]
     }
-    getAugmentedPageData = async (prompt: string, include: FieldsInclude) => {
-        /*try {
+} as const;
+
+export class OpenaiAgent {
+    getSuggestion = async (modelInput: any) => {
+        try {
             const completion = await openai.chat.completions.create({
-                model: config.openai.model,
-                messages: [{ role: 'user', content: prompt }],
-                temperature: 0.7,
+                model: "gpt-4o-mini",
+                temperature: 0.2,
+                response_format: {
+                    type: "json_schema",
+                    json_schema: SuggestionSchema
+                },
+                messages: [
+                    {
+                        role: "system",
+                        content:
+                            "You are a product recommendation engine for an e-commerce platform. " +
+                            "Based on weighted intent signals, select up to 5 relevant products. " +
+                            "Also generate a short summary sentence explaining how the suggestions relate to the user’s intent."
+                    },
+                    {
+                        role: "user",
+                        content: JSON.stringify(modelInput)
+                    }
+                ]
             });
 
-            if (completion === undefined) {
-                throw new Error('The AI model setting is invalid')
+            const content = completion.choices[0]?.message?.content ?? "{}";
+            const parsed = JSON.parse(content) as AiRecommendationResponse;
+            parsed.suggestions = (parsed.suggestions ?? []).slice(0, 5);
+
+            return parsed;
+        } catch (e: any) {
+            return {
+                message: "Unable to generate AI recommendations.",
+                suggestions: []
             }
-
-            const raw = completion?.choices[0].message.content || '{}';
-            const suggestions = this.extractSuggestion(raw);
-
-            if (!suggestions) {
-                return ''; // Or better: return null or throw
-            }
-
-            // Step 4: Filter by include flags
-            const result = {
-                ...(include.title && { title: suggestions.title }),
-                ...(include.keywords && { keywords: suggestions.keywords.join(',') }),
-                ...(include.description && { description: suggestions.description }),
-            };
-
-            return result;
-        } catch (err) {
-            console.error('OpenAI error:', err);
-            return ''
-        }*/
-    }
-
-    private extractSuggestion(raw: string): FieldsInput | null {
-        try {
-            // Remove markdown code block fences if present
-            const cleaned = raw
-                .replace(/^```json\s*/i, '')
-                .replace(/^```/, '')
-                .replace(/```$/, '')
-                .trim();
-
-            return JSON.parse(cleaned);
-        } catch (err) {
-            console.error('Failed to parse OpenAI response:', raw);
-            return null;
         }
     }
+
 
 }

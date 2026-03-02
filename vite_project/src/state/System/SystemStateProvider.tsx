@@ -1,7 +1,8 @@
-import {type ReactNode, useMemo} from "react";
+import {type ReactNode, useEffect, useMemo, useState} from "react";
 import {LocalSystemStateContext} from "./SystemState.tsx";
 import {createGraphqlClient} from "../../lib/graphql.ts";
 import type {ReactEdgeRuntimeIntegrations} from "../../domain/intent-discovery.types.ts";
+import {createIntentEngine} from "../../integration/intent/IntentEngine.ts";
 
 interface SystemStateProviderProps {
     children: ReactNode;
@@ -20,10 +21,37 @@ export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ childr
         [config.magentoGraphql?.api]
     );
 
+    // ✅ One single engine instance
+    const intentEngine = useMemo(
+        () => createIntentEngine(),
+        []
+    );
+
+    const [intentState, setIntentState] = useState(
+        intentEngine.getState()
+    );
+
+    useEffect(() => {
+        const handler = (event: any) => {
+            const signal = event.detail;
+
+            intentEngine.handle(signal);
+            setIntentState({ ...intentEngine.getState() });
+        };
+
+        window.addEventListener("reactedge:intent", handler);
+
+        return () => {
+            window.removeEventListener("reactedge:intent", handler);
+        };
+    }, [intentEngine]);
+
     return (
         <LocalStateProvider
             value={{
-                graphqlClient
+                graphqlClient,
+                intentEngine,
+                intentState
             }}
         >
             {children}

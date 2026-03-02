@@ -14,3 +14,15 @@ export const formatRange = (str: string) => {
 
     return `${formatMoney(prices[0])} - ${formatMoney(prices[1])}`
 }
+
+export function formatPrice(value: number, currency: string) {
+    try {
+        return new Intl.NumberFormat(undefined, {
+            style: "currency",
+            currency,
+            maximumFractionDigits: 0,
+        }).format(value)
+    } catch {
+        return `${value} ${currency}`
+    }
+}

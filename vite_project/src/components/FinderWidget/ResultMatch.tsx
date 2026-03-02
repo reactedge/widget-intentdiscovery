@@ -2,7 +2,7 @@ import { useOptionPreferenceState } from "../../state/OptionPreference/useOption
 import type { OptionSelection } from "../../state/OptionPreference/type.ts";
 import { getOptionLabel } from "../../lib/option-match.ts";
 import type { MagentoCategory } from "../../types/infra/magento/category.types.ts";
-import { useFindProduct } from "../../hooks/domain/useFindProduct.tsx";
+import { useFindLayeredData } from "../../hooks/domain/useFindLayeredData.tsx";
 import { ErrorState } from "../global/ErrorState.tsx";
 import { Spinner } from "../global/Spinner.tsx";
 import { activity } from "../../activity";
@@ -14,7 +14,7 @@ interface StepFinderProps {
 export const ResultMatch = ({ categoryData }: StepFinderProps) => {
     const { optionState } = useOptionPreferenceState();
     const { productData, productLoading, productError } =
-        useFindProduct(categoryData);
+        useFindLayeredData(categoryData);
 
     if (productError) return <ErrorState />;
     if (productLoading) return <Spinner />;

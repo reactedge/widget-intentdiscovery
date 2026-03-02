@@ -1,34 +1,54 @@
-import {unescapeHtml} from "../../lib/string.ts";
-import {useFindAttributeOptionsByCode} from "../../hooks/domain/useFindAttributeOptionsByCode.tsx";
-import {useOptionPreferenceState} from "../../state/OptionPreference/useOptionPreferenceState.ts";
-import type {MagentoCategory} from "../../types/infra/magento/category.types.ts";
-import {Spinner} from "../global/Spinner.tsx";
-import {ErrorState} from "../global/ErrorState.tsx";
+import { unescapeHtml } from "../../lib/string.ts";
+import { useFindAttributeOptionsByCode } from "../../hooks/domain/useFindAttributeOptionsByCode.tsx";
+import { useOptionPreferenceState } from "../../state/OptionPreference/useOptionPreferenceState.ts";
+import { useActiveAttributeState } from "../../state/ActiveAttribute/useActiveAttributeState.ts";
+import type {MagentoAggregationOption, MagentoProducts} from "../../hooks/infra/useProductAttributeLayer.tsx";
+import {activity} from "../../activity";
 
 
 interface StepFinderProps {
     optionCode: string
-    categoryData: MagentoCategory
+    attributeLayerData: MagentoProducts
 }
 
-export const StepFinder: React.FC<StepFinderProps> = ({optionCode, categoryData}: StepFinderProps) => {
-    const {setActiveOptionCode, setOptionSelection} = useOptionPreferenceState()
-    const {totalCount, attributeData, attributeLoading, attributeError} = useFindAttributeOptionsByCode(optionCode, categoryData)
+export const StepFinder: React.FC<StepFinderProps> = ({ optionCode, attributeLayerData }: StepFinderProps) => {
+    const { optionState, toggleOptionSelection } = useOptionPreferenceState()
+    const { setActiveAttributeCode } = useActiveAttributeState()
+    const { attributeData } = useFindAttributeOptionsByCode(optionCode, attributeLayerData)
 
-    const onChange = async (option: any) => {
-        setActiveOptionCode(optionCode);
-        setOptionSelection(optionCode, attributeData.label, option.value, option.label)
+    // find the currently selected value for this option code
+    const currentSelection = optionState.optionSelection.find(sel => sel.code === optionCode);
+
+    const onChange = async (option: MagentoAggregationOption) => {
+        setActiveAttributeCode(optionCode);
+        const action = toggleOptionSelection(optionCode, attributeData.label, option.value, option.label);
+
+        activity('select-options', `Select ${optionCode}`, action);
+
+        if (action === 'select') {
+            window.ReactEdgeIntent.emit({
+                type: 'filter_select',
+                attribute: optionCode,
+                value: option.value
+            });
+        } else {
+            window.ReactEdgeIntent.emit({
+                type: 'filter_deselect',
+                attribute: optionCode,
+                value: option.value
+            });
+        }
     };
 
-    if (attributeLoading) return <Spinner />
-    if (attributeError) return <ErrorState />
-
+    // check if current option value is selected (handles both single and multiple selections)
+    const isOptionSelected = (optionValue: string): boolean => {
+        if (!currentSelection) return false;
+        return currentSelection.value === optionValue;
+    };
 
     return (
-        <>
-            {totalCount && `${totalCount} products`}
             <div className="step-finder">
-                {attributeData?.options.map((option) => (
+                {attributeData?.options.map((option: MagentoAggregationOption) => (
                     <label
                         key={option.value}
                         className="choice-tile"
@@ -40,12 +60,11 @@ export const StepFinder: React.FC<StepFinderProps> = ({optionCode, categoryData}
                             onChange={() => onChange(option)}
                         />
 
-                        <span className="choice-tile__label">
+                        <span className={`choice-tile__label ${isOptionSelected(option.value) ? 'choice-tile__label--active' : ''}`}>
                             {unescapeHtml(option.label)} ({option.count})
                         </span>
                     </label>
                 ))}
             </div>
-        </>
     );
 };

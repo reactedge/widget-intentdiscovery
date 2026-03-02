@@ -24,6 +24,14 @@
     box-sizing: border-box;
 }
 
+.choice-tile__label {
+    margin-right: 10px;
+}
+
+.choice-tile__label--active {
+    font-weight: 600;
+}
+
 .choice-tile:hover {
     border-color: #cfcfcf;
     background: #fafafa;
@@ -37,7 +45,7 @@
 }
 
 /* Selected state */
-.choice-tile input:checked + .choice-tile__label {
+.choice-tile input:checked+.choice-tile__label {
     font-weight: 600;
 }
 

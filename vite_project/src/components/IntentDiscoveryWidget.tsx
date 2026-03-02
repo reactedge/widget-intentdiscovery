@@ -4,9 +4,9 @@ import { Spinner } from "./global/Spinner.tsx";
 import { ErrorState } from "./global/ErrorState.tsx";
 import { IntentDiscovery } from "./IntentDiscovery.tsx";
 import { OptionPreferenceStateProvider } from "../state/OptionPreference/OptionPreferenceStateProvider.tsx";
-import { LastIntentDisplay } from "./Intent/LastIntentDisplay.tsx";
-import { useIntent } from "../hooks/domain/useLastIntent.tsx";
-import { AttributeLayer } from "./AttributeLayer.tsx";
+import { ActiveAttributeStateProvider } from "../state/ActiveAttribute/ActiveAttributeStateProvider.tsx";
+import {useSystemState} from "../state/System/useSystemState.ts";
+import {activity} from "../activity";
 
 type Props = {
     config: ResolvedIntentDiscoveryConfig
@@ -15,20 +15,22 @@ type Props = {
 export const IntentDiscoveryWidget = ({ config }: Props) => {
     const { categoryData, categoryError, categoryLoading } =
         useCategory(config.data.categoryUrlKey);
-    const intent = useIntent();
+    const { intentState } = useSystemState();
 
     if (categoryLoading) return <Spinner />;
     if (categoryError) return <ErrorState />;
     if (!categoryData) return null;
 
+    activity('intent-state', 'Intent State', intentState);
+
     return (
         <OptionPreferenceStateProvider>
-            <AttributeLayer categoryData={categoryData} intent={intent} />
-            <IntentDiscovery
-                config={config.data}
-                categoryData={categoryData}
-            />
-            <LastIntentDisplay intent={intent} />
+            <ActiveAttributeStateProvider>
+                <IntentDiscovery
+                    config={config.data}
+                    categoryData={categoryData}
+                />
+            </ActiveAttributeStateProvider>
         </OptionPreferenceStateProvider>
     );
 };

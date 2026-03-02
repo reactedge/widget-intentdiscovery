@@ -2,6 +2,7 @@ import {type ReactNode, useCallback} from "react";
 import {useImmer} from "use-immer";
 import {LocalOptionPreferenceStateContext, readActiveOption} from "./OptionPreferenceState.tsx";
 import type {OptionPreferenceInfoState} from "./type.ts";
+import {activity} from "../../activity";
 
 interface OptionPreferenceStateProviderProps {
     children: ReactNode;
@@ -30,6 +31,16 @@ export const OptionPreferenceStateProvider: React.FC<OptionPreferenceStateProvid
         updateState('activeOptionCode', code);
     }
 
+    const toggleActiveOptionCode = useCallback((code: string) => {
+        setState(draft => {
+            if (draft.optionState['activeOptionCode']) {
+                draft.optionState['activeOptionCode'] = null;
+            } else {
+                draft.optionState['activeOptionCode'] = code;
+            }
+        });
+    }, []);
+
     const setOptionSelection = (
         code: string,
         attributeLabel: string,
@@ -46,6 +57,41 @@ export const OptionPreferenceStateProvider: React.FC<OptionPreferenceStateProvid
         });
     };
 
+    const toggleOptionSelection = (
+        code: string,
+        attributeLabel: string,
+        value: string,
+        label: string
+    ) => {
+        let action: 'select' | 'deselect' = 'select';
+
+        setState(draft => {
+            const selections = draft.optionState.optionSelection;
+            const existingIndex = selections.findIndex(s => s.code === code);
+
+            if (existingIndex !== -1) {
+                const existing = selections[existingIndex];
+
+                if (existing.value === value) {
+                    selections.splice(existingIndex, 1);
+                    action = 'deselect';
+                    return;
+                }
+
+                selections[existingIndex] = { code, attributeLabel, value, label };
+                action = 'select';
+                return;
+            }
+
+            selections.push({ code, attributeLabel, value, label });
+            action = 'select';
+
+            activity('toggle-option', `Select ${code}`, {action, existingIndex, exist: selections[existingIndex], value: value});
+        });
+
+        return action;
+    };
+
     const setActiveCategoryName = (name: string) => {
         updateState('activeCategoryName', name);
     }
@@ -56,6 +102,8 @@ export const OptionPreferenceStateProvider: React.FC<OptionPreferenceStateProvid
                 setActiveOptionCode,
                 setActiveCategoryName,
                 setOptionSelection,
+                toggleActiveOptionCode,
+                toggleOptionSelection,
                 optionState: state.optionState
             }}
         >

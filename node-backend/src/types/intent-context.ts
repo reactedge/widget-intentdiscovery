@@ -43,8 +43,56 @@ export type Suggestion = {
 };
 
 export type SuggestionResponse = {
-    intentStage: IntentStage;
-    strategy: SuggestionStrategy;
+    //intentStage: IntentStage;
+    //strategy: SuggestionStrategy;
 
     suggestions: Array<Suggestion>;
+};
+
+export interface AiRecommendationRequest {
+    intent: {
+        signals: Record<string, Record<string, number>>
+    }
+    products: {
+        title: string
+        shortDescription?: string
+        attributes: Record<string, string[]>
+    }[]
+}
+
+interface IntentState {
+    attributeScore?: Record<string, Record<string, number>>
+}
+
+interface MagentoProduct {
+    name: string
+    short_description?: string
+    attributes: Record<string, string> // already label-mapped
+}
+
+export interface AiRecommendationResponse {
+    suggestions: MagentoProduct[]
+    message?: string
+}
+
+export interface MagentoAggregationOption {
+    count: number;
+    label: string;
+    value: string;
+}
+
+export interface MagentoAggregation {
+    attribute_code: string;
+    label: string;
+    count: number;
+    options: MagentoAggregationOption[];
+}
+
+export type ModelInput = {
+    intent: Record<string, Record<string, number>>;
+    products: {
+        title: string;
+        shortDescription?: string;
+        attributes: Record<string, string[]>;
+    }[];
 };

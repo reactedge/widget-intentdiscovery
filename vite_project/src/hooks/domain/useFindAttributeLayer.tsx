@@ -7,7 +7,7 @@ export function useFindAttributeLayer(categoryData: MagentoCategory) {
         loading: attributeLayerLoading,
         error: attributeLayerError,
         refetch,
-    } = useProductAttributeLayer('', categoryData);
+    } = useProductAttributeLayer(categoryData);
 
     return {
         attributeLayerData,

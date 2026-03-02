@@ -15,14 +15,12 @@ const QUERY = `
         filters: $filter
       ) {
         items {
-          id
-          uid
+          id        
           name
           description
           image
           children {
-            id
-            uid
+            id           
           }
         }
       }

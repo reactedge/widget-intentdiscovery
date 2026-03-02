@@ -3,15 +3,60 @@
     "categoryUrlKey": "women",
     "attributes": [
       {
-        "code": "climate"
+        "code": "eco_collection",
+        "excludeFromLayer": true
       },
       {
-        "code": "style_general"
+        "code": "erin_recommends",
+        "excludeFromLayer": true
       },
       {
-        "code": "material"
+        "code": "sale",
+        "excludeFromLayer": true
+      },
+      {
+        "code": "pattern_category",
+        "excludeFromLayer": true
+      },
+      {
+        "code": "new",
+        "excludeFromLayer": true
+      },
+      {
+        "code": "performance_fabric",
+        "excludeFromLayer": true
+      },
+      {
+        "code": "price",
+        "excludeFromLayer": true
+      },
+      {
+        "code": "category_uid",
+        "excludeFromLayer": true
+      },
+      {
+        "code": "style_bottom",
+        "excludeFromLayer": true
+      },
+      {
+        "code": "price",
+        "excludeFromLayer": true
       }
-    ]
+    ],
+    "labelMap": {
+      "style_general": "Do you have a style of preference?",
+      "climate": "Do you know the type of weather you need this clothing for?",
+      "material": "Let's decide on the material upfront, shall we?",
+      "size": "Let's decide on the size now?",
+      "price": "Let's narrow the price range?",
+      "result": "Here are your best matches"
+    },
+    "ai": {
+      "enabled": true,
+      "matchThreshold": 30,
+      "minIntentScore": 4,
+      "maxProductsForAnalysis": 40
+    }
   },
   "translations": {}
 }

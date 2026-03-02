@@ -6,8 +6,8 @@ import {IntentHandler} from "../controller/intent-handler";
 
 export const setupIntentRoutes = (app: Application) => {
     const router = express.Router()
-    //const options = corsOptions();
-    //router.use(options)
+    const options = corsOptions();
+    router.use(options)
 
     const intentHandlerController = new IntentHandler()
 
@@ -18,7 +18,7 @@ export const setupIntentRoutes = (app: Application) => {
 
     router.post("/suggest", intentHandlerController.buildContextSuggestion)
 
-    //router.options('*', options);
+    router.options('*', options);
 
     app.use(config.route.intentPrefix, router)
 }

@@ -1,6 +1,5 @@
 export interface MagentoCategory {
     id: number;
-    uid: string;
     name: string;
     description?: string | null;
     image?: string | null;
@@ -9,5 +8,4 @@ export interface MagentoCategory {
 
 export interface MagentoCategoryChild {
     id: number;
-    uid: string;
 }
