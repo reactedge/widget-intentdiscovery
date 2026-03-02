@@ -1,33 +1,27 @@
 import {useOptionPreferenceState} from "../../state/OptionPreference/useOptionPreferenceState.ts";
 import {useFindAttributeOptionsByCode} from "../../hooks/domain/useFindAttributeOptionsByCode.tsx";
 import {formatRange} from "../../lib/price.ts";
-import type {MagentoCategory} from "../../types/infra/magento/category.types.ts";
-import {Spinner} from "../global/Spinner.tsx";
-import {ErrorState} from "../global/ErrorState.tsx";
+import type {MagentoAggregationOption, MagentoProducts} from "../../hooks/infra/useProductAttributeLayer.tsx";
 
 interface StepFinderProps {
-    categoryData: MagentoCategory
+    attributeLayerData: MagentoProducts
 }
 
-export const StepPriceFinder = ({categoryData}: StepFinderProps) => {
+export const StepPriceFinder = ({attributeLayerData}: StepFinderProps) => {
     const option = 'price'
     const {setOptionSelection, setActiveOptionCode} = useOptionPreferenceState()
-    const {attributeData, attributeLoading, attributeError} = useFindAttributeOptionsByCode(option, categoryData)
+    const {attributeData} = useFindAttributeOptionsByCode(option, attributeLayerData)
 
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const input = e.target;
 
-
-    const onChange = async (e: React.MouseEvent<HTMLInputElement>) => {
-        const input = e.target as HTMLInputElement
-        setActiveOptionCode('result')
-        setOptionSelection(option, attributeData.label, input.id, input.id)
+        setActiveOptionCode('result');
+        setOptionSelection(option, attributeData.label, input.value, input.value);
     };
-
-    if (attributeLoading) return <Spinner />
-    if (attributeError) return <ErrorState />
 
     return (
         <div className="step-finder">
-            {attributeData?.options.map((option) => (
+            {attributeData?.options.map((option: MagentoAggregationOption) => (
                 <label
                     key={option.value}
                     className="choice-tile"
@@ -36,7 +30,7 @@ export const StepPriceFinder = ({categoryData}: StepFinderProps) => {
                         type="radio"
                         name="preference"
                         value={option.value}
-                        onChange={() => onChange(option.value)}
+                        onChange={onChange}
                     />
 
                     <span className="choice-tile__label">

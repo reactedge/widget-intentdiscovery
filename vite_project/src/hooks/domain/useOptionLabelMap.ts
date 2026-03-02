@@ -6,7 +6,7 @@ export function useOptionLabelMap(
     aggregations?: MagentoAggregation[]
 ) {
     return useMemo(() => {
-        if (!aggregations) return {};
+        if (!aggregations) return new Map();
 
         const map: OptionLabelMap = new Map<string, Map<string, string>>();
 

@@ -4,6 +4,7 @@ import {createGraphqlClient} from "../../lib/graphql.ts";
 import type {ReactEdgeRuntimeIntegrations} from "../../domain/intent-discovery.types.ts";
 import {createIntentEngine} from "../../integration/intent/IntentEngine.ts";
 import type {AiRecommendationRequest} from "../../hooks/infra/useAiRecommendations.tsx";
+import type {IntentSignal} from "../../integration/intent/types.ts";
 
 interface SystemStateProviderProps {
     children: ReactNode;
@@ -56,8 +57,10 @@ export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ childr
     );
 
     useEffect(() => {
-        const handler = (event: any) => {
-            const signal = event.detail;
+        const handler = (event: Event) => {
+            const customEvent = event as CustomEvent<IntentSignal>;
+
+            const signal = customEvent.detail;
 
             intentEngine.handle(signal);
             setIntentState({ ...intentEngine.getState() });

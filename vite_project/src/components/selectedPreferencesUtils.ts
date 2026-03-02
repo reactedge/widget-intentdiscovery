@@ -1,4 +1,4 @@
-import type {MagentoProducts} from "../hooks/infra/useProductAttributeLayer.tsx";
+import type {MagentoAggregation, MagentoProducts} from "../hooks/infra/useProductAttributeLayer.tsx";
 import type {OptionLabelMap} from "../state/OptionPreference/type.ts";
 import {useOptionLabelMap} from "../hooks/domain/useOptionLabelMap.ts";
 
@@ -55,7 +55,7 @@ export function getSelectedAttributes(
     intent?: IntentRecord
 ) {
     return (
-        layerData?.aggregations?.filter((attr: any) =>
+        layerData?.aggregations?.filter((attr: MagentoAggregation) =>
             isAttributeSelected(attr.attribute_code, intent)
         ) || []
     );

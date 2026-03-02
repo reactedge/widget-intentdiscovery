@@ -1,20 +1,21 @@
-import type { MagentoCategory } from "../types/infra/magento/category.types.ts";
 import { useActiveAttributeState } from "../state/ActiveAttribute/useActiveAttributeState.ts";
 import {
     useSelectedPreferences,
 } from "./selectedPreferencesUtils";
+import type {MagentoProducts} from "../hooks/infra/useProductAttributeLayer.tsx";
+import type {IntentState} from "../integration/intent/types.ts";
 
 
 type Props = {
-    categoryData: MagentoCategory;
-    intent?: Record<string, any>;
+    attributeLayerData: MagentoProducts
+    intent?: IntentState
 };
 
-export const SelectedPreferences = ({ categoryData, intent }: Props) => {
+export const SelectedPreferences = ({ attributeLayerData, intent }: Props) => {
     const { setActiveAttributeCode } = useActiveAttributeState();
 
     const { selected: selectedAttributes, valueFor } =
-        useSelectedPreferences(categoryData, intent);
+        useSelectedPreferences(attributeLayerData, intent);
 
     if (selectedAttributes.length === 0) return null;
 

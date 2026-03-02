@@ -8,7 +8,7 @@ export const sanitiseString = (value: unknown) => {
     return typeof value === "string" ? value : undefined;
 }
 
-export const shortenText = (text, maxLength = 200) => {
+export const shortenText = (text: string, maxLength = 200) => {
     return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
 };
 

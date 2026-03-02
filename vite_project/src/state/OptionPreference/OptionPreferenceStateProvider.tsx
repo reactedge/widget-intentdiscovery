@@ -34,7 +34,7 @@ export const OptionPreferenceStateProvider: React.FC<OptionPreferenceStateProvid
     const toggleActiveOptionCode = useCallback((code: string) => {
         setState(draft => {
             if (draft.optionState['activeOptionCode']) {
-                draft.optionState['activeOptionCode'] = null;
+                delete draft.optionState.activeOptionCode;
             } else {
                 draft.optionState['activeOptionCode'] = code;
             }

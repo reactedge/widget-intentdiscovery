@@ -1,14 +1,14 @@
-import type {MagentoCategory} from "../types/infra/magento/category.types.ts";
+import type {MagentoCategory, MagentoCategoryChild} from "../types/infra/magento/category.types.ts";
 
 export const categoryLayereIds = (category?: MagentoCategory) => {
-    let ids = category?.children.map((child: any) => {
+    let ids = category?.children.map((child: MagentoCategoryChild) => {
         return child.id
     })
 
     if (!ids) {
         ids = []
     }
-    ids.push(category.id)
+    if (category?.id) ids.push(category?.id)
 
     return ids
 }

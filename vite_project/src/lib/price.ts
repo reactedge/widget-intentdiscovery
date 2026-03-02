@@ -12,7 +12,7 @@ export const formatMoney = (amount: number = 0) => {
 export const formatRange = (str: string) => {
     const prices = str.split('-')
 
-    return `${formatMoney(prices[0])} - ${formatMoney(prices[1])}`
+    return `${formatMoney(parseInt(prices[0]))} - ${formatMoney(parseInt(prices[1]))}`
 }
 
 export function formatPrice(value: number, currency: string) {

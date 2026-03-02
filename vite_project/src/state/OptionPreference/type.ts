@@ -9,7 +9,7 @@ export interface OptionSelection {
 export interface OptionPreferenceInfoState {
     activeCategoryName: string
     optionSelection: OptionSelection[],
-    activeOptionCode: string
+    activeOptionCode?: string
 }
 
 export type OptionLabelMap = Map<string, Map<string, string>>
