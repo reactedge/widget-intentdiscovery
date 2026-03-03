@@ -14,13 +14,13 @@ export default defineConfig({
     lib: {
       entry: "src/widget.ts",
       name: "WidgetIntentDiscovery",
-      fileName: () => `widget-intent-discovery@${pkg.version}.iife.js`,
+      fileName: () => `widget-intentdiscovery@${pkg.version}.iife.js`,
       formats: ["iife"],
     },
     rollupOptions: {
       output: {
         inlineDynamicImports: true,
-        assetFileNames: "widget-intent-discovery.[ext]",
+        assetFileNames: "widget-intentdiscovery.[ext]",
       },
     },
     minify: true,

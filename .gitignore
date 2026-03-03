@@ -9,6 +9,7 @@ node_modules
 
 # local environment
 .env
+.env.*
 widget.local.crt
 widget.local.key
 
