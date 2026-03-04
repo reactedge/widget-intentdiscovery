@@ -1,14 +1,13 @@
-import {getExcludedAttributes} from "../../../lib/attributes.ts";
+import type {MagentoAggregation} from "../../../hooks/infra/useProductAttributeLayer.tsx";
 
 export type OptionPreference = 'climate' | 'style_general' | 'price' | 'result' | (string & {})
 
 export type MenOptionPreference = 'climate' | 'material' | 'size' | 'price' | 'result' | (string & {})
 
 
-export const getNextPreferenceStep = (attributeData: any[], actionOptionCode: string, configAttributes: any[]): MenOptionPreference => {
-    const excludeCodes = getExcludedAttributes(configAttributes)
+export const getNextPreferenceStep = (attributeData: MagentoAggregation[], actionOptionCode: string, configAttributes: string[]): MenOptionPreference => {
     const layerAttributes = attributeData
-                .filter(attribute => !excludeCodes.includes(attribute.attribute_code))
+                .filter(attribute => !configAttributes.includes(attribute.attribute_code))
                 .map(attribute => attribute.attribute_code)
 
     if (actionOptionCode === "") {

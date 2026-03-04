@@ -16,7 +16,7 @@ export const ResultMatch = ({ categoryData }: StepFinderProps) => {
     const { productData, productLoading, productError } =
         useFindLayeredData(categoryData);
 
-    if (productError) return <ErrorState />;
+    if (productError) return <ErrorState error={productError}  />;
     if (productLoading) return <Spinner />;
     if (!productData) return <Spinner />;
 

@@ -8,6 +8,7 @@ import {ErrorState} from "./global/ErrorState.tsx";
 import {AttributeLayer} from "./AttributeLayer.tsx";
 import {IntentDiscoveryOptions} from "./IntentDiscoveryOptions.tsx";
 import {ProductRecommendations} from "./ProductRecommendations.tsx";
+import {activity} from "../activity";
 
 export interface Props {
     config: IntentDiscoveryDataConfig
@@ -27,8 +28,10 @@ export const IntentDiscovery = ({ config, categoryData }: Props) => {
     }, [config.categoryUrlKey, setActiveCategoryName, attributeLayerData?.aggregations]);
 
     if (attributeLayerLoading) return <Spinner />;
-    if (attributeLayerError) return <ErrorState />;
+    if (attributeLayerError) return <ErrorState error={attributeLayerError}  />;
     if (!attributeLayerData) return null;
+
+    activity('attribute-layer', 'Attribute Layer', attributeLayerData);
 
     return (
         <div className={showRightColumn ? "re-intent-layout re-intent-layout--two" : "re-intent-layout"}>

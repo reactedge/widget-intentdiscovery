@@ -1,47 +1,20 @@
 {
   "data": {
-    "categoryUrlKey": "women",
-    "attributes": [
-      {
-        "code": "eco_collection",
-        "excludeFromLayer": true
-      },
-      {
-        "code": "erin_recommends",
-        "excludeFromLayer": true
-      },
-      {
-        "code": "sale",
-        "excludeFromLayer": true
-      },
-      {
-        "code": "pattern_category",
-        "excludeFromLayer": true
-      },
-      {
-        "code": "new",
-        "excludeFromLayer": true
-      },
-      {
-        "code": "performance_fabric",
-        "excludeFromLayer": true
-      },
-      {
-        "code": "price",
-        "excludeFromLayer": true
-      },
-      {
-        "code": "category_uid",
-        "excludeFromLayer": true
-      },
-      {
-        "code": "style_bottom",
-        "excludeFromLayer": true
-      },
-      {
-        "code": "price",
-        "excludeFromLayer": true
-      }
+    "enabledCategories": [
+      "tops-women",
+      "tops-men"
+    ],
+    "minProductCount": 40,
+    "attributeExcludedInLayer": [
+      "eco_collection",
+      "erin_recommends",
+      "sale",
+      "pattern_category",
+      "new",
+      "performance_fabric",
+      "price",
+      "category_uid",
+      "style_bottom"
     ],
     "labelMap": {
       "style_general": "Do you have a style of preference?",

@@ -13,6 +13,16 @@
                 );
             }
         }
+        function simulateCategory(category) {
+            window.dispatchEvent(
+                new CustomEvent("reactedge:intent", {
+                    detail: {
+                        type: "category_view",
+                        id: category
+                    }
+                })
+            );
+        }
     </script>
 
     <div style="padding:20px; border:1px solid #ccc; margin-top:20px;">
@@ -44,6 +54,14 @@
 
         <button onclick="ReactEdgeIntent.emit({ type: 'filter_select', attribute: 'material', value: '36' })">
             Simulate Filter Material Mesh
+        </button>
+
+        <button onclick="simulateCategory('men')">
+            Simulate category: Mens
+        </button>
+
+        <button onclick="simulateCategory('jackets-men')">
+            Simulate category: Tops
         </button>
     </div>
 

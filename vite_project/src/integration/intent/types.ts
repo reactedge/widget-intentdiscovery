@@ -6,7 +6,8 @@ export type IntentState = {
         min?: number
         max?: number
         avg?: number
-    }
+    },
+    currentUrl?: string
 }
 
 export type IntentSignal =
@@ -15,4 +16,5 @@ export type IntentSignal =
     | { type: "filter_deselect"; attribute: string; value: string }
     | { type: "product_view"; sku: string }
     | { type: "add_to_cart"; sku: string; price: number }
+    | { type: "url"; }
 

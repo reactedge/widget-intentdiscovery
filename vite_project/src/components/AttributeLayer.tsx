@@ -1,10 +1,9 @@
-import { useState } from "react";
-import type { MagentoCategory } from "../types/infra/magento/category.types.ts";
-import { useActiveAttributeState } from "../state/ActiveAttribute/useActiveAttributeState.ts";
-import { useSelectedPreferences } from "./selectedPreferencesUtils";
+import {useState} from "react";
+import type {MagentoCategory} from "../types/infra/magento/category.types.ts";
+import {useActiveAttributeState} from "../state/ActiveAttribute/useActiveAttributeState.ts";
+import {useSelectedPreferences} from "./selectedPreferencesUtils";
 import type {IntentDiscoveryDataConfig} from "../domain/intent-discovery.types.ts";
 import {useSystemState} from "../state/System/useSystemState.ts";
-import {getExcludedAttributes} from "../lib/attributes.ts";
 import type {MagentoAggregation, MagentoProducts} from "../hooks/infra/useProductAttributeLayer.tsx";
 
 type Props = {
@@ -16,15 +15,13 @@ type Props = {
 export const AttributeLayer = ({ config, attributeLayerData }: Props) => {
     const { setActiveAttributeCode } = useActiveAttributeState();
     const {intentState} = useSystemState()
-    const excludeCodes = getExcludedAttributes(config.attributes)
-
     const { valueFor: prefValue } =
         useSelectedPreferences(attributeLayerData, intentState);
 
     const [showAll, setShowAll] = useState(false);
 
     const allAttributes = (attributeLayerData?.aggregations || []).filter(
-        (attr: MagentoAggregation) => !excludeCodes?.includes(attr.attribute_code)
+        (attr: MagentoAggregation) => !config.attributeExcludedInLayer?.includes(attr.attribute_code)
     );
     const visibleAttributes = showAll ? allAttributes : allAttributes.slice(0, 4);
 

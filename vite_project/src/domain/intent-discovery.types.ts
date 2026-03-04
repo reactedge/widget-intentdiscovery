@@ -29,11 +29,6 @@ export type IntentDiscoveryTranslationsConfig = Record<string, string> | undefin
 
 export type MagentoIntegrationName = 'magentoGraphql';
 
-export type ConfigAttribute = {
-    code: string;
-    excludeFromLayer?: boolean;
-}
-
 export interface IntentDiscoveryDataConfig {
     categoryUrlKey: string;
     /**
@@ -41,7 +36,8 @@ export interface IntentDiscoveryDataConfig {
      * will be **excluded** from the attribute layer display; the layer renders
      * only attributes not listed here.
      */
-    attributes: ConfigAttribute[];
+    attributeExcludedInLayer: string[];
+    enabledCategories: string[];
     /**
      * Optional mapping of step codes (usually attribute codes plus the special
      * `price`/`result` values) to labels shown in the finder UI.

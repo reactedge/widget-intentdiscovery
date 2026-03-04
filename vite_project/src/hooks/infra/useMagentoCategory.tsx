@@ -16,9 +16,7 @@ const QUERY = `
       ) {
         items {
           id        
-          name
-          description
-          image
+          name        
           children {
             id           
           }

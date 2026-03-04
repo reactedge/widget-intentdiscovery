@@ -5,23 +5,19 @@ import { ErrorState } from "./global/ErrorState.tsx";
 import { IntentDiscovery } from "./IntentDiscovery.tsx";
 import { OptionPreferenceStateProvider } from "../state/OptionPreference/OptionPreferenceStateProvider.tsx";
 import { ActiveAttributeStateProvider } from "../state/ActiveAttribute/ActiveAttributeStateProvider.tsx";
-import {useSystemState} from "../state/System/useSystemState.ts";
-import {activity} from "../activity";
 
 type Props = {
     config: ResolvedIntentDiscoveryConfig
+    categoryUrlKey: string
 };
 
-export const IntentDiscoveryWidget = ({ config }: Props) => {
+export const IntentDiscoveryWidget = ({ config, categoryUrlKey }: Props) => {
     const { categoryData, categoryError, categoryLoading } =
-        useCategory(config.data.categoryUrlKey);
-    const { intentState } = useSystemState();
+        useCategory(categoryUrlKey);
 
     if (categoryLoading) return <Spinner />;
-    if (categoryError) return <ErrorState />;
+    if (categoryError) return <ErrorState error={categoryError}  />;
     if (!categoryData) return null;
-
-    activity('intent-state', 'Intent State', intentState);
 
     return (
         <OptionPreferenceStateProvider>

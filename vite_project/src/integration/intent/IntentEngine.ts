@@ -12,6 +12,20 @@ export class IntentEngine {
 
     private listeners = new Set<Listener>();
 
+    constructor() {
+        this.resolveUrl()
+    }
+
+    private resolveUrl() {
+        const path = window.location.pathname;
+        const segments = path.split("/").filter(Boolean);
+        let lastSegment = segments[segments.length - 1];
+        if (lastSegment?.endsWith(".html")) {
+            lastSegment = lastSegment.replace(".html", "");
+        }
+        this.state.currentUrl = lastSegment
+    }
+
     subscribe(listener: Listener) {
         this.listeners.add(listener);
         return () => this.listeners.delete(listener);
@@ -34,9 +48,8 @@ export class IntentEngine {
     handle(signal: IntentSignal) {
         switch (signal.type) {
             case "category_view":
-                this.bump(this.state.categoryScore, signal.id);
+                this.bump(this.state.categoryScore, signal.id)
                 break;
-
             case "filter_select":
                 if (!this.state.attributeScore[signal.attribute]) {
                     this.state.attributeScore[signal.attribute] = {};
@@ -68,6 +81,17 @@ export class IntentEngine {
         }
 
         this.notify();
+    }
+
+    registerUrl() {
+        const path = window.location.pathname;
+        const segments = path.split("/").filter(Boolean);
+        const lastSegment = segments[segments.length - 1];
+
+        return {
+            path,
+            lastSegment
+        };
     }
 
     getState() {

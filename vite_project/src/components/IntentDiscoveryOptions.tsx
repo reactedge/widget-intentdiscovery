@@ -37,7 +37,7 @@ export const IntentDiscoveryOptions = ({ config, categoryData, attributeLayerDat
     // prefer active attribute code if there's one, else fall back to preference progression
     const stepCode: string =
         attributeState.attributeCode ||
-        getNextPreferenceStep(attributeLayerData.aggregations, optionState.activeOptionCode || '', config.attributes);
+        getNextPreferenceStep(attributeLayerData.aggregations, optionState.activeOptionCode || '', config.attributeExcludedInLayer);
 
     const stepLabel = labelMap[stepCode] || "";
 

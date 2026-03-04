@@ -1,0 +1,499 @@
+diff --git a/vite_project/index.html b/vite_project/index.html
+index e40bb58..b8f8693 100644
+--- a/vite_project/index.html
++++ b/vite_project/index.html
+@@ -13,6 +13,16 @@
+                 );
+             }
+         }
++        function simulateCategory(category) {
++            window.dispatchEvent(
++                new CustomEvent("reactedge:intent", {
++                    detail: {
++                        type: "category_view",
++                        id: category
++                    }
++                })
++            );
++        }
+     </script>
+ 
+     <div style="padding:20px; border:1px solid #ccc; margin-top:20px;">
+@@ -45,6 +55,14 @@
+         <button onclick="ReactEdgeIntent.emit({ type: 'filter_select', attribute: 'material', value: '36' })">
+             Simulate Filter Material Mesh
+         </button>
++
++        <button onclick="simulateCategory('men')">
++            Simulate category: Mens
++        </button>
++
++        <button onclick="simulateCategory('jackets-men')">
++            Simulate category: Tops
++        </button>
+     </div>
+ 
+     <intentdiscovery-widget data-contract="/cdn/uk.json" />
+diff --git a/vite_project/package-lock.json b/vite_project/package-lock.json
+index 10d9680..f05ea50 100644
+--- a/vite_project/package-lock.json
++++ b/vite_project/package-lock.json
+@@ -1,12 +1,12 @@
+ {
+   "name": "widget-intent-discovery",
+-  "version": "0.0.5",
++  "version": "0.0.23",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+       "name": "widget-intent-discovery",
+-      "version": "0.0.5",
++      "version": "0.0.23",
+       "dependencies": {
+         "@react-google-maps/api": "^2.20.7",
+         "react": "^19.2.0",
+diff --git a/vite_project/package.json b/vite_project/package.json
+index ec1c8b9..f740538 100644
+--- a/vite_project/package.json
++++ b/vite_project/package.json
+@@ -1,7 +1,7 @@
+ {
+   "name": "widget-intent-discovery",
+   "private": true,
+-  "version": "0.0.5",
++  "version": "0.0.23",
+   "type": "module",
+   "scripts": {
+     "dev": "vite",
+diff --git a/vite_project/public/cdn/uk.json b/vite_project/public/cdn/uk.json
+index 8c9a9ce..b87d85b 100644
+--- a/vite_project/public/cdn/uk.json
++++ b/vite_project/public/cdn/uk.json
+@@ -1,47 +1,20 @@
+ {
+   "data": {
+-    "categoryUrlKey": "women",
+-    "attributes": [
+-      {
+-        "code": "eco_collection",
+-        "excludeFromLayer": true
+-      },
+-      {
+-        "code": "erin_recommends",
+-        "excludeFromLayer": true
+-      },
+-      {
+-        "code": "sale",
+-        "excludeFromLayer": true
+-      },
+-      {
+-        "code": "pattern_category",
+-        "excludeFromLayer": true
+-      },
+-      {
+-        "code": "new",
+-        "excludeFromLayer": true
+-      },
+-      {
+-        "code": "performance_fabric",
+-        "excludeFromLayer": true
+-      },
+-      {
+-        "code": "price",
+-        "excludeFromLayer": true
+-      },
+-      {
+-        "code": "category_uid",
+-        "excludeFromLayer": true
+-      },
+-      {
+-        "code": "style_bottom",
+-        "excludeFromLayer": true
+-      },
+-      {
+-        "code": "price",
+-        "excludeFromLayer": true
+-      }
++    "enabledCategories": [
++      "tops-women",
++      "tops-men"
++    ],
++    "minProductCount": 40,
++    "attributeExcludedInLayer": [
++      "eco_collection",
++      "erin_recommends",
++      "sale",
++      "pattern_category",
++      "new",
++      "performance_fabric",
++      "price",
++      "category_uid",
++      "style_bottom"
+     ],
+     "labelMap": {
+       "style_general": "Do you have a style of preference?",
+diff --git a/vite_project/src/IntentDiscoveryWidgetWrapper.tsx b/vite_project/src/IntentDiscoveryWidgetWrapper.tsx
+index ee265b6..476a5b5 100644
+--- a/vite_project/src/IntentDiscoveryWidgetWrapper.tsx
++++ b/vite_project/src/IntentDiscoveryWidgetWrapper.tsx
+@@ -1,8 +1,8 @@
+ import {useWidgetConfig} from "./hooks/useWidgetConfig.ts";
+-import {IntentDiscoveryWidget} from "./components/IntentDiscoveryWidget.tsx";
+ import {ErrorState} from "./components/global/ErrorState.tsx";
+ import {Spinner} from "./components/global/Spinner.tsx";
+ import {SystemStateProvider} from "./state/System/SystemStateProvider.tsx";
++import {IntentLookup} from "./components/IntentLookup.tsx";
+ 
+ type Props = {
+     host: HTMLElement;
+@@ -12,11 +12,11 @@ export const IntentDiscoveryWidgetWrapper = ({ host }: Props) => {
+     const {config, error, loading} = useWidgetConfig(host);
+ 
+     if (!config) return null;
+-    if (error) return <ErrorState />
++    if (error) return <ErrorState error={error}  />
+     if (loading) return <Spinner />
+ 
+     return  <SystemStateProvider config={config.integrations}>
+-                <IntentDiscoveryWidget config={config} />
++                <IntentLookup config={config} />
+             </SystemStateProvider>
+ };
+ 
+diff --git a/vite_project/src/components/AttributeLayer.tsx b/vite_project/src/components/AttributeLayer.tsx
+index 14d1140..ac497c9 100644
+--- a/vite_project/src/components/AttributeLayer.tsx
++++ b/vite_project/src/components/AttributeLayer.tsx
+@@ -1,10 +1,9 @@
+-import { useState } from "react";
+-import type { MagentoCategory } from "../types/infra/magento/category.types.ts";
+-import { useActiveAttributeState } from "../state/ActiveAttribute/useActiveAttributeState.ts";
+-import { useSelectedPreferences } from "./selectedPreferencesUtils";
++import {useState} from "react";
++import type {MagentoCategory} from "../types/infra/magento/category.types.ts";
++import {useActiveAttributeState} from "../state/ActiveAttribute/useActiveAttributeState.ts";
++import {useSelectedPreferences} from "./selectedPreferencesUtils";
+ import type {IntentDiscoveryDataConfig} from "../domain/intent-discovery.types.ts";
+ import {useSystemState} from "../state/System/useSystemState.ts";
+-import {getExcludedAttributes} from "../lib/attributes.ts";
+ import type {MagentoAggregation, MagentoProducts} from "../hooks/infra/useProductAttributeLayer.tsx";
+ 
+ type Props = {
+@@ -16,15 +15,13 @@ type Props = {
+ export const AttributeLayer = ({ config, attributeLayerData }: Props) => {
+     const { setActiveAttributeCode } = useActiveAttributeState();
+     const {intentState} = useSystemState()
+-    const excludeCodes = getExcludedAttributes(config.attributes)
+-
+     const { valueFor: prefValue } =
+         useSelectedPreferences(attributeLayerData, intentState);
+ 
+     const [showAll, setShowAll] = useState(false);
+ 
+     const allAttributes = (attributeLayerData?.aggregations || []).filter(
+-        (attr: MagentoAggregation) => !excludeCodes?.includes(attr.attribute_code)
++        (attr: MagentoAggregation) => !config.attributeExcludedInLayer?.includes(attr.attribute_code)
+     );
+     const visibleAttributes = showAll ? allAttributes : allAttributes.slice(0, 4);
+ 
+diff --git a/vite_project/src/components/FinderWidget/ResultMatch.tsx b/vite_project/src/components/FinderWidget/ResultMatch.tsx
+index 48660aa..ede037d 100644
+--- a/vite_project/src/components/FinderWidget/ResultMatch.tsx
++++ b/vite_project/src/components/FinderWidget/ResultMatch.tsx
+@@ -16,7 +16,7 @@ export const ResultMatch = ({ categoryData }: StepFinderProps) => {
+     const { productData, productLoading, productError } =
+         useFindLayeredData(categoryData);
+ 
+-    if (productError) return <ErrorState />;
++    if (productError) return <ErrorState error={productError}  />;
+     if (productLoading) return <Spinner />;
+     if (!productData) return <Spinner />;
+ 
+diff --git a/vite_project/src/components/IntentDiscovery.tsx b/vite_project/src/components/IntentDiscovery.tsx
+index b8398e2..e8f87f3 100644
+--- a/vite_project/src/components/IntentDiscovery.tsx
++++ b/vite_project/src/components/IntentDiscovery.tsx
+@@ -8,6 +8,7 @@ import {ErrorState} from "./global/ErrorState.tsx";
+ import {AttributeLayer} from "./AttributeLayer.tsx";
+ import {IntentDiscoveryOptions} from "./IntentDiscoveryOptions.tsx";
+ import {ProductRecommendations} from "./ProductRecommendations.tsx";
++import {activity} from "../activity";
+ 
+ export interface Props {
+     config: IntentDiscoveryDataConfig
+@@ -27,9 +28,11 @@ export const IntentDiscovery = ({ config, categoryData }: Props) => {
+     }, [config.categoryUrlKey, setActiveCategoryName, attributeLayerData?.aggregations]);
+ 
+     if (attributeLayerLoading) return <Spinner />;
+-    if (attributeLayerError) return <ErrorState />;
++    if (attributeLayerError) return <ErrorState error={attributeLayerError}  />;
+     if (!attributeLayerData) return null;
+ 
++    activity('attribute-layer', 'Attribute Layer', attributeLayerData);
++
+     return (
+         <div className={showRightColumn ? "re-intent-layout re-intent-layout--two" : "re-intent-layout"}>
+             <div className="re-intent-col re-intent-col--left">
+diff --git a/vite_project/src/components/IntentDiscoveryOptions.tsx b/vite_project/src/components/IntentDiscoveryOptions.tsx
+index e0bfc70..3c1a78f 100644
+--- a/vite_project/src/components/IntentDiscoveryOptions.tsx
++++ b/vite_project/src/components/IntentDiscoveryOptions.tsx
+@@ -37,7 +37,7 @@ export const IntentDiscoveryOptions = ({ config, categoryData, attributeLayerDat
+     // prefer active attribute code if there's one, else fall back to preference progression
+     const stepCode: string =
+         attributeState.attributeCode ||
+-        getNextPreferenceStep(attributeLayerData.aggregations, optionState.activeOptionCode || '', config.attributes);
++        getNextPreferenceStep(attributeLayerData.aggregations, optionState.activeOptionCode || '', config.attributeExcludedInLayer);
+ 
+     const stepLabel = labelMap[stepCode] || "";
+ 
+diff --git a/vite_project/src/components/IntentDiscoveryWidget.tsx b/vite_project/src/components/IntentDiscoveryWidget.tsx
+index f6af343..75a5efb 100644
+--- a/vite_project/src/components/IntentDiscoveryWidget.tsx
++++ b/vite_project/src/components/IntentDiscoveryWidget.tsx
+@@ -5,24 +5,20 @@ import { ErrorState } from "./global/ErrorState.tsx";
+ import { IntentDiscovery } from "./IntentDiscovery.tsx";
+ import { OptionPreferenceStateProvider } from "../state/OptionPreference/OptionPreferenceStateProvider.tsx";
+ import { ActiveAttributeStateProvider } from "../state/ActiveAttribute/ActiveAttributeStateProvider.tsx";
+-import {useSystemState} from "../state/System/useSystemState.ts";
+-import {activity} from "../activity";
+ 
+ type Props = {
+     config: ResolvedIntentDiscoveryConfig
++    categoryUrlKey: string
+ };
+ 
+-export const IntentDiscoveryWidget = ({ config }: Props) => {
++export const IntentDiscoveryWidget = ({ config, categoryUrlKey }: Props) => {
+     const { categoryData, categoryError, categoryLoading } =
+-        useCategory(config.data.categoryUrlKey);
+-    const { intentState } = useSystemState();
++        useCategory(categoryUrlKey);
+ 
+     if (categoryLoading) return <Spinner />;
+-    if (categoryError) return <ErrorState />;
++    if (categoryError) return <ErrorState error={categoryError}  />;
+     if (!categoryData) return null;
+ 
+-    activity('intent-state', 'Intent State', intentState);
+-
+     return (
+         <OptionPreferenceStateProvider>
+             <ActiveAttributeStateProvider>
+diff --git a/vite_project/src/components/global/ErrorState.tsx b/vite_project/src/components/global/ErrorState.tsx
+index c21e6cc..edda350 100644
+--- a/vite_project/src/components/global/ErrorState.tsx
++++ b/vite_project/src/components/global/ErrorState.tsx
+@@ -1,3 +1,7 @@
+-export function ErrorState() {
+-    return (<>error</>)
++import {activity} from "../../activity";
++
++export function ErrorState({ error }: { error?: any }) {
++    activity('intentdiscovery', 'Intent Discovery Failure', error, 'error');
++
++    return <>error</>;
+ }
+\ No newline at end of file
+diff --git a/vite_project/src/domain/intent-discovery.types.ts b/vite_project/src/domain/intent-discovery.types.ts
+index 120c554..8978b85 100644
+--- a/vite_project/src/domain/intent-discovery.types.ts
++++ b/vite_project/src/domain/intent-discovery.types.ts
+@@ -29,11 +29,6 @@ export type IntentDiscoveryTranslationsConfig = Record<string, string> | undefin
+ 
+ export type MagentoIntegrationName = 'magentoGraphql';
+ 
+-export type ConfigAttribute = {
+-    code: string;
+-    excludeFromLayer?: boolean;
+-}
+-
+ export interface IntentDiscoveryDataConfig {
+     categoryUrlKey: string;
+     /**
+@@ -41,7 +36,8 @@ export interface IntentDiscoveryDataConfig {
+      * will be **excluded** from the attribute layer display; the layer renders
+      * only attributes not listed here.
+      */
+-    attributes: ConfigAttribute[];
++    attributeExcludedInLayer: string[];
++    enabledCategories: string[];
+     /**
+      * Optional mapping of step codes (usually attribute codes plus the special
+      * `price`/`result` values) to labels shown in the finder UI.
+diff --git a/vite_project/src/hooks/infra/useMagentoCategory.tsx b/vite_project/src/hooks/infra/useMagentoCategory.tsx
+index 4d4b3b3..b42618c 100644
+--- a/vite_project/src/hooks/infra/useMagentoCategory.tsx
++++ b/vite_project/src/hooks/infra/useMagentoCategory.tsx
+@@ -16,9 +16,7 @@ const QUERY = `
+       ) {
+         items {
+           id        
+-          name
+-          description
+-          image
++          name        
+           children {
+             id           
+           }
+diff --git a/vite_project/src/integration/intent/IntentEngine.ts b/vite_project/src/integration/intent/IntentEngine.ts
+index 5e3ffbb..f51e152 100644
+--- a/vite_project/src/integration/intent/IntentEngine.ts
++++ b/vite_project/src/integration/intent/IntentEngine.ts
+@@ -12,6 +12,20 @@ export class IntentEngine {
+ 
+     private listeners = new Set<Listener>();
+ 
++    constructor() {
++        this.resolveUrl()
++    }
++
++    private resolveUrl() {
++        const path = window.location.pathname;
++        const segments = path.split("/").filter(Boolean);
++        let lastSegment = segments[segments.length - 1];
++        if (lastSegment?.endsWith(".html")) {
++            lastSegment = lastSegment.replace(".html", "");
++        }
++        this.state.currentUrl = lastSegment
++    }
++
+     subscribe(listener: Listener) {
+         this.listeners.add(listener);
+         return () => this.listeners.delete(listener);
+@@ -34,9 +48,8 @@ export class IntentEngine {
+     handle(signal: IntentSignal) {
+         switch (signal.type) {
+             case "category_view":
+-                this.bump(this.state.categoryScore, signal.id);
++                this.bump(this.state.categoryScore, signal.id)
+                 break;
+-
+             case "filter_select":
+                 if (!this.state.attributeScore[signal.attribute]) {
+                     this.state.attributeScore[signal.attribute] = {};
+@@ -70,6 +83,17 @@ export class IntentEngine {
+         this.notify();
+     }
+ 
++    registerUrl() {
++        const path = window.location.pathname;
++        const segments = path.split("/").filter(Boolean);
++        const lastSegment = segments[segments.length - 1];
++
++        return {
++            path,
++            lastSegment
++        };
++    }
++
+     getState() {
+         return this.state;
+     }
+diff --git a/vite_project/src/integration/intent/types.ts b/vite_project/src/integration/intent/types.ts
+index b3b2de3..20508fd 100644
+--- a/vite_project/src/integration/intent/types.ts
++++ b/vite_project/src/integration/intent/types.ts
+@@ -6,7 +6,8 @@ export type IntentState = {
+         min?: number
+         max?: number
+         avg?: number
+-    }
++    },
++    currentUrl?: string
+ }
+ 
+ export type IntentSignal =
+@@ -15,4 +16,5 @@ export type IntentSignal =
+     | { type: "filter_deselect"; attribute: string; value: string }
+     | { type: "product_view"; sku: string }
+     | { type: "add_to_cart"; sku: string; price: number }
++    | { type: "url"; }
+ 
+diff --git a/vite_project/src/lib/graphql.ts b/vite_project/src/lib/graphql.ts
+index 06c6d04..6109ee4 100644
+--- a/vite_project/src/lib/graphql.ts
++++ b/vite_project/src/lib/graphql.ts
+@@ -1,5 +1,6 @@
+ // infra/graphqlClient.ts
+ import {activity} from "../activity";
++import { normalizeGraphqlResponse } from "./graphqlResponseNormalizer";
+ 
+ export type GraphqlClient = <T>(
+     query: string,
+@@ -13,7 +14,6 @@ export function createGraphqlClient(apiEndpoint: string) {
+     ): Promise<T> {
+         const res = await fetch(apiEndpoint, {
+             method: "POST",
+-            credentials: "include",
+             headers: {
+                 "Content-Type": "application/json",
+             },
+@@ -30,19 +30,34 @@ export function createGraphqlClient(apiEndpoint: string) {
+             throw new Error(`Network error: ${res.status}`);
+         }
+ 
+-        const json = await res.json();
++        const text = await res.text();
+ 
+-        if (json.errors) {
+-            activity(
+-                "graphql",
+-                "GraphQL json parsing",
+-                { res: json },
+-                "error"
+-            );
+-            throw new Error(json.errors.map((e: any) => e.message).join(", "));
++        let json: { data: T };
++
++        try {
++            json = JSON.parse(text);
++        } catch (e) {
++            activity('graphql-failed-query', 'GraphQL Failed query', { api_endpoint: apiEndpoint, query, variables }, 'error');
++            activity('graphql-invalid-json', 'GraphQL returned non-JSON response', {
++                endpoint: apiEndpoint,
++                status: res.status,
++                textSnippet: text.slice(0, 500)
++            });
++
++            json = normalizeGraphqlResponse(text);
++            activity('graphql-invalid-json', 'GraphQL failed raw text', {
++                endpoint: apiEndpoint,
++                status: res.status,
++                textSnippet: text
++            });
++            activity('graphql-invalid-json', 'GraphQL patched response', {
++                endpoint: apiEndpoint,
++                status: res.status,
++                json: json
++            });
+         }
+ 
+-        return json.data;
++        return json?.data;
+     };
+ }
+ 
+diff --git a/vite_project/src/types/domain/magento/attribute.ts b/vite_project/src/types/domain/magento/attribute.ts
+index 5e03f90..4b47a92 100644
+--- a/vite_project/src/types/domain/magento/attribute.ts
++++ b/vite_project/src/types/domain/magento/attribute.ts
+@@ -1,14 +1,13 @@
+-import {getExcludedAttributes} from "../../../lib/attributes.ts";
++import type {MagentoAggregation} from "../../../hooks/infra/useProductAttributeLayer.tsx";
+ 
+ export type OptionPreference = 'climate' | 'style_general' | 'price' | 'result' | (string & {})
+ 
+ export type MenOptionPreference = 'climate' | 'material' | 'size' | 'price' | 'result' | (string & {})
+ 
+ 
+-export const getNextPreferenceStep = (attributeData: any[], actionOptionCode: string, configAttributes: any[]): MenOptionPreference => {
+-    const excludeCodes = getExcludedAttributes(configAttributes)
++export const getNextPreferenceStep = (attributeData: MagentoAggregation[], actionOptionCode: string, configAttributes: string[]): MenOptionPreference => {
+     const layerAttributes = attributeData
+-                .filter(attribute => !excludeCodes.includes(attribute.attribute_code))
++                .filter(attribute => !configAttributes.includes(attribute.attribute_code))
+                 .map(attribute => attribute.attribute_code)
+ 
+     if (actionOptionCode === "") {
