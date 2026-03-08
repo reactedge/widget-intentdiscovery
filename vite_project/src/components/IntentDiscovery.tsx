@@ -21,9 +21,10 @@ export const IntentDiscovery = ({ config, categoryData }: Props) => {
     const { setActiveCategoryName } = useOptionPreferenceState();
     const { attributeLayerData, attributeLayerLoading, attributeLayerError } =
         useFindAttributeLayer(categoryData);
+    const [intentText, setIntentText] = useState("");
 
     const [showRightColumn, setShowRightColumn] = useState(false)
-    const { shouldSearch } = useIntentDecision(attributeLayerData, config)
+    const { shouldSearch,shouldInterpret } = useIntentDecision(attributeLayerData, config, intentText)
     const [isEvaluating, setIsEvaluating] = useState(false)
 
     useEffect(() => {
@@ -38,14 +39,19 @@ export const IntentDiscovery = ({ config, categoryData }: Props) => {
     activity('attribute-layer', 'Attribute Layer', attributeLayerData);
 
     return (
-        <>
-            {isEvaluating && <EvaluationOverlay />}
+        <div className="finder">
+            {isEvaluating && <EvaluationOverlay/>}
             <div className={showRightColumn ? "re-intent-layout re-intent-layout--two" : "re-intent-layout"}>
                 <div className="re-intent-col re-intent-col--left">
                     <AttributeLayer
                         config={config}
                         attributeLayerData={attributeLayerData}
                         disabled={isEvaluating}
+                        intent={{
+                            text: intentText,
+                            onChange: setIntentText,
+                            shouldInterpret
+                        }}
                     />
                     <IntentDiscoveryOptions
                         config={config}
@@ -58,12 +64,14 @@ export const IntentDiscovery = ({ config, categoryData }: Props) => {
                     <ProductRecommendations
                         categoryData={categoryData}
                         attributeLayerData={attributeLayerData}
+                        search={{
+                            shouldRun: shouldSearch,
+                            setIsEvaluating
+                        }}
                         onVisibilityChange={setShowRightColumn}
-                        shouldSearch={shouldSearch}
-                        setIsEvaluating={setIsEvaluating}
                     />
                 </div>
             </div>
-        </>
+        </div>
     );
 };

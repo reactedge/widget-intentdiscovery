@@ -1,6 +1,6 @@
 import {OpenAI} from "openai";
 import {config} from "../../config";
-import {AiRecommendationResponse} from "../../types/intent-context";
+import {AiRecommendationResponse} from "../../types/intent-recommendations-context";
 
 const openai = new OpenAI({ apiKey: config.openai.apiKey });
 
@@ -31,7 +31,7 @@ const SuggestionSchema = {
     }
 } as const;
 
-export class OpenaiAgent {
+export class OpenaiRecommendationAgent {
     getSuggestion = async (modelInput: any) => {
         try {
             const completion = await openai.chat.completions.create({
@@ -68,6 +68,4 @@ export class OpenaiAgent {
             }
         }
     }
-
-
 }

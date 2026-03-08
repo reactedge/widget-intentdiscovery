@@ -2,7 +2,6 @@ import { useOptionPreferenceState } from "../state/OptionPreference/useOptionPre
 import { useEffect } from "react";
 import { useActiveAttributeState } from "../state/ActiveAttribute/useActiveAttributeState.ts";
 import type { IntentDiscoveryDataConfig } from "../domain/intent-discovery.types.ts";
-import { getNextPreferenceStep } from "../types/domain/magento/attribute.ts";
 import { StepFinder } from "./FinderWidget/StepFinder.tsx";
 import { StepPriceFinder } from "./FinderWidget/StepPriceFinder.tsx";
 import { ResultMatch } from "./FinderWidget/ResultMatch.tsx";
@@ -22,7 +21,7 @@ export interface Props {
 // we no longer hard‑code a union type here
 
 export const IntentDiscoveryOptions = ({ config, categoryData, attributeLayerData }: Props) => {
-    const { optionState, setActiveCategoryName } = useOptionPreferenceState();
+    const { setActiveCategoryName } = useOptionPreferenceState();
     const { attributeState } = useActiveAttributeState();
 
     useEffect(() => {
@@ -31,15 +30,10 @@ export const IntentDiscoveryOptions = ({ config, categoryData, attributeLayerDat
 
     if (!attributeLayerData) return null;
 
-    // retrieve labels from the configuration (contract); fall back to an empty map
-    const labelMap: Record<string, string> = config.labelMap || {};
-
     // prefer active attribute code if there's one, else fall back to preference progression
-    const stepCode: string =
-        attributeState.attributeCode ||
-        getNextPreferenceStep(attributeLayerData.aggregations, optionState.activeOptionCode || '', config.attributeExcludedInLayer);
+    const stepCode = attributeState.attributeCode
 
-    const stepLabel = labelMap[stepCode] || "";
+    if (stepCode === null) return
 
     const renderStep = () => {
         if (stepCode === "price") return <StepPriceFinder attributeLayerData={attributeLayerData} />;
@@ -53,7 +47,6 @@ export const IntentDiscoveryOptions = ({ config, categoryData, attributeLayerDat
     return (
         <div className="finder">
             <FinderRow>
-                <p className="finder__label">{stepLabel}</p>
                 {renderStep()}
             </FinderRow>
         </div>

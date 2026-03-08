@@ -1,17 +1,29 @@
-import {useState} from "react";
+import { useState} from "react";
 import {useActiveAttributeState} from "../state/ActiveAttribute/useActiveAttributeState.ts";
 import {useSelectedPreferences} from "./selectedPreferencesUtils";
 import type {IntentDiscoveryDataConfig} from "../domain/intent-discovery.types.ts";
 import {useSystemState} from "../state/System/useSystemState.ts";
 import type {MagentoAggregation, MagentoProducts} from "../hooks/infra/useProductAttributeLayer.tsx";
+import {IntentMessage} from "./IntentMessage.tsx";
+import {useIntentAttributes} from "../hooks/domain/useIntentAttributes.tsx";
 
 type Props = {
-    config: IntentDiscoveryDataConfig;
+    config: IntentDiscoveryDataConfig
     attributeLayerData: MagentoProducts
+    intent: {
+        text: string
+        onChange: (intent: string) => void
+        shouldInterpret: boolean
+    }
     disabled: boolean
-};
+}
 
-export const AttributeLayer = ({ config, attributeLayerData, disabled }: Props) => {
+export const AttributeLayer = ({
+       config,
+       attributeLayerData,
+       intent,
+       disabled
+    }: Props) => {
     const { setActiveAttributeCode } = useActiveAttributeState();
     const {intentState} = useSystemState()
     const { valueFor: prefValue } =
@@ -19,9 +31,7 @@ export const AttributeLayer = ({ config, attributeLayerData, disabled }: Props) 
 
     const [showAll, setShowAll] = useState(false);
 
-    const allAttributes = (attributeLayerData?.aggregations || []).filter(
-        (attr: MagentoAggregation) => !config.attributeExcludedInLayer?.includes(attr.attribute_code)
-    );
+    const allAttributes = useIntentAttributes(attributeLayerData?.aggregations, config)
     const visibleAttributes = showAll ? allAttributes : allAttributes.slice(0, 3);
 
     const isAttributeSelected = (attributeCode: string): boolean => {
@@ -40,9 +50,18 @@ export const AttributeLayer = ({ config, attributeLayerData, disabled }: Props) 
     };
 
     return (
-        <>
             <div className="finder">
-                <h2 className="finder__title">Need help choosing?</h2>
+                <h2 className="finder__title">May I ask why you came here to shop?</h2>
+                <IntentMessage
+                    config={config}
+                    shouldInterpret={intent.shouldInterpret}
+                    intentText={intent.text}
+                    onIntentChange={intent.onChange}
+                    attributeLayerData={attributeLayerData}
+                />
+                <label className="intent-subtitle">
+                    Describe what you're looking for
+                </label>
                 <div className={`step-finder ${disabled ? 'step-finder--disabled' : ''}`}>
                     {visibleAttributes.map((attr: MagentoAggregation) => (
                         <div
@@ -72,6 +91,5 @@ export const AttributeLayer = ({ config, attributeLayerData, disabled }: Props) 
                     )}
                 </div>
             </div>
-        </>
     );
 };

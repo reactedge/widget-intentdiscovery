@@ -18,6 +18,8 @@ export const setupIntentRoutes = (app: Application) => {
 
     router.post("/suggest", intentHandlerController.buildContextSuggestion)
 
+    router.post("/interpret", intentHandlerController.validateIntentInput)
+
     router.options('*', options);
 
     app.use(config.route.intentPrefix, router)

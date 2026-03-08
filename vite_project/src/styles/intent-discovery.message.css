@@ -1,0 +1,41 @@
+.intent-input-wrapper {
+    width: 100%;
+    margin: 16px 0 20px;
+}
+
+.intent-input {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 14px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+
+    background: #fafafa;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+
+    transition: all 0.15s ease;
+}
+
+.intent-input:focus {
+    outline: none;
+    border-color: #2f6fed;
+    box-shadow: 0 0 0 2px rgba(47,111,237,0.15);
+}
+
+.intent-input-wrapper {
+    width: 100%;
+    margin: 16px 0 20px;
+}
+
+.intent-input::placeholder {
+    color: #9ca3af;
+}
+
+.intent-subtitle {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 0.6rem;
+    color: #444;
+}

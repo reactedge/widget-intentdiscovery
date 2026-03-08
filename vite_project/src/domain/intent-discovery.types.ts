@@ -38,6 +38,7 @@ export interface IntentDiscoveryDataConfig {
      */
     attributeExcludedInLayer: string[];
     enabledCategories: string[];
+    attributeOrder: string[];
     /**
      * Optional mapping of step codes (usually attribute codes plus the special
      * `price`/`result` values) to labels shown in the finder UI.
