@@ -22,6 +22,22 @@
     cursor: pointer;
     transition: all 0.15s ease;
     box-sizing: border-box;
+    position: relative;
+}
+
+.choice-tile .intent-icon {
+    top: unset;
+}
+
+.intent-icon {
+    stroke-width:1.8;
+    fill:none;
+    margin-right: 6px;
+    margin-left:10px;
+    opacity: 0.75;
+    position: absolute;
+    right: 20px;
+    z-index: 999;
 }
 
 .choice-tile__label {

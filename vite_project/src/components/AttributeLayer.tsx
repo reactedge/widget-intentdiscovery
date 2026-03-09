@@ -6,6 +6,7 @@ import {useSystemState} from "../state/System/useSystemState.ts";
 import type {MagentoAggregation, MagentoProducts} from "../hooks/infra/useProductAttributeLayer.tsx";
 import {IntentMessage} from "./IntentMessage.tsx";
 import {useIntentAttributes} from "../hooks/domain/useIntentAttributes.tsx";
+import {Icon} from "./AttributeLayer/Icon.tsx";
 
 type Props = {
     config: IntentDiscoveryDataConfig
@@ -79,6 +80,7 @@ export const AttributeLayer = ({
                                     {prefValue(attr.attribute_code)}
                                 </span>
                             )}
+                            <Icon attribute_code={attr.attribute_code} />
                         </div>
                     ))}
                     {allAttributes.length > 4 && (

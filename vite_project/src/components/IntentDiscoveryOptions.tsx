@@ -9,6 +9,7 @@ import { FinderRow } from "./FinderRow.tsx";
 import type { MagentoCategory } from "../types/infra/magento/category.types.ts";
 import { activity } from "../activity";
 import type {MagentoProducts} from "../hooks/infra/useProductAttributeLayer.tsx";
+import {Icon} from "./AttributeLayer/Icon.tsx";
 
 export interface Props {
     config: IntentDiscoveryDataConfig
@@ -47,6 +48,7 @@ export const IntentDiscoveryOptions = ({ config, categoryData, attributeLayerDat
     return (
         <div className="finder">
             <FinderRow>
+                <Icon attribute_code={stepCode} size={70} />
                 {renderStep()}
             </FinderRow>
         </div>

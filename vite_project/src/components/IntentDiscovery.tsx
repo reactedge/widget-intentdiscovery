@@ -39,7 +39,7 @@ export const IntentDiscovery = ({ config, categoryData }: Props) => {
     activity('attribute-layer', 'Attribute Layer', attributeLayerData);
 
     return (
-        <div className="finder">
+        <div className="intent-widget">
             {isEvaluating && <EvaluationOverlay/>}
             <div className={showRightColumn ? "re-intent-layout re-intent-layout--two" : "re-intent-layout"}>
                 <div className="re-intent-col re-intent-col--left">
