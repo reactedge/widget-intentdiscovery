@@ -8,13 +8,15 @@ import type {
 } from "./domain/intent-discovery.types.ts";
 import { WIDGET_ID } from "./mountWidget.tsx";
 
+export type IntentDiscoveryTranslationsConfig = Record<string, string> | undefined;
+
 export interface IntentDiscoveryWidgetConfig {
     /**
      * Structured banner payload.
      * Shape is banner-owned and opaque to the platform.
      */
     readonly data: IntentDiscoveryDataConfig
-    readonly translations?: Record<string, string>;
+    readonly translations?: IntentDiscoveryTranslationsConfig
     readonly integration: {
         readonly requires: readonly MagentoIntegrationName[];
     };

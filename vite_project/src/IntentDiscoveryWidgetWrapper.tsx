@@ -3,6 +3,7 @@ import {ErrorState} from "./components/global/ErrorState.tsx";
 import {Spinner} from "./components/global/Spinner.tsx";
 import {SystemStateProvider} from "./state/System/SystemStateProvider.tsx";
 import {IntentLookup} from "./components/IntentLookup.tsx";
+import {TranslationStateProvider} from "./state/Translation/TranslationStateProvider.tsx";
 
 type Props = {
     host: HTMLElement;
@@ -16,7 +17,9 @@ export const IntentDiscoveryWidgetWrapper = ({ host }: Props) => {
     if (loading) return <Spinner />
 
     return  <SystemStateProvider config={config.integrations}>
-                <IntentLookup config={config} />
+                <TranslationStateProvider translations={config.translations}>
+                    <IntentLookup config={config} />
+                </TranslationStateProvider>
             </SystemStateProvider>
 };
 

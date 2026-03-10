@@ -1,9 +1,47 @@
 {
   "data": {
-    "categoryUrlKey": "hommes"
+    "enabledCategories": [
+      "men",
+      "tops-women",
+      "tops-men"
+    ],
+    "minProductCount": 40,
+    "attributeExcludedInLayer": [
+      "eco_collection",
+      "erin_recommends",
+      "sale",
+      "pattern_category",
+      "new",
+      "performance_fabric",
+      "price",
+      "category_uid",
+      "style_bottom"
+    ],
+    "attributeOrder": [
+      "color",
+      "climate"
+    ],
+    "labelMap": {
+      "color": "Couleur",
+      "climate": "Météo",
+      "style_general": "Style",
+      "material": "Matière",
+      "size": "Taille",
+      "price": "Prix",
+      "pattern": "Motif",
+      "result": "Meilleures correspondances"
+    },
+    "ai": {
+      "enabled": true,
+      "matchThreshold": 30,
+      "minIntentScore": 4,
+      "maxProductsForAnalysis": 40
+    }
   },
   "translations": {
-
+    "Tell us what matters most for your purchase (3+ words)": "Décrivez ce que vous recherchez (3+ mots)",
+    "May I ask why you came here to shop?": "Qu’êtes-vous venu chercher aujourd’hui ?",
+    "Describe what you're looking for": "Décrivez ce que vous recherchez"
   },
   "integrations": {
     "require": ["magentoGraphql", "intentApi"]

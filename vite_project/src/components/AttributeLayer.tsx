@@ -7,6 +7,7 @@ import type {MagentoAggregation, MagentoProducts} from "../hooks/infra/useProduc
 import {IntentMessage} from "./IntentMessage.tsx";
 import {useIntentAttributes} from "../hooks/domain/useIntentAttributes.tsx";
 import {Icon} from "./AttributeLayer/Icon.tsx";
+import {useTranslationState} from "../state/Translation/useTranslationState.ts";
 
 type Props = {
     config: IntentDiscoveryDataConfig
@@ -29,6 +30,7 @@ export const AttributeLayer = ({
     const {intentState} = useSystemState()
     const { valueFor: prefValue } =
         useSelectedPreferences(attributeLayerData, intentState);
+    const {t} = useTranslationState()
 
     const [showAll, setShowAll] = useState(false);
 
@@ -52,7 +54,7 @@ export const AttributeLayer = ({
 
     return (
             <div className="finder">
-                <h2 className="finder__title">May I ask why you came here to shop?</h2>
+                <h2 className="finder__title">{t("May I ask why you came here to shop?")}</h2>
                 <IntentMessage
                     config={config}
                     shouldInterpret={intent.shouldInterpret}
@@ -61,7 +63,7 @@ export const AttributeLayer = ({
                     attributeLayerData={attributeLayerData}
                 />
                 <label className="intent-subtitle">
-                    Describe what you're looking for
+                    {t("Describe what you're looking for")}
                 </label>
                 <div className={`step-finder ${disabled ? 'step-finder--disabled' : ''}`}>
                     {visibleAttributes.map((attr: MagentoAggregation) => (

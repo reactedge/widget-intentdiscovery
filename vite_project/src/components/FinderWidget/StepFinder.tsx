@@ -24,20 +24,6 @@ export const StepFinder: React.FC<StepFinderProps> = ({ optionCode, attributeLay
         const action = toggleOptionSelection(optionCode, attributeData.label, option.value, option.label);
 
         activity('select-options', `Select ${optionCode}`, action);
-
-        if (action === 'select') {
-            window.ReactEdgeIntent.emit({
-                type: 'filter_select',
-                attribute: optionCode,
-                value: option.value
-            });
-        } else {
-            window.ReactEdgeIntent.emit({
-                type: 'filter_deselect',
-                attribute: optionCode,
-                value: option.value
-            });
-        }
     };
 
     // check if current option value is selected (handles both single and multiple selections)

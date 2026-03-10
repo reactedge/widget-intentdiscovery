@@ -3,6 +3,7 @@ import type {MagentoProducts} from "../hooks/infra/useProductAttributeLayer.tsx"
 import {Spinner} from "./global/Spinner.tsx";
 import {ErrorState} from "./global/ErrorState.tsx";
 import type {IntentDiscoveryDataConfig} from "../domain/intent-discovery.types.ts";
+import {useTranslationState} from "../state/Translation/useTranslationState.ts";
 
 type Props = {
     config: IntentDiscoveryDataConfig,
@@ -18,6 +19,7 @@ export const IntentMessage = ({config, shouldInterpret, intentText, onIntentChan
         attributeLayerData?.aggregations,
         shouldInterpret
     )
+    const {t} = useTranslationState()
 
     if (evaluationLoading) return <Spinner />
     if (evaluationError) return <ErrorState error={evaluationError} />
@@ -26,7 +28,7 @@ export const IntentMessage = ({config, shouldInterpret, intentText, onIntentChan
         <div className="intent-input-wrapper">
             <input
                 type="text"
-                placeholder="Tell us what matters most for your purchase"
+                placeholder={t("Tell us what matters most for your purchase (3+ words)")}
                 value={intentText}
                 onChange={(e) => onIntentChange(e.target.value)}
                 className="intent-input"
