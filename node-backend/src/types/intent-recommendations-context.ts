@@ -2,11 +2,13 @@ export interface AiRecommendationRequest {
     intent: {
         signals: Record<string, Record<string, number>>
     }
-    products: {
-        title: string
-        shortDescription?: string
-        attributes: Record<string, string[]>
-    }[]
+    products: ProductRequest[]
+}
+
+export interface ProductRequest {
+    title: string
+    shortDescription?: string
+    attributes: Record<string, string[]>
 }
 
 interface MagentoProduct {

@@ -70,6 +70,8 @@ export const AttributeLayer = ({
                         <div
                             key={attr.attribute_code}
                             className="choice-tile"
+                            data-intent-card={attr.attribute_code}
+                            data-intent-active={isAttributeSelected(attr.attribute_code)}
                             onClick={() => setActiveAttributeCode(attr.attribute_code)}
                         >
                             <span

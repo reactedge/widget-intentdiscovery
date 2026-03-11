@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {useSystemState} from "../../state/System/useSystemState.ts";
 import {getError} from "../../lib/error.ts";
 import {type MagentoProductFilter, useOptionSelectionFilter} from "../domain/useOptionSelectionFilter.tsx";
-import type {MagentoCategory} from "../../types/infra/magento/category.types.ts";
+import type {CategoryData} from "../../types/infra/magento/category.types.ts";
 
 const QUERY = `
      query MagentoProducts($filter: ProductAttributeFilterInput!) {
@@ -44,7 +44,7 @@ type ProductAttributesResponse = {
     products: MagentoProducts;
 }
 
-export const useProductAttributeLayer = (categoryData: MagentoCategory) => {
+export const useProductAttributeLayer = (categoryData: CategoryData) => {
     const [data, setData] = useState<ProductAttributesResponse>();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);

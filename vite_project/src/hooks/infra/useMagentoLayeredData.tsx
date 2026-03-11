@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSystemState } from "../../state/System/useSystemState.ts";
 import { getError } from "../../lib/error.ts";
 import { useOptionSelectionFilter } from "../domain/useOptionSelectionFilter.tsx";
-import type { MagentoCategory } from "../../types/infra/magento/category.types.ts";
+import type { CategoryData } from "../../types/infra/magento/category.types.ts";
 
 type ProductsResponse = {
     products: any
@@ -26,7 +26,7 @@ const QUERY = `
     }
 `;
 
-export function useMagentoLayeredData(categoryData: MagentoCategory) {
+export function useMagentoLayeredData(categoryData: CategoryData) {
     const [data, setData] = useState<ProductsResponse>();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);

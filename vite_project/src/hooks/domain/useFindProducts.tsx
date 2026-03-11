@@ -1,8 +1,8 @@
 
-import type {MagentoCategory} from "../../types/infra/magento/category.types.ts";
+import type {CategoryData} from "../../types/infra/magento/category.types.ts";
 import {useMagentoProducts} from "../infra/useMagentoProducts.tsx";
 
-export function useFindProducts(categoryData: MagentoCategory, enabled: boolean) {
+export function useFindProducts(categoryData: CategoryData, enabled: boolean) {
     const {
         magentoProducts,
         loading: productLoading,

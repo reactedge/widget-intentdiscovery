@@ -1,12 +1,12 @@
 import type {MagentoProducts} from "../hooks/infra/useProductAttributeLayer.tsx";
 import {useAnalyseSearch} from "../hooks/domain/useAnalyseSearch.tsx";
-import type {MagentoCategory} from "../types/infra/magento/category.types.ts";
+import type {CategoryData} from "../types/infra/magento/category.types.ts";
 import {Spinner} from "./global/Spinner.tsx";
 import {SuggestionContainer} from "./Suggestions/SuggestionContainer.tsx";
 import {useEffect} from "react";
 
 type Props = {
-    categoryData: MagentoCategory
+    categoryData: CategoryData
     attributeLayerData: MagentoProducts
     search: {
         shouldRun: boolean

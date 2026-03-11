@@ -6,14 +6,14 @@ import { StepFinder } from "./FinderWidget/StepFinder.tsx";
 import { StepPriceFinder } from "./FinderWidget/StepPriceFinder.tsx";
 import { ResultMatch } from "./FinderWidget/ResultMatch.tsx";
 import { FinderRow } from "./FinderRow.tsx";
-import type { MagentoCategory } from "../types/infra/magento/category.types.ts";
+import type { CategoryData } from "../types/infra/magento/category.types.ts";
 import { activity } from "../activity";
 import type {MagentoProducts} from "../hooks/infra/useProductAttributeLayer.tsx";
 import {Icon} from "./AttributeLayer/Icon.tsx";
 
 export interface Props {
     config: IntentDiscoveryDataConfig
-    categoryData: MagentoCategory
+    categoryData: CategoryData
     excludeCodes?: string[];
     attributeLayerData: MagentoProducts
 }

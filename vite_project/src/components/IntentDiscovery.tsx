@@ -1,7 +1,7 @@
 import { useOptionPreferenceState } from "../state/OptionPreference/useOptionPreferenceState.ts";
 import {useEffect, useState} from "react";
 import type { IntentDiscoveryDataConfig } from "../domain/intent-discovery.types.ts";
-import type { MagentoCategory } from "../types/infra/magento/category.types.ts";
+import type { CategoryData } from "../types/infra/magento/category.types.ts";
 import {useFindAttributeLayer} from "../hooks/domain/useFindAttributeLayer.tsx";
 import {Spinner} from "./global/Spinner.tsx";
 import {ErrorState} from "./global/ErrorState.tsx";
@@ -14,7 +14,7 @@ import {EvaluationOverlay} from "./EvaluationOverlay.tsx";
 
 export interface Props {
     config: IntentDiscoveryDataConfig
-    categoryData: MagentoCategory
+    categoryData: CategoryData
 }
 
 export const IntentDiscovery = ({ config, categoryData }: Props) => {
@@ -22,9 +22,10 @@ export const IntentDiscovery = ({ config, categoryData }: Props) => {
     const { attributeLayerData, attributeLayerLoading, attributeLayerError } =
         useFindAttributeLayer(categoryData);
     const [intentText, setIntentText] = useState("");
+    //const [intentSubmitted, setIntentSubmitted] = useState(false)
 
     const [showRightColumn, setShowRightColumn] = useState(false)
-    const { shouldSearch,shouldInterpret } = useIntentDecision(attributeLayerData, config, intentText)
+    const { shouldSearch, shouldInterpret } = useIntentDecision(attributeLayerData, config, intentText)
     const [isEvaluating, setIsEvaluating] = useState(false)
 
     useEffect(() => {

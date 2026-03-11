@@ -39,9 +39,9 @@
     }
   },
   "translations": {
-    "Tell us what matters most for your purchase (3+ words)": "Décrivez ce que vous recherchez (3+ mots)",
     "May I ask why you came here to shop?": "Qu’êtes-vous venu chercher aujourd’hui ?",
-    "Describe what you're looking for": "Décrivez ce que vous recherchez"
+    "Describe what you're looking for": "Décrivez ce que vous recherchez",
+    "Tell us what matters most for your purchase (50 characters meaningful for AI to help)": "Décrivez ce qui compte le plus pour votre achat (50 caractères minimum pour aider l’IA)"
   },
   "integrations": {
     "require": ["magentoGraphql", "intentApi"]

@@ -3,7 +3,6 @@ import {useImmer} from "use-immer";
 import {LocalOptionPreferenceStateContext, readActiveOption} from "./OptionPreferenceState.tsx";
 import type {OptionPreferenceInfoState} from "./type.ts";
 import {activity} from "../../activity";
-import {emitFiltersUpdate} from "../../integration/event-handler.ts";
 
 interface OptionPreferenceStateProviderProps {
     children: ReactNode;
@@ -81,7 +80,6 @@ export const OptionPreferenceStateProvider: React.FC<OptionPreferenceStateProvid
 
                 selections[existingIndex] = { code, attributeLabel, value, label };
                 action = 'select';
-                emitFiltersUpdate(selections.map(s => ({ ...s })))
                 return;
             }
 
@@ -89,7 +87,6 @@ export const OptionPreferenceStateProvider: React.FC<OptionPreferenceStateProvid
             action = 'select';
 
             activity('toggle-option', `Select ${code}`, {action, existingIndex, exist: selections[existingIndex], value: value});
-            emitFiltersUpdate(selections.map(s => ({ ...s })))
         });
 
         return action;

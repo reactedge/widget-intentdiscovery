@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import {useSystemState} from "../../state/System/useSystemState.ts";
-import type {MagentoCategory} from "../../types/infra/magento/category.types.ts";
+import type {CategoryData} from "../../types/infra/magento/category.types.ts";
 import {getError} from "../../lib/error.ts";
 
 type CategoryResponse = {
     categories: {
-        items: MagentoCategory[]
+        items: CategoryData[]
     }
 }
 

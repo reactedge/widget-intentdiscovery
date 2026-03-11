@@ -1,9 +1,9 @@
-import {AiRecommendationRequest} from "../../types/intent-context";
+import {AiRecommendationRequest, ProductRequest} from "../../types/intent-recommendations-context";
 
 export function preScoreProducts(payload: AiRecommendationRequest, maxCandidates: number) {
     const { signals } = payload.intent;
 
-    return payload.products.map(product => {
+    return payload.products.map((product: ProductRequest) => {
 
         let score = 0;
 

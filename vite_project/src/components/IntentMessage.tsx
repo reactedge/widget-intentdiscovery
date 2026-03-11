@@ -28,7 +28,7 @@ export const IntentMessage = ({config, shouldInterpret, intentText, onIntentChan
         <div className="intent-input-wrapper">
             <input
                 type="text"
-                placeholder={t("Tell us what matters most for your purchase (3+ words)")}
+                placeholder={t("Tell us what matters most for your purchase (50 characters meaningful tor AI to help)")}
                 value={intentText}
                 onChange={(e) => onIntentChange(e.target.value)}
                 className="intent-input"
