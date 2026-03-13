@@ -1,13 +1,15 @@
-import type { IntentSignal, IntentState } from "./types.ts";
+import type {IntentSignal, IntentState} from "./types.ts";
 
 type Listener = (state: IntentState) => void;
 
 export class IntentEngine {
     private state: IntentState = {
+        intentText: '',
         categoryScore: {},
         attributeScore: {},
         productScore: {},
-        priceAffinity: {}
+        priceAffinity: {},
+        status: 'idle'
     };
 
     private listeners = new Set<Listener>();
@@ -34,12 +36,14 @@ export class IntentEngine {
     private notify() {
         // IMPORTANT: emit a new reference so React state updates reliably
         const snapshot: IntentState = {
+            intentText: this.state.intentText,
             categoryScore: { ...this.state.categoryScore },
             attributeScore: Object.fromEntries(
                 Object.entries(this.state.attributeScore).map(([k, v]) => [k, { ...(v as any) }])
             ),
             productScore: { ...this.state.productScore },
-            priceAffinity: { ...this.state.priceAffinity }
+            priceAffinity: { ...this.state.priceAffinity },
+            status: this.state.status
         };
 
         for (const listener of this.listeners) listener(snapshot);

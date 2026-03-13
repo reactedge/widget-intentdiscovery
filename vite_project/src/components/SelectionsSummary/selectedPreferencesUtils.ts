@@ -1,6 +1,6 @@
-import type {MagentoAggregation, MagentoProducts} from "../hooks/infra/useProductAttributeLayer.tsx";
-import type {OptionLabelMap} from "../state/OptionPreference/type.ts";
-import {useOptionLabelMap} from "../hooks/domain/useOptionLabelMap.ts";
+import type {MagentoAggregation} from "../../hooks/infra/useProductAttributeLayer.tsx";
+import type {OptionLabelMap} from "../../state/OptionPreference/type.ts";
+import {useOptionLabelMap} from "../../hooks/domain/useOptionLabelMap.ts";
 
 export type IntentRecord = Record<string, any> | undefined;
 
@@ -51,23 +51,23 @@ export function renderPreferenceValue(
 }
 
 export function getSelectedAttributes(
-    layerData: MagentoProducts | undefined,
+    aggregations: MagentoAggregation[] | undefined,
     intent?: IntentRecord
 ) {
     return (
-        layerData?.aggregations?.filter((attr: MagentoAggregation) =>
+        aggregations?.filter((attr: MagentoAggregation) =>
             isAttributeSelected(attr.attribute_code, intent)
         ) || []
     );
 }
 
 export function useSelectedPreferences(
-    attributeLayerData: MagentoProducts,
+    aggregations: MagentoAggregation[],
     intent?: IntentRecord
 ) {
-    const optionLabelMap = useOptionLabelMap(attributeLayerData?.aggregations);
+    const optionLabelMap = useOptionLabelMap(aggregations);
 
-    const selected = getSelectedAttributes(attributeLayerData, intent);
+    const selected = getSelectedAttributes(aggregations, intent);
 
     const valueFor = (code: string) => renderPreferenceValue(code, optionLabelMap, intent);
 

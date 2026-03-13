@@ -1,4 +1,4 @@
-import type {MagentoCategory} from "../../types/infra/magento/category.types.ts";
+import type {CategoryData} from "../../types/infra/magento/category.types.ts";
 import {categoryLayereIds} from "../../lib/category.ts";
 import {useMemo} from "react";
 import {useSystemState} from "../../state/System/useSystemState.ts";
@@ -10,7 +10,7 @@ type FilterValue =
 
 export type MagentoProductFilter = Record<string, FilterValue>;
 
-export function useOptionSelectionFilter(categoryData?: MagentoCategory) {
+export function useOptionSelectionFilter(categoryData?: CategoryData) {
     const { intentState } = useSystemState();
 
     const categoryIds = useMemo(

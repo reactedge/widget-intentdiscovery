@@ -1,12 +1,15 @@
 import { Request, Response } from "express";
 import {ContextIntentHandler} from "../model/context-intent-handler";
-import {AiRecommendationRequest, AiRecommendationResponse} from "../types/intent-context";
 import {preScoreProducts} from "../model/context-intent-handler/scoring";
+import {AiRecommendationRequest} from "../types/intent-recommendations-context";
+import {AiInterpretationRequest} from "../types/intent-interpretation-context";
+import {Stores} from "../types/intent-accepted-store";
 
 export class IntentHandler {
     buildContextSuggestion = async (req: Request, res: Response): Promise<void> => {
         try {
             const payload = req.body as AiRecommendationRequest;
+            const store = req.get('Store') as Stores;
 
             if (!payload?.products?.length) {
                 res.json({ suggestions: [], message: "No products to evaluate." });
@@ -25,12 +28,86 @@ export class IntentHandler {
             };
 
             const IntentHandler = new ContextIntentHandler()
-            const suggestions = await IntentHandler.getIntentSuggestions(modelInput);
+            const suggestions = await IntentHandler.getIntentSuggestions(modelInput, store);
 
             res.json(suggestions);
         } catch (err) {
             console.error(err);
             res.status(500).json({ error: "Server error" });
+        }
+    }
+
+    validateIntentInput = async (
+        req: Request,
+        res: Response
+    ): Promise<void> => {
+        try {
+            const body = req.body
+            const store = req.get('Store') as Stores;
+
+            if (!this.isValidIntentRequest(body)) {
+                res.status(400).json({
+                    error: "Invalid interpretation request payload"
+                })
+                return
+            }
+
+            const { intent, attributes } = body
+
+            const IntentHandler = new ContextIntentHandler()
+            const filters = await IntentHandler.getFiltersFromIIntent(intent, attributes, store);
+
+            res.json(filters);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: "Server error" });
+        }
+    }
+
+    isValidIntentRequest = (body: any): body is AiInterpretationRequest => {
+        return (
+            body &&
+            typeof body === "object" &&
+            body.intent &&
+            typeof body.intent.text === "string" &&
+            Array.isArray(body.attributes)
+        )
+    }
+
+    dummy = async (
+        req: Request,
+        res: Response
+    ): Promise<void> => {
+        try {
+            const { intent } = req.body
+            const text: string = intent?.text ?? ""
+
+            const filters: Record<string, string> = {}
+
+            await new Promise(resolve => setTimeout(resolve, 500))
+
+            filters.color = "58"
+            /*filters.climate = "202"
+
+            if (text.includes("red")) {
+                filters.color = "red"
+            }
+
+            if (text.includes("jacket")) {
+                filters.category = "jackets"
+            }
+
+            if (text.includes("hiking")) {
+                filters.activity = "hiking"
+            }*/
+
+            res.json({filters})
+
+        } catch (err) {
+            console.error(err)
+            res.status(500).json({
+                error: "Server error"
+            })
         }
     }
 }

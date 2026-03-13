@@ -90,6 +90,12 @@ intentApi: {
 5.  JSON schema is strictly enforced.
 6.  Deterministic fallback used if AI fails.
 
+## To run the test suite:
+```bash
+npx playwright test --config=tests/playwright.dev.config.ts
+npx playwright test --config=tests/playwright.dev.config.ts --debug
+```
+
 ------------------------------------------------------------------------
 
 ## Production Considerations

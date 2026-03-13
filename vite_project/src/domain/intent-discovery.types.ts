@@ -23,6 +23,7 @@ export interface ResolvedIntentDiscoveryConfig {
     readonly data: IntentDiscoveryDataConfig;
     readonly integrations: ReactEdgeRuntimeIntegrations;
     readonly translations: IntentDiscoveryTranslationsConfig
+    readonly storeCode: string
 }
 
 export type IntentDiscoveryTranslationsConfig = Record<string, string> | undefined;
@@ -38,6 +39,7 @@ export interface IntentDiscoveryDataConfig {
      */
     attributeExcludedInLayer: string[];
     enabledCategories: string[];
+    attributeOrder: string[];
     /**
      * Optional mapping of step codes (usually attribute codes plus the special
      * `price`/`result` values) to labels shown in the finder UI.
@@ -45,6 +47,7 @@ export interface IntentDiscoveryDataConfig {
     labelMap?: Record<string, string>;
     ai: {
         "enabled": boolean,
+        "activationThreshold": number,
         "matchThreshold": number,
         "minIntentScore": number,
         "maxProductsForAnalysis": number

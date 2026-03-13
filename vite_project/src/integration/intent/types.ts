@@ -1,4 +1,5 @@
 export type IntentState = {
+    intentText: string
     categoryScore: Record<string, number>
     attributeScore: Record<string, Record<string, number>>
     productScore: Record<string, number>
@@ -8,6 +9,7 @@ export type IntentState = {
         avg?: number
     },
     currentUrl?: string
+    status: IntentStatus
 }
 
 export type IntentSignal =
@@ -18,3 +20,9 @@ export type IntentSignal =
     | { type: "add_to_cart"; sku: string; price: number }
     | { type: "url"; }
 
+export type IntentStatus =
+    | "idle"
+    | "ready"
+    | "canBeInterpreted"
+    | "interpreting"
+    | "interpreted";

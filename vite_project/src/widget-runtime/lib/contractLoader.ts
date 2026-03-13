@@ -1,4 +1,5 @@
 import {activity} from "../../activity";
+import {extractStoreCode} from "../../lib/store.ts";
 
 export async function loadContract(hostElement: HTMLElement) {
     const contractUrl = hostElement.getAttribute("data-contract");
@@ -15,7 +16,12 @@ export async function loadContract(hostElement: HTMLElement) {
         throw new Error(`Failed to load contract: ${response.status}`);
     }
 
+    const storeCode = extractStoreCode(contractUrl)
+
     const json = await response.json();
 
-    return json;
+    return {
+        storeCode,
+        json
+    };
 }

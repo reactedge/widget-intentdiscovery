@@ -1,14 +1,14 @@
 import { useOptionPreferenceState } from "../../state/OptionPreference/useOptionPreferenceState.ts";
 import type { OptionSelection } from "../../state/OptionPreference/type.ts";
 import { getOptionLabel } from "../../lib/option-match.ts";
-import type { MagentoCategory } from "../../types/infra/magento/category.types.ts";
+import type { CategoryData } from "../../types/infra/magento/category.types.ts";
 import { useFindLayeredData } from "../../hooks/domain/useFindLayeredData.tsx";
 import { ErrorState } from "../global/ErrorState.tsx";
 import { Spinner } from "../global/Spinner.tsx";
 import { activity } from "../../activity";
 
 interface StepFinderProps {
-    categoryData: MagentoCategory
+    categoryData: CategoryData
 }
 
 export const ResultMatch = ({ categoryData }: StepFinderProps) => {

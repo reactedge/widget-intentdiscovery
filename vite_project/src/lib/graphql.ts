@@ -7,7 +7,7 @@ export type GraphqlClient = <T>(
     variables?: Record<string, unknown>
 ) => Promise<T>;
 
-export function createGraphqlClient(apiEndpoint: string) {
+export function createGraphqlClient(apiEndpoint: string, storeCode: string) {
     return async function graphqlRequest<T>(
         query: string,
         variables?: Record<string, unknown>
@@ -16,6 +16,7 @@ export function createGraphqlClient(apiEndpoint: string) {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "Store": storeCode
             },
             body: JSON.stringify({ query, variables }),
         });

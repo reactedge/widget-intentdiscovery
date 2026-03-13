@@ -4,16 +4,18 @@ import {createGraphqlClient} from "../../lib/graphql.ts";
 import type {ReactEdgeRuntimeIntegrations} from "../../domain/intent-discovery.types.ts";
 import {createIntentEngine} from "../../integration/intent/IntentEngine.ts";
 import type {AiRecommendationRequest} from "../../hooks/infra/useAiRecommendations.tsx";
-import type {IntentSignal} from "../../integration/intent/types.ts";
+import type {IntentSignal, IntentStatus} from "../../integration/intent/types.ts";
+import type {AiInterpretationRequest} from "../../hooks/infra/useAiInterpreter.tsx";
 
 interface SystemStateProviderProps {
     children: ReactNode;
     config: ReactEdgeRuntimeIntegrations;
+    store: string
 }
 
 const LocalStateProvider = LocalSystemStateContext.Provider;
 
-export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ children, config }) => {
+export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ children, config, store }) => {
     if (!config?.magentoGraphql?.api) {
         throw new Error('GraphQL client cannot be created without API endpoint');
     }
@@ -22,7 +24,7 @@ export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ childr
     }
 
     const graphqlClient = useMemo(
-        () => createGraphqlClient(config.magentoGraphql.api),
+        () => createGraphqlClient(config.magentoGraphql.api, store),
         [config.magentoGraphql?.api]
     );
 
@@ -39,7 +41,33 @@ export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ childr
             suggest: async (payload: AiRecommendationRequest) => {
                 const response = await fetch(`${baseUrl}/intent/suggest`, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { "Content-Type": "application/json", "Store": store },
+                    body: JSON.stringify(payload),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Intent API request failed");
+                }
+
+                return response.json();
+            },
+            interpret: async (payload: AiInterpretationRequest) => {
+                const response = await fetch(`${baseUrl}/intent/interpret`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "Store": store },
+                    body: JSON.stringify(payload),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Intent API request failed");
+                }
+
+                return response.json();
+            },
+            dummy: async (payload: AiInterpretationRequest) => {
+                const response = await fetch(`${baseUrl}/intent/dummy`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "Store": store },
                     body: JSON.stringify(payload),
                 });
 
@@ -51,6 +79,38 @@ export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ childr
             }
         };
     }, [config.intentApi?.baseUrl]);
+
+    const setPreference = (attributeCode: string, optionValue: string) => {
+        setIntentState(prev => {
+
+            const attributeScore = { ...(prev.attributeScore ?? {}) }
+
+            if (!attributeScore[attributeCode]) {
+                attributeScore[attributeCode] = {}
+            }
+
+            attributeScore[attributeCode][optionValue] = 1
+
+            return {
+                ...prev,
+                attributeScore
+            }
+        })
+    }
+
+    const setIntentStatus = (status: IntentStatus) => {
+        setIntentState(prev => ({
+            ...prev,
+            status
+        }))
+    }
+
+    const setIntentText = (text: string) => {
+        setIntentState(prev => ({
+            ...prev,
+            intentText: text
+        }))
+    }
 
     const [intentState, setIntentState] = useState(
         intentEngine.getState()
@@ -79,7 +139,10 @@ export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ childr
                 graphqlClient,
                 intentApiClient,
                 intentEngine,
-                intentState
+                intentState,
+                setIntentText,
+                setIntentStatus,
+                setPreference
             }}
         >
             {children}

@@ -18,8 +18,8 @@ export function Spinner({ size = 40 }: SpinnerProps) {
                     r="20"
                     fill="none"
                     stroke="#d3cdcd"
-                    strokeWidth="4"
-                    strokeDasharray="31.4 31.4"
+                    strokeWidth="2"
+                    strokeDasharray="20 80"
                     strokeLinecap="round"
                 >
                     <animateTransform

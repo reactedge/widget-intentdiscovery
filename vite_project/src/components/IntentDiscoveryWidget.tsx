@@ -2,9 +2,9 @@ import type { ResolvedIntentDiscoveryConfig } from "../domain/intent-discovery.t
 import { useCategory } from "../hooks/domain/useCategory.tsx";
 import { Spinner } from "./global/Spinner.tsx";
 import { ErrorState } from "./global/ErrorState.tsx";
-import { IntentDiscovery } from "./IntentDiscovery.tsx";
 import { OptionPreferenceStateProvider } from "../state/OptionPreference/OptionPreferenceStateProvider.tsx";
 import { ActiveAttributeStateProvider } from "../state/ActiveAttribute/ActiveAttributeStateProvider.tsx";
+import {IntentDiscoveryLoader} from "./IntentDiscovery/IntentDiscoveryLoader.tsx";
 
 type Props = {
     config: ResolvedIntentDiscoveryConfig
@@ -22,7 +22,7 @@ export const IntentDiscoveryWidget = ({ config, categoryUrlKey }: Props) => {
     return (
         <OptionPreferenceStateProvider>
             <ActiveAttributeStateProvider>
-                <IntentDiscovery
+                <IntentDiscoveryLoader
                     config={config.data}
                     categoryData={categoryData}
                 />

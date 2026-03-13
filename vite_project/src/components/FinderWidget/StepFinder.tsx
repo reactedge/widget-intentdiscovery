@@ -52,6 +52,9 @@ export const StepFinder: React.FC<StepFinderProps> = ({ optionCode, attributeLay
                     <label
                         key={option.value}
                         className="choice-tile"
+                        data-intent-option={option.label}
+                        data-intent-selected={isOptionSelected(option.value)}
+                        data-intent-count={option.count}
                     >
                         <input
                             type="radio"

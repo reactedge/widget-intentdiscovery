@@ -54,11 +54,11 @@ export function useAiRecommendations(
             );
 
             const json = await intentApiClient.suggest(payload);
-            activity('ai-recommendations', 'Ai recommendations API ran', json);
+            activity('ai-recommendations', 'AI recommendations API ran', json);
 
             setData(json)
         } catch (err: unknown) {
-            activity('ai-recommendations', 'Ai recommendations Error', {
+            activity('ai-recommendations', 'AI recommendations Error', {
                 error: (err as Error).message
             }, 'error');
             setError(err instanceof Error ? err : new Error("Unknown error"))

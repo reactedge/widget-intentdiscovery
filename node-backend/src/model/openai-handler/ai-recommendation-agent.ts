@@ -1,6 +1,7 @@
 import {OpenAI} from "openai";
 import {config} from "../../config";
-import {AiRecommendationResponse} from "../../types/intent-context";
+import {AiRecommendationResponse} from "../../types/intent-recommendations-context";
+import {Stores} from "../../types/intent-accepted-store";
 
 const openai = new OpenAI({ apiKey: config.openai.apiKey });
 
@@ -31,8 +32,8 @@ const SuggestionSchema = {
     }
 } as const;
 
-export class OpenaiAgent {
-    getSuggestion = async (modelInput: any) => {
+export class OpenaiRecommendationAgent {
+    getSuggestion = async (modelInput: any, store: Stores) => {
         try {
             const completion = await openai.chat.completions.create({
                 model: "gpt-4o-mini",
@@ -47,7 +48,8 @@ export class OpenaiAgent {
                         content:
                             "You are a product recommendation engine for an e-commerce platform. " +
                             "Based on weighted intent signals, select up to 5 relevant products. " +
-                            "Also generate a short summary sentence explaining how the suggestions relate to the user’s intent."
+                            "Also generate a short summary sentence explaining how the suggestions relate to the user’s intent." +
+                            `Respond in ${store === 'fr' ? 'French' : 'English'}.`
                     },
                     {
                         role: "user",
@@ -68,6 +70,4 @@ export class OpenaiAgent {
             }
         }
     }
-
-
 }

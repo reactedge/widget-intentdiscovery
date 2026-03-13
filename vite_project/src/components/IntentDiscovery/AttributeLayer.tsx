@@ -1,27 +1,33 @@
-import {useState} from "react";
-import {useActiveAttributeState} from "../state/ActiveAttribute/useActiveAttributeState.ts";
-import {useSelectedPreferences} from "./selectedPreferencesUtils";
-import type {IntentDiscoveryDataConfig} from "../domain/intent-discovery.types.ts";
-import {useSystemState} from "../state/System/useSystemState.ts";
-import type {MagentoAggregation, MagentoProducts} from "../hooks/infra/useProductAttributeLayer.tsx";
+import { useState} from "react";
+import {useActiveAttributeState} from "../../state/ActiveAttribute/useActiveAttributeState.ts";
+import {useSelectedPreferences} from "../SelectionsSummary/selectedPreferencesUtils.ts";
+import type {IntentDiscoveryDataConfig} from "../../domain/intent-discovery.types.ts";
+import {useSystemState} from "../../state/System/useSystemState.ts";
+import type {MagentoAggregation, MagentoProducts} from "../../hooks/infra/useProductAttributeLayer.tsx";
+import {useIntentAttributes} from "../../hooks/domain/useIntentAttributes.tsx";
+import {Icon} from "../AttributeLayer/Icon.tsx";
+import {useTranslationState} from "../../state/Translation/useTranslationState.ts";
 
 type Props = {
-    config: IntentDiscoveryDataConfig;
+    config: IntentDiscoveryDataConfig
     attributeLayerData: MagentoProducts
     disabled: boolean
-};
+}
 
-export const AttributeLayer = ({ config, attributeLayerData, disabled }: Props) => {
+export const AttributeLayer = ({
+       config,
+       attributeLayerData,
+       disabled
+    }: Props) => {
     const { setActiveAttributeCode } = useActiveAttributeState();
     const {intentState} = useSystemState()
     const { valueFor: prefValue } =
-        useSelectedPreferences(attributeLayerData, intentState);
+        useSelectedPreferences(attributeLayerData?.aggregations, intentState);
+    const {t} = useTranslationState()
 
     const [showAll, setShowAll] = useState(false);
 
-    const allAttributes = (attributeLayerData?.aggregations || []).filter(
-        (attr: MagentoAggregation) => !config.attributeExcludedInLayer?.includes(attr.attribute_code)
-    );
+    const allAttributes = useIntentAttributes(attributeLayerData?.aggregations, config)
     const visibleAttributes = showAll ? allAttributes : allAttributes.slice(0, 3);
 
     const isAttributeSelected = (attributeCode: string): boolean => {
@@ -40,14 +46,17 @@ export const AttributeLayer = ({ config, attributeLayerData, disabled }: Props) 
     };
 
     return (
-        <>
             <div className="finder">
-                <h2 className="finder__title">Need help choosing?</h2>
+                <label className="intent-subtitle">
+                    {t("Describe what you're looking for")}
+                </label>
                 <div className={`step-finder ${disabled ? 'step-finder--disabled' : ''}`}>
                     {visibleAttributes.map((attr: MagentoAggregation) => (
                         <div
                             key={attr.attribute_code}
                             className="choice-tile"
+                            data-intent-card={attr.attribute_code}
+                            data-intent-active={isAttributeSelected(attr.attribute_code)}
                             onClick={() => setActiveAttributeCode(attr.attribute_code)}
                         >
                             <span
@@ -60,6 +69,7 @@ export const AttributeLayer = ({ config, attributeLayerData, disabled }: Props) 
                                     {prefValue(attr.attribute_code)}
                                 </span>
                             )}
+                            <Icon attribute_code={attr.attribute_code} />
                         </div>
                     ))}
                     {allAttributes.length > 4 && (
@@ -67,11 +77,10 @@ export const AttributeLayer = ({ config, attributeLayerData, disabled }: Props) 
                             className="choice-tile choice-tile--view-all"
                             onClick={() => setShowAll(prev => !prev)}
                         >
-                            {showAll ? "Show less" : "View all"}
+                            {showAll ? t("Show less") : t("View all")}
                         </button>
                     )}
                 </div>
             </div>
-        </>
     );
 };
