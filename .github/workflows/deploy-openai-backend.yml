@@ -1,0 +1,37 @@
+name: Deploy OpenAI Backend
+
+on:
+  push:
+    tags:
+      - "intent-discovery*"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy backend via rsync
+        uses: burnett01/rsync-deployments@7.0
+        with:
+          switches: -avzr --delete
+          path: node-backend/
+          remote_path: /var/www/openai-express/
+          remote_host: ${{ secrets.SERVER_HOST }}
+          remote_user: ${{ secrets.SERVER_USER }}
+          remote_key: ${{ secrets.SERVER_SSH_KEY }}
+
+      - name: Install backend dependencies
+        run: |
+          ssh -o StrictHostKeyChecking=no \
+          ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
+          "cd /var/www/openai-express && npm install --omit=dev"
+
+      - name: Restart backend
+        run: |
+          ssh -o StrictHostKeyChecking=no \
+          ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
+          "pm2 restart openai-express || pm2 start /var/www/openai-express/ecosystem.config.js"

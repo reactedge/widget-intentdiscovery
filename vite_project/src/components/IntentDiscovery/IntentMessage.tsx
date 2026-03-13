@@ -12,7 +12,7 @@ type Props = {
     intent: IntentControllerState,
     attributeLayerData: MagentoProducts
 };
-export const IntentMessage = ({intent, attributeLayerData}: Props) => {
+export const IntentMessage = ({intent, attributeLayerData, config}: Props) => {
     const { intentState, setIntentText, setPreference, intentApiClient } = useSystemState()
     const optionLabelMap = useOptionLabelMap(attributeLayerData?.aggregations);
 
@@ -24,7 +24,8 @@ export const IntentMessage = ({intent, attributeLayerData}: Props) => {
                 intentState,
                 attributeLayerData?.aggregations,
                 intent.text,
-                optionLabelMap
+                optionLabelMap,
+                config
             )
 
             const json = await intentApiClient.interpret(payload)
