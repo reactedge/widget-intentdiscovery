@@ -38,11 +38,11 @@ jobs:
       - name: Install backend dependencies
         run: |
           ssh -o StrictHostKeyChecking=no \
-          ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
+          ${{ secrets.WIDGET_SSH_USER }}@${{ secrets.WIDGET_SSH_HOST }} \
           "cd /var/www/openai-express && npm install --omit=dev"
 
       - name: Restart backend
         run: |
           ssh -o StrictHostKeyChecking=no \
-          ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
-          "pm2 restart openai-express || pm2 start /var/www/openai-express/"
+          ${{ secrets.WIDGET_SSH_USER }}@${{ secrets.WIDGET_SSH_HOST }} \
+          "pm2 reload openai-express || pm2 start /var/www/openai-express/"
