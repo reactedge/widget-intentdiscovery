@@ -1,13 +1,16 @@
 import {Spinner} from "./global/Spinner.tsx";
 import {useTranslationState} from "../state/Translation/useTranslationState.ts";
+import {Sparkle} from "./SearchOverlay/Sparkle.tsx";
 
 export const SearchOverlay = () => {
     const {t} = useTranslationState()
 
     return (
         <div className="intent-evaluation-overlay">
-            <Spinner />
-            <p>{t("Searching your best match…")}</p>
+            <Spinner/>
+            <div className="intent-text">{t("Searching your best match…")}</div>
+
+            <Sparkle />
         </div>
     )
 }

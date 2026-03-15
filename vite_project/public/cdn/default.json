@@ -33,7 +33,7 @@
     },
     "ai": {
       "enabled": true,
-      "activationThreshold": 5,
+      "activationThreshold": 30,
       "matchThreshold": 30,
       "minIntentScore": 4,
       "maxProductsForAnalysis": 40
