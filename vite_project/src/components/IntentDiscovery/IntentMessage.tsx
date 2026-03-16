@@ -7,7 +7,7 @@ import {useSystemState} from "../../state/System/useSystemState.ts";
 import {useOptionLabelMap} from "../../hooks/domain/useOptionLabelMap.ts";
 import {useState} from "react";
 import {sendRequestToAi} from "../../services/message-interpret.ts";
-import {SearchOverlay} from "../SearchOverlay.tsx";
+import {SpinnerOverlay} from "../SpinnerOverlay.tsx";
 
 type Props = {
     config: IntentDiscoveryDataConfig,
@@ -47,7 +47,7 @@ export const IntentMessage = ({intent, attributeLayerData, config}: Props) => {
         })
     }
 
-    if (loading) return <SearchOverlay />
+    if (loading) return <SpinnerOverlay />
 
     return (
         <div className="finder">

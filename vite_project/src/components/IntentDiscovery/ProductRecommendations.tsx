@@ -1,12 +1,12 @@
 import type {MagentoProducts} from "../../hooks/infra/useProductAttributeLayer.tsx";
 import {useAnalyseSearch} from "../../hooks/domain/useAnalyseSearch.tsx";
 import type {CategoryData} from "../../types/infra/magento/category.types.ts";
-import {Spinner} from "../global/Spinner.tsx";
 import {SuggestionContainer} from "../Suggestions/SuggestionContainer.tsx";
 import {useEffect} from "react";
 import {useTranslationState} from "../../state/Translation/useTranslationState.ts";
 import {useIntentSearch} from "../../hooks/domain/useIntentSearch.tsx";
 import type {IntentDiscoveryDataConfig} from "../../domain/intent-discovery.types.ts";
+import {SpinnerOverlay} from "../SpinnerOverlay.tsx";
 
 type Props = {
     config: IntentDiscoveryDataConfig
@@ -49,7 +49,7 @@ export const ProductRecommendations = ({
     }, [searchLoading]);
 
     if (!shouldSearch) return null;
-    if (searchLoading) return <Spinner />;
+    if (searchLoading) return <SpinnerOverlay />;
     if (!aiRecommendation?.suggestions?.length) return null;
 
     return (

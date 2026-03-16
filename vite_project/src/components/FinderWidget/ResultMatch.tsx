@@ -4,8 +4,8 @@ import { getOptionLabel } from "../../lib/option-match.ts";
 import type { CategoryData } from "../../types/infra/magento/category.types.ts";
 import { useFindLayeredData } from "../../hooks/domain/useFindLayeredData.tsx";
 import { ErrorState } from "../global/ErrorState.tsx";
-import { Spinner } from "../global/Spinner.tsx";
 import { activity } from "../../activity";
+import {SpinnerOverlay} from "../SpinnerOverlay.tsx";
 
 interface StepFinderProps {
     categoryData: CategoryData
@@ -17,8 +17,8 @@ export const ResultMatch = ({ categoryData }: StepFinderProps) => {
         useFindLayeredData(categoryData);
 
     if (productError) return <ErrorState error={productError}  />;
-    if (productLoading) return <Spinner />;
-    if (!productData) return <Spinner />;
+    if (productLoading) return <SpinnerOverlay />;
+    if (!productData) return <SpinnerOverlay />;
 
     activity('match', 'Search Product Result', productData);
 
