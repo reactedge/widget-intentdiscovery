@@ -1,9 +1,12 @@
+
+
 type SpinnerProps = {
     size?: number;
     className?: string;
 };
 
 export function Spinner({ size = 40 }: SpinnerProps) {
+
     return (
         <div className="widget-loader-wrapper" role="status" aria-label="Loading">
             <svg
