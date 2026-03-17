@@ -63,6 +63,10 @@ export function readIntegrationConfig(): ReactEdgeRuntimeConfig {
         throw new Error(`${WIDGET_ID}: intentApi baseUrl missing in reactedge-runtime`);
     }
 
+    if (!config.integrations?.intentApi?.promptVersion) {
+        throw new Error(`${WIDGET_ID}: intentApi promptVersion missing in reactedge-runtime`);
+    }
+
     return config;
 }
 

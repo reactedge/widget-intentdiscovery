@@ -19,7 +19,7 @@ export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ childr
     if (!config?.magentoGraphql?.api) {
         throw new Error('GraphQL client cannot be created without API endpoint');
     }
-    if (!config?.intentApi?.baseUrl) {
+    if (!config?.intentApi?.baseUrl || !config?.intentApi?.promptVersion) {
         throw new Error('intentApi endpoint is required');
     }
 
@@ -41,7 +41,7 @@ export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ childr
             suggest: async (payload: AiRecommendationRequest) => {
                 const response = await fetch(`${baseUrl}/intent/suggest`, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json", "Store": store },
+                    headers: { "Content-Type": "application/json", "Store": store, "X-Prompt-Version": config.intentApi?.promptVersion as string },
                     body: JSON.stringify(payload),
                 });
 
