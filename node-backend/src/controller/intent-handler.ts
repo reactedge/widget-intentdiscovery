@@ -4,12 +4,14 @@ import {preScoreProducts} from "../model/context-intent-handler/scoring";
 import {AiRecommendationRequest} from "../types/intent-recommendations-context";
 import {AiInterpretationRequest} from "../types/intent-interpretation-context";
 import {Stores} from "../types/intent-accepted-store";
+import {getIntentPrompt} from "../model/prompt-handler/loader";
 
 export class IntentHandler {
     buildContextSuggestion = async (req: Request, res: Response): Promise<void> => {
         try {
             const payload = req.body as AiRecommendationRequest;
             const store = req.get('Store') as Stores;
+            const promptVersion = req.get('X-Prompt-Version') || 'v2';
 
             if (!payload?.products?.length) {
                 res.json({ suggestions: [], message: "No products to evaluate." });
@@ -28,7 +30,8 @@ export class IntentHandler {
             };
 
             const IntentHandler = new ContextIntentHandler()
-            const suggestions = await IntentHandler.getIntentSuggestions(modelInput, store);
+            const prompt = await getIntentPrompt(promptVersion)
+            const suggestions = await IntentHandler.getIntentSuggestions(modelInput, prompt, store);
 
             res.json(suggestions);
         } catch (err) {

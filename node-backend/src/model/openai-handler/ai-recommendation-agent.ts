@@ -33,11 +33,11 @@ const SuggestionSchema = {
 } as const;
 
 export class OpenaiRecommendationAgent {
-    getSuggestion = async (modelInput: any, store: Stores) => {
+    getSuggestion = async (modelInput: any, prompt: string, store: Stores) => {
         try {
             const completion = await openai.chat.completions.create({
-                model: "gpt-4o-mini",
-                temperature: 0.2,
+                model: config.openai.model,
+                temperature: config.openai.performance,
                 response_format: {
                     type: "json_schema",
                     json_schema: SuggestionSchema
@@ -45,10 +45,7 @@ export class OpenaiRecommendationAgent {
                 messages: [
                     {
                         role: "system",
-                        content:
-                            "You are a product recommendation engine for an e-commerce platform. " +
-                            "Based on weighted intent signals, select up to 5 relevant products. " +
-                            "Also generate a short summary sentence explaining how the suggestions relate to the user’s intent." +
+                        content: prompt +
                             `Respond in ${store === 'fr' ? 'French' : 'English'}.`
                     },
                     {

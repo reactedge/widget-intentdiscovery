@@ -4,7 +4,7 @@
   "description": "hey dude",
   "main": "build/index.js",
   "scripts": {
-    "start:build": "npx tsc -w",
+    "start:build": "npx tsc -w && cp -r src/cdn build/cdn",
     "start:run": "nodemon build/index.js",
     "start": "concurrently npm:start:*",
     "debug": "nodemon build/index.js",

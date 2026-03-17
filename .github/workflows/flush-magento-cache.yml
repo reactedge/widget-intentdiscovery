@@ -1,0 +1,40 @@
+name: Widget Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract version
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Deploy cache refresh
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.MAGENTO_HOST }}
+          username: ${{ secrets.MAGENTO_USER }}
+          key: ${{ secrets.MAGENTO_SSH_KEY }}
+          script: |
+            VERSION=${{ steps.version.outputs.VERSION }}
+            cd /var/www/mageos/magento
+
+             echo "Setting widget version to $VERSION"
+
+            docker exec mageos php bin/magento config:set reactedge/intentdiscovery/version $VERSION
+
+            echo "Cleaning Magento caches"
+
+            docker exec mageos php bin/magento cache:clean config
+            docker exec mageos php bin/magento cache:clean full_page
+
+            echo "Deployment complete"

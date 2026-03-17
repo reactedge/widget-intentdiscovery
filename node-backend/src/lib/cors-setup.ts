@@ -12,6 +12,7 @@ export const corsOptions = () => {
         allowedHeaders: [
             'Origin',
             'X-Requested-With',
+            'X-Prompt-Version',
             'Content-Type',
             'Store',
             'Accept',
