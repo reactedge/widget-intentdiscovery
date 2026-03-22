@@ -6,13 +6,22 @@ import {Stores} from "../types/intent-accepted-store";
 
 
 export class ContextIntentHandler {
-    getIntentSuggestions = async (modelInput: ModelInput, prompt: string, store: Stores = 'uk'): Promise<AiRecommendationResponse> => {
+    getIntentSuggestions = async (
+        modelInput: ModelInput,
+        promptVersion: string,
+        store: Stores = 'uk'
+    ): Promise<AiRecommendationResponse> => {
         const openaiAgent = new OpenaiRecommendationAgent()
-        return await openaiAgent.getSuggestion(modelInput, prompt, store);
+        return await openaiAgent.getSuggestion(modelInput, promptVersion, store);
     }
 
-    getFiltersFromIIntent = async (intent: Intent , attributes: Attribute[], store: Stores = 'uk'): Promise<AiInterpretationResponse> => {
+    getFiltersFromIIntent = async (
+        intent: Intent ,
+        attributes: Attribute[],
+        promptVersion: string,
+        store: Stores = 'uk'
+    ): Promise<AiInterpretationResponse> => {
         const openaiAgent = new OpenaiInterpreterAgent()
-        return await openaiAgent.getIntentFilters(intent, attributes, store);
+        return await openaiAgent.getIntentFilters(intent, attributes, promptVersion, store);
     }
 }

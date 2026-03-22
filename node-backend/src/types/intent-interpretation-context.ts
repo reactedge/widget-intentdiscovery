@@ -23,3 +23,16 @@ export type AttributeOption = {
 export type AiInterpretationResponse = {
     filters: Record<string, string>
 }
+
+export type AttributeRole = 'filter' | 'intent' | 'derived'
+
+export interface AttributeConfig {
+    role?: AttributeRole // default = 'filter'
+}
+
+export type AttributesConfig = Record<string, AttributeConfig>
+
+export interface InterpretationConfig {
+    attributes?: AttributesConfig
+    instructions?: string[]
+}

@@ -13,6 +13,6 @@ export const useIntentSearch = (
 
     return {
         total,
-        shouldSearch: total <= threshold
+        searchPossible: total <= threshold
     }
 }

@@ -4,7 +4,7 @@ import {preScoreProducts} from "../model/context-intent-handler/scoring";
 import {AiRecommendationRequest} from "../types/intent-recommendations-context";
 import {AiInterpretationRequest} from "../types/intent-interpretation-context";
 import {Stores} from "../types/intent-accepted-store";
-import {getIntentPrompt} from "../model/prompt-handler/loader";
+import {getIntentInterpretationPrompt, getIntentPrompt} from "../model/prompt-handler/loader";
 
 export class IntentHandler {
     buildContextSuggestion = async (req: Request, res: Response): Promise<void> => {
@@ -40,13 +40,14 @@ export class IntentHandler {
         }
     }
 
-    validateIntentInput = async (
+    getFiltersFromIntent = async (
         req: Request,
         res: Response
     ): Promise<void> => {
         try {
             const body = req.body
             const store = req.get('Store') as Stores;
+            const promptVersion = req.get('X-Prompt-Version') || 'v2';
 
             if (!this.isValidIntentRequest(body)) {
                 res.status(400).json({
@@ -58,7 +59,7 @@ export class IntentHandler {
             const { intent, attributes } = body
 
             const IntentHandler = new ContextIntentHandler()
-            const filters = await IntentHandler.getFiltersFromIIntent(intent, attributes, store);
+            const filters = await IntentHandler.getFiltersFromIIntent(intent, attributes, promptVersion, store);
 
             res.json(filters);
         } catch (err) {

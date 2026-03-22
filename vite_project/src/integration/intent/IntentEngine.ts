@@ -55,9 +55,9 @@ export class IntentEngine {
                 this.bump(this.state.categoryScore, signal.id)
                 break;
             case "filter_select":
-                if (!this.state.attributeScore[signal.attribute]) {
-                    this.state.attributeScore[signal.attribute] = {};
-                }
+                //if (!this.state.attributeScore[signal.attribute]) {
+                this.state.attributeScore[signal.attribute] = {};
+                //}
                 this.bump(
                     this.state.attributeScore[signal.attribute] as Record<string, number>,
                     signal.value

@@ -41,7 +41,11 @@ export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ childr
             suggest: async (payload: AiRecommendationRequest) => {
                 const response = await fetch(`${baseUrl}/intent/suggest`, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json", "Store": store, "X-Prompt-Version": config.intentApi?.promptVersion as string },
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Store": store,
+                        "X-Prompt-Version": config.intentApi?.promptVersion as string
+                    },
                     body: JSON.stringify(payload),
                 });
 
@@ -54,7 +58,11 @@ export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ childr
             interpret: async (payload: AiInterpretationRequest) => {
                 const response = await fetch(`${baseUrl}/intent/interpret`, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json", "Store": store },
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Store": store,
+                        "X-Prompt-Version": config.intentApi?.promptVersion as string
+                    },
                     body: JSON.stringify(payload),
                 });
 
@@ -67,7 +75,11 @@ export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ childr
             dummy: async (payload: AiInterpretationRequest) => {
                 const response = await fetch(`${baseUrl}/intent/dummy`, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json", "Store": store },
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Store": store,
+                        "X-Prompt-Version": config.intentApi?.promptVersion as string
+                    },
                     body: JSON.stringify(payload),
                 });
 

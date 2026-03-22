@@ -41,6 +41,14 @@
     color:#666;
 }
 
+.intent-explanations {
+    position: relative;
+    display: flex;
+    align-items: center; /* anchors baseline at bottom */
+    justify-content: space-between;
+    gap: 12px;
+}
+
 .intent-ai-threshold {
     font-size: 12px;
     color: #666;

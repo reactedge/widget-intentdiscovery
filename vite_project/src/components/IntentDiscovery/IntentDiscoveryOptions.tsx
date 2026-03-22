@@ -1,5 +1,5 @@
 import { useOptionPreferenceState } from "../../state/OptionPreference/useOptionPreferenceState.ts";
-import { useEffect } from "react";
+import {useEffect} from "react";
 import { useActiveAttributeState } from "../../state/ActiveAttribute/useActiveAttributeState.ts";
 import type { IntentDiscoveryDataConfig } from "../../domain/intent-discovery.types.ts";
 import { StepFinder } from "../FinderWidget/StepFinder.tsx";
@@ -14,42 +14,44 @@ import {Icon} from "../AttributeLayer/Icon.tsx";
 export interface Props {
     config: IntentDiscoveryDataConfig
     categoryData: CategoryData
-    excludeCodes?: string[];
     attributeLayerData: MagentoProducts
 }
 
-// step codes are dynamic strings derived from the active attribute or preference state
-// we no longer hard‑code a union type here
-
-export const IntentDiscoveryOptions = ({ config, categoryData, attributeLayerData }: Props) => {
+export const IntentDiscoveryOptions = ({
+       config,
+       categoryData,
+       attributeLayerData
+   }: Props) => {
     const { setActiveCategoryName } = useOptionPreferenceState();
-    const { attributeState } = useActiveAttributeState();
+    const { attributeCode: stepCode } = useActiveAttributeState().attributeState;
 
     useEffect(() => {
         setActiveCategoryName(config.categoryUrlKey);
     }, [config.categoryUrlKey, setActiveCategoryName]);
 
-    if (!attributeLayerData) return null;
+    useEffect(() => {
+        if (stepCode !== null) {
+            activity('intent-discovery', 'Intent Discover Step', stepCode);
+        }
+    }, [stepCode]);
 
-    // prefer active attribute code if there's one, else fall back to preference progression
-    const stepCode = attributeState.attributeCode
+    if (!attributeLayerData || stepCode === null) return null;
 
-    if (stepCode === null) return
+    let step;
 
-    const renderStep = () => {
-        if (stepCode === "price") return <StepPriceFinder attributeLayerData={attributeLayerData} />;
-        if (stepCode === "result") return <ResultMatch categoryData={categoryData} />;
-
-        return <StepFinder optionCode={stepCode} attributeLayerData={attributeLayerData} />;
-    };
-
-    activity('intent-discovery', 'Intent Discover Step', stepCode);
+    if (stepCode === "price") {
+        step = <StepPriceFinder attributeLayerData={attributeLayerData} />;
+    } else if (stepCode === "result") {
+        step = <ResultMatch categoryData={categoryData} />;
+    } else {
+        step = <StepFinder optionCode={stepCode} attributeLayerData={attributeLayerData} />;
+    }
 
     return (
         <div className="finder">
             <FinderRow>
                 <Icon attribute_code={stepCode} size={70} />
-                {renderStep()}
+                {step}
             </FinderRow>
         </div>
     );

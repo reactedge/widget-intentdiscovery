@@ -6,6 +6,7 @@ import {
     Intent
 } from "../../types/intent-interpretation-context";
 import {Stores} from "../../types/intent-accepted-store";
+import {getIntentInterpretationPrompt} from "../prompt-handler/loader";
 
 const openai = new OpenAI({ apiKey: config.openai.apiKey });
 
@@ -31,37 +32,9 @@ const InterpretationSchema = {
 } as const;
 
 export class OpenaiInterpreterAgent {
-    createPrompt = (store: Stores) => {
-        return `You are a product interpretation engine for an e-commerce platform.
-
-                Your task is to translate a shopper's intent into product filters.
-                
-                You receive:
-                - an intent text
-                - weighted intent signals
-                - a list of attributes and their possible options
-                
-                Determine which attribute options best match the intent.
-                
-                Interpret semantic meaning, not just exact words.
-                For example:
-                - "winter", "cold", "outdoor conditions" may relate to climate attributes.
-                - "red", "blue", "black" relate to color attributes.
-                
-                Rules:
-                - Only use attributes and option values present in the input.
-                - Do not invent attributes or option values.
-                - Multiple attributes may apply.
-                - If nothing matches, return an empty filters object.
-                
-                Important:
-                Each option contains a "label" and a "value".
-                You must return the VALUE of the option, not the label.
-                Respond in ${store === 'fr' ? 'French' : 'English'}.`
-    }
-
-    async getIntentFilters(intent: Intent, attributes: Attribute[], store: Stores) {
+    async getIntentFilters(intent: Intent, attributes: Attribute[], promptVersion: string, store: Stores) {
         try {
+            const promptData = await getIntentInterpretationPrompt(promptVersion)
 
             const completion = await openai.chat.completions.create({
                 model: "gpt-4o-mini",
@@ -73,7 +46,8 @@ export class OpenaiInterpreterAgent {
                 messages: [
                     {
                         role: "system",
-                        content: this.createPrompt(store)
+                        content: promptData.instructions +
+                            `Respond in ${store === 'fr' ? 'French' : 'English'}.`
                     },
                     {
                         role: "user",

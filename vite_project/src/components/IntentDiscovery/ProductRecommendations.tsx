@@ -4,7 +4,6 @@ import type {CategoryData} from "../../types/infra/magento/category.types.ts";
 import {SuggestionContainer} from "../Suggestions/SuggestionContainer.tsx";
 import {useEffect} from "react";
 import {useTranslationState} from "../../state/Translation/useTranslationState.ts";
-import {useIntentSearch} from "../../hooks/domain/useIntentSearch.tsx";
 import type {IntentDiscoveryDataConfig} from "../../domain/intent-discovery.types.ts";
 import {SpinnerOverlay} from "../SpinnerOverlay.tsx";
 
@@ -12,24 +11,18 @@ type Props = {
     config: IntentDiscoveryDataConfig
     categoryData: CategoryData
     attributeLayerData: MagentoProducts
-    search: {
-        setIsSearching: (state: boolean) => void
-    }
+    setIsSearching: (state: boolean) => void
+    shouldSearch: boolean
     onVisibilityChange: (visible: boolean) => void
 }
 
 export const ProductRecommendations = ({
-   config,
    categoryData,
    attributeLayerData,
-   search,
+   setIsSearching,
+   shouldSearch,
    onVisibilityChange
 }: Props) => {
-    const { shouldSearch } = useIntentSearch(
-        attributeLayerData,
-        config
-    )
-
     const { aiRecommendation, searchLoading, error } =
         useAnalyseSearch(
             attributeLayerData?.aggregations,
@@ -45,7 +38,7 @@ export const ProductRecommendations = ({
     }, [hasSuggestions, onVisibilityChange])
 
     useEffect(() => {
-        search.setIsSearching(searchLoading);
+        setIsSearching(searchLoading);
     }, [searchLoading]);
 
     if (!shouldSearch) return null;

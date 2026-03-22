@@ -18,7 +18,7 @@ export const setupIntentRoutes = (app: Application) => {
 
     router.post("/suggest", intentHandlerController.buildContextSuggestion)
 
-    router.post("/interpret", intentHandlerController.validateIntentInput)
+    router.post("/interpret", intentHandlerController.getFiltersFromIntent)
 
     router.post("/dummy", intentHandlerController.dummy)
 

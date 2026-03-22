@@ -25,4 +25,7 @@ export type IntentStatus =
     | "ready"
     | "canBeInterpreted"
     | "interpreting"
-    | "interpreted";
+    | "interpreted"
+    | "readyToSearch"
+    | "suggestionProcessing"
+    | "suggestionSent";
