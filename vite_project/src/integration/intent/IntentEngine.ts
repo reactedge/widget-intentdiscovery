@@ -1,4 +1,5 @@
 import type {IntentSignal, IntentState} from "./types.ts";
+import type {IntentApiClient} from "./intentApiClient.ts";
 
 type Listener = (state: IntentState) => void;
 
@@ -12,9 +13,12 @@ export class IntentEngine {
         status: 'idle'
     };
 
+    private intentApiClient
+
     private listeners = new Set<Listener>();
 
-    constructor() {
+    constructor(intentApiClient: IntentApiClient) {
+        this.intentApiClient = intentApiClient
         this.resolveUrl()
     }
 
@@ -51,13 +55,43 @@ export class IntentEngine {
 
     handle(signal: IntentSignal) {
         switch (signal.type) {
+            case "status_updated":
+                this.state.status = signal.status;
+                break;
+
+            case "text_updated":
+                this.state.intentText = signal.text;
+                break;
+
             case "category_view":
                 this.bump(this.state.categoryScore, signal.id)
                 break;
+
+            case "filter_toggle": {
+                const { attribute, value } = signal;
+
+                const isSelected =
+                    this.state.attributeScore?.[attribute]?.[value];
+
+                if (isSelected) {
+                    this.handle({
+                        type: "filter_deselect",
+                        attribute,
+                        value
+                    });
+                } else {
+                    this.handle({
+                        type: "filter_select",
+                        attribute,
+                        value
+                    });
+                }
+
+                break;
+            }
+
             case "filter_select":
-                //if (!this.state.attributeScore[signal.attribute]) {
                 this.state.attributeScore[signal.attribute] = {};
-                //}
                 this.bump(
                     this.state.attributeScore[signal.attribute] as Record<string, number>,
                     signal.value
@@ -83,7 +117,6 @@ export class IntentEngine {
                 this.updatePriceAffinity(signal.price);
                 break;
         }
-
         this.notify();
     }
 
@@ -100,6 +133,10 @@ export class IntentEngine {
 
     getState() {
         return this.state;
+    }
+
+    getApiClient() {
+        return this.intentApiClient;
     }
 
     private bump(map: Record<string, number>, key: string) {
@@ -129,4 +166,8 @@ export class IntentEngine {
     }
 }
 
-export const createIntentEngine = () => new IntentEngine();
+type EngineParams = {
+    intentApiClient: IntentApiClient
+}
+
+export const createIntentEngine = ({ intentApiClient }: EngineParams) => new IntentEngine(intentApiClient);

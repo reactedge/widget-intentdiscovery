@@ -15,10 +15,6 @@ export const IntentExplanation = ({
 
     return (
         <div className="intent-explanations">
-            <label className="intent-subtitle">
-                {t("Describe what you're looking for")}
-            </label>
-
             <button
                 onClick={onAsk}
                 className="filter-apply-button"
@@ -32,6 +28,10 @@ export const IntentExplanation = ({
                     ? t("Add %s+ characters in the text intent or refine your preferences", remainingChars)
                     : t("AI ready to interpret your request")}
             </div>
+
+            <label className="intent-subtitle">
+                {t("Describe what you're looking for")}
+            </label>
         </div>
     );
 };

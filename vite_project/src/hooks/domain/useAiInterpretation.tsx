@@ -3,9 +3,8 @@ import {sendRequestToAi} from "../../services/message-interpret.ts";
 import type {IntentState, IntentStatus} from "../../integration/intent/types.ts";
 import type {IntentControllerState} from "../../domain/intent.types.ts";
 import type {MagentoAggregation} from "../infra/useProductAttributeLayer.tsx";
-import type {OptionLabelMap} from "../../state/OptionPreference/type.ts";
-import type {IntentDiscoveryDataConfig} from "../../domain/intent-discovery.types.ts";
-import type {IntentApiClient} from "../../state/System/type.ts";
+import type {IntentDiscoveryDataConfig, OptionLabelMap} from "../../domain/intent-discovery.types.ts";
+import type {IntentApiClient} from "../../integration/intent/intentApiClient.ts";
 
 type UseAskAiParams = {
     intentState: IntentState;

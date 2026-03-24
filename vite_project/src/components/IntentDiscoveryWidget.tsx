@@ -1,10 +1,7 @@
 import type { ResolvedIntentDiscoveryConfig } from "../domain/intent-discovery.types.ts";
 import { useCategory } from "../hooks/domain/useCategory.tsx";
-import { ErrorState } from "./global/ErrorState.tsx";
-import { OptionPreferenceStateProvider } from "../state/OptionPreference/OptionPreferenceStateProvider.tsx";
-import { ActiveAttributeStateProvider } from "../state/ActiveAttribute/ActiveAttributeStateProvider.tsx";
 import {IntentDiscoveryLoader} from "./IntentDiscovery/IntentDiscoveryLoader.tsx";
-import {SpinnerOverlay} from "./SpinnerOverlay.tsx";
+import {SpinnerOverlay} from "./global/SpinnerOverlay.tsx";
 
 type Props = {
     config: ResolvedIntentDiscoveryConfig
@@ -16,17 +13,13 @@ export const IntentDiscoveryWidget = ({ config, categoryUrlKey }: Props) => {
         useCategory(categoryUrlKey);
 
     if (categoryLoading) return <SpinnerOverlay />;
-    if (categoryError) return <ErrorState error={categoryError}  />;
+    if (categoryError) return null; // if the connection to Magento fails, we fail silently
     if (!categoryData) return null;
 
     return (
-        <OptionPreferenceStateProvider>
-            <ActiveAttributeStateProvider>
-                <IntentDiscoveryLoader
-                    config={config.data}
-                    categoryData={categoryData}
-                />
-            </ActiveAttributeStateProvider>
-        </OptionPreferenceStateProvider>
+        <IntentDiscoveryLoader
+            config={config.data}
+            categoryData={categoryData}
+        />
     );
 };

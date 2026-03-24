@@ -24,7 +24,7 @@ export const IntentDiscoveryLayout = ({ config, categoryData, attributeLayerData
         setIsSearching
     } = useIntentLayoutState()
 
-    const { intent } = useIntentController(attributeLayerData, config)
+    const { intent } = useIntentController(config)
 
     const { searchPossible } = useIntentSearch(
         attributeLayerData,
@@ -46,9 +46,9 @@ export const IntentDiscoveryLayout = ({ config, categoryData, attributeLayerData
                         disabled={isSearching}
                     />
                     <IntentDiscoveryOptions
-                        config={config}
                         categoryData={categoryData}
                         attributeLayerData={attributeLayerData}
+                        isSearching={isSearching}
                     />
                 </div>
                 <div className="re-intent-col re-intent-col--right">

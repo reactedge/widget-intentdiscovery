@@ -29,6 +29,8 @@ export interface ResolvedIntentDiscoveryConfig {
 
 export type IntentDiscoveryTranslationsConfig = Record<string, string> | undefined;
 
+export type OptionLabelMap = Map<string, Map<string, string>>
+
 export type MagentoIntegrationName = 'magentoGraphql';
 
 export interface IntentDiscoveryDataConfig {

@@ -1,6 +1,4 @@
-import type {MagentoAggregation} from "../../hooks/infra/useProductAttributeLayer.tsx";
-import type {OptionLabelMap} from "../../state/OptionPreference/type.ts";
-import {useOptionLabelMap} from "../../hooks/domain/useOptionLabelMap.ts";
+import type { MagentoAggregation } from "../../hooks/infra/useProductAttributeLayer.tsx";
 
 export type IntentRecord = Record<string, any> | undefined;
 
@@ -25,29 +23,23 @@ export function isAttributeSelected(
 
 export function renderPreferenceValue(
     attributeCode: string,
-    labelLookup: OptionLabelMap,
+    aggregations: MagentoAggregation[],
     intent?: IntentRecord
 ): string {
-    if (intent?.attributeScore && intent.attributeScore[attributeCode]) {
-        const entries = Object.entries(
-            intent.attributeScore[attributeCode] as Record<string, number>
-        );
-        function getOptionLabel(val: string) {
-            return labelLookup.get(attributeCode)?.get(val);
-        }
-        return entries.map(([val, count]) => `${getOptionLabel(val)} (${count})`).join(", ");
-    }
+    const scores = intent?.attributeScore?.[attributeCode];
+    if (!scores) return "";
 
-    if (attributeCode === "price" && intent?.priceAffinity) {
-        const { min, max, avg } = intent.priceAffinity;
-        const parts: string[] = [];
-        if (min !== undefined) parts.push(`min: ${min}`);
-        if (max !== undefined) parts.push(`max: ${max}`);
-        if (avg !== undefined) parts.push(`avg: ${avg}`);
-        return parts.join(", ");
-    }
+    const aggregation = aggregations.find(a => a.attribute_code === attributeCode);
 
-    return "";
+    return Object.entries(scores)
+        .map(([val, score]) => {
+            const option = aggregation?.options.find(o => String(o.value) === String(val));
+            const label = option?.label ?? val;
+            const count = option?.count ?? score;
+
+            return `${label} (${count})`;
+        })
+        .join(", ");
 }
 
 export function getSelectedAttributes(
@@ -65,11 +57,28 @@ export function useSelectedPreferences(
     aggregations: MagentoAggregation[],
     intent?: IntentRecord
 ) {
-    const optionLabelMap = useOptionLabelMap(aggregations);
-
     const selected = getSelectedAttributes(aggregations, intent);
 
-    const valueFor = (code: string) => renderPreferenceValue(code, optionLabelMap, intent);
+    const valueFor = (code: string): string | null => {
+        const scores = intent?.attributeScore?.[code];
+        if (!scores) return null;
 
-    return { selected, valueFor };
+        const [bestValue] = Object.entries(scores)
+            .sort((a: Record<number, any>, b: Record<number, any>) => b[1] - a[1])[0] || [];
+
+        if (!bestValue) return null;
+
+        const aggregation = aggregations.find(a => a.attribute_code === code);
+        if (!aggregation) return null;
+
+        const valid = aggregation.options.find(o => String(o.value) === String(bestValue));
+
+        return valid ? String(valid.value) : null;
+    };
+
+    const displayFor = (code: string): string => {
+        return renderPreferenceValue(code, aggregations, intent);
+    };
+
+    return { selected, valueFor, displayFor };
 }

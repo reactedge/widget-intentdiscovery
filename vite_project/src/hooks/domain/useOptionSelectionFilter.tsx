@@ -11,7 +11,7 @@ type FilterValue =
 export type MagentoProductFilter = Record<string, FilterValue>;
 
 export function useOptionSelectionFilter(categoryData?: CategoryData) {
-    const { intentState } = useSystemState();
+    const {intentState} = useSystemState()
 
     const categoryIds = useMemo(
         () => categoryLayereIds(categoryData),

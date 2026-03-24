@@ -1,33 +1,25 @@
-import { useOptionPreferenceState } from "../../state/OptionPreference/useOptionPreferenceState.ts";
 import {useEffect} from "react";
-import { useActiveAttributeState } from "../../state/ActiveAttribute/useActiveAttributeState.ts";
-import type { IntentDiscoveryDataConfig } from "../../domain/intent-discovery.types.ts";
 import { StepFinder } from "../FinderWidget/StepFinder.tsx";
 import { StepPriceFinder } from "../FinderWidget/StepPriceFinder.tsx";
-import { ResultMatch } from "../FinderWidget/ResultMatch.tsx";
 import { FinderRow } from "../FinderRow.tsx";
 import type { CategoryData } from "../../types/infra/magento/category.types.ts";
 import { activity } from "../../activity";
 import type {MagentoProducts} from "../../hooks/infra/useProductAttributeLayer.tsx";
 import {Icon} from "../AttributeLayer/Icon.tsx";
+import {useInteractionState} from "../../state/Interaction/useInteractionState.ts";
 
 export interface Props {
-    config: IntentDiscoveryDataConfig
     categoryData: CategoryData
     attributeLayerData: MagentoProducts
+    isSearching: boolean
 }
 
 export const IntentDiscoveryOptions = ({
-       config,
-       categoryData,
-       attributeLayerData
+       attributeLayerData,
+       isSearching
    }: Props) => {
-    const { setActiveCategoryName } = useOptionPreferenceState();
-    const { attributeCode: stepCode } = useActiveAttributeState().attributeState;
-
-    useEffect(() => {
-        setActiveCategoryName(config.categoryUrlKey);
-    }, [config.categoryUrlKey, setActiveCategoryName]);
+    const { navigation } = useInteractionState().interactionState;
+    const stepCode = navigation.activeAttribute
 
     useEffect(() => {
         if (stepCode !== null) {
@@ -41,11 +33,11 @@ export const IntentDiscoveryOptions = ({
 
     if (stepCode === "price") {
         step = <StepPriceFinder attributeLayerData={attributeLayerData} />;
-    } else if (stepCode === "result") {
-        step = <ResultMatch categoryData={categoryData} />;
     } else {
         step = <StepFinder optionCode={stepCode} attributeLayerData={attributeLayerData} />;
     }
+
+    if (isSearching) return null; // make the feature more compact when the search is processing
 
     return (
         <div className="finder">

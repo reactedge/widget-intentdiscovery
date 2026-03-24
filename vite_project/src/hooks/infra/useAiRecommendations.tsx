@@ -1,10 +1,10 @@
-import {useCallback, useEffect, useState} from "react";
-import {useSystemState} from "../../state/System/useSystemState.ts";
-import type {MagentoAggregation} from "./useProductAttributeLayer.tsx";
-import type {GraphqlProduct} from "./useMagentoProducts.tsx";
-import {activity} from "../../activity";
-import {buildAiRecommendationPayload} from "../../lib/ai-recommendations.ts";
-import {useOptionLabelMap} from "../domain/useOptionLabelMap.ts";
+import { useCallback, useEffect, useState } from "react";
+import { useSystemState } from "../../state/System/useSystemState.ts";
+import type { MagentoAggregation } from "./useProductAttributeLayer.tsx";
+import type { GraphqlProduct } from "./useMagentoProducts.tsx";
+import { activity } from "../../activity";
+import { buildAiRecommendationPayload } from "../../lib/ai-recommendations.ts";
+import { useOptionLabelMap } from "../domain/useOptionLabelMap.ts";
 
 export interface AiRecommendationRequest {
     intent: {
@@ -32,13 +32,14 @@ export function useAiRecommendations(
     productData: GraphqlProduct[] | undefined,
     enabled: boolean
 ) {
-    const { intentState } = useSystemState()
+    const { intentEngine } = useSystemState()
+    const intentState = intentEngine.getState()
 
     const [data, setData] = useState<AiRecommendationResponse | null>(null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<Error | null>(null)
     const optionLabelMap = useOptionLabelMap(attributeData);
-    const { intentApiClient } = useSystemState();
+    const intentApiClient = intentEngine.getApiClient()
 
     const load = useCallback(async () => {
         if (!intentState || !attributeData?.length || !productData?.length || !enabled) return

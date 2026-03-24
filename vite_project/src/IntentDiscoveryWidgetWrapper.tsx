@@ -3,21 +3,18 @@ import {ErrorState} from "./components/global/ErrorState.tsx";
 import {SystemStateProvider} from "./state/System/SystemStateProvider.tsx";
 import {IntentLookup} from "./components/IntentLookup.tsx";
 import {TranslationStateProvider} from "./state/Translation/TranslationStateProvider.tsx";
+import {SpinnerOverlay} from "./components/global/SpinnerOverlay.tsx";
 
 type Props = {
     host: HTMLElement;
 };
-
-function SearchOverlay() {
-    return null;
-}
 
 export const IntentDiscoveryWidgetWrapper = ({ host }: Props) => {
     const {config, error, loading} = useWidgetConfig(host);
 
     if (!config) return null;
     if (error) return <ErrorState error={error}  />
-    if (loading) return <SearchOverlay />
+    if (loading) return <SpinnerOverlay />
 
     return  <SystemStateProvider config={config.integrations} store={config.storeCode}>
                 <TranslationStateProvider translations={config.translations}>

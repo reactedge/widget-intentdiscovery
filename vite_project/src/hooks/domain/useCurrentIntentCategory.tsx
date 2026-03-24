@@ -2,7 +2,8 @@ import {useSystemState} from "../../state/System/useSystemState.ts";
 import {activity} from "../../activity";
 
 export const useCurrentIntentCategory = (enabledCategories?: string[]) => {
-    const { intentState } = useSystemState();
+    const { intentEngine } = useSystemState();
+    const intentState = intentEngine.getState()
 
     const category = intentState.currentUrl;
 
