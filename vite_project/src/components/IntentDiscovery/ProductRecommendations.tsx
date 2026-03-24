@@ -1,11 +1,11 @@
-import type {MagentoProducts} from "../../hooks/infra/useProductAttributeLayer.tsx";
-import {useAnalyseSearch} from "../../hooks/domain/useAnalyseSearch.tsx";
-import type {CategoryData} from "../../types/infra/magento/category.types.ts";
-import {SuggestionContainer} from "../Suggestions/SuggestionContainer.tsx";
-import {useEffect} from "react";
-import {useTranslationState} from "../../state/Translation/useTranslationState.ts";
-import type {IntentDiscoveryDataConfig} from "../../domain/intent-discovery.types.ts";
-import {SpinnerOverlay} from "../SpinnerOverlay.tsx";
+import type { MagentoProducts } from "../../hooks/infra/useProductAttributeLayer.tsx";
+import { useAnalyseSearch } from "../../hooks/domain/useAnalyseSearch.tsx";
+import type { CategoryData } from "../../types/infra/magento/category.types.ts";
+import { SuggestionContainer } from "../Suggestions/SuggestionContainer.tsx";
+import { useEffect } from "react";
+import { useTranslationState } from "../../state/Translation/useTranslationState.ts";
+import type { IntentDiscoveryDataConfig } from "../../domain/intent-discovery.types.ts";
+import {SearchSpinnerOverlay} from "../global/SearchSpinnerOverlay.tsx";
 
 type Props = {
     config: IntentDiscoveryDataConfig
@@ -17,12 +17,13 @@ type Props = {
 }
 
 export const ProductRecommendations = ({
-   categoryData,
-   attributeLayerData,
-   setIsSearching,
-   shouldSearch,
-   onVisibilityChange
+    categoryData,
+    attributeLayerData,
+    setIsSearching,
+    shouldSearch,
+    onVisibilityChange
 }: Props) => {
+
     const { aiRecommendation, searchLoading, error } =
         useAnalyseSearch(
             attributeLayerData?.aggregations,
@@ -31,7 +32,7 @@ export const ProductRecommendations = ({
         );
 
     const hasSuggestions = !!aiRecommendation?.suggestions?.length
-    const {t} = useTranslationState()
+    const { t } = useTranslationState()
 
     useEffect(() => {
         onVisibilityChange?.(hasSuggestions)
@@ -42,7 +43,7 @@ export const ProductRecommendations = ({
     }, [searchLoading]);
 
     if (!shouldSearch) return null;
-    if (searchLoading) return <SpinnerOverlay />;
+    if (searchLoading) return <SearchSpinnerOverlay />;
     if (!aiRecommendation?.suggestions?.length) return null;
 
     return (

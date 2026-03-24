@@ -4,10 +4,10 @@ import {useSystemState} from "../../state/System/useSystemState.ts";
 import type {MagentoAggregation} from "../../hooks/infra/useProductAttributeLayer.tsx";
 import type {IntentControllerState} from "../../domain/intent.types.ts";
 import {useOptionLabelMap} from "../../hooks/domain/useOptionLabelMap.ts";
-import {SpinnerOverlay} from "../SpinnerOverlay.tsx";
 import {useAskAi} from "../../hooks/domain/useAiInterpretation.tsx";
 import {AttributeSelectorLayer} from "../AttributeLayer/AttributeSelectorLayer.tsx";
 import {IntentExplanation} from "../AttributeLayer/IntentExplanation.tsx";
+import {SearchSpinnerOverlay} from "../global/SearchSpinnerOverlay.tsx";
 
 type Props = {
     config: IntentDiscoveryDataConfig
@@ -24,9 +24,10 @@ export const AttributeLayer = ({
        aggregations,
        disabled
     }: Props) => {
-    const { intentState, setIntentText, setIntentStatus, setPreference, intentApiClient } = useSystemState()
+    const { setIntentText, setIntentStatus, setPreference, intentEngine, intentState } = useSystemState()
     const optionLabelMap = useOptionLabelMap(aggregations);
     const [loading, setLoading] = useState(false);
+    const intentApiClient = intentEngine.getApiClient()
 
     const handleAsk = useAskAi({
         intentState,
@@ -41,7 +42,7 @@ export const AttributeLayer = ({
         setLoading
     });
 
-    if (loading) return <SpinnerOverlay />
+    if (loading) return <SearchSpinnerOverlay />
 
     return (
             <div className="finder">

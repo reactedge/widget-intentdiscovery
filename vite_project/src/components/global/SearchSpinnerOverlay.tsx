@@ -1,8 +1,8 @@
 import {Spinner} from "./SearchOverlay/Spinner.tsx";
-import {useTranslationState} from "../state/Translation/useTranslationState.ts";
+import {useTranslationState} from "../../state/Translation/useTranslationState.ts";
 import {Sparkle} from "./SearchOverlay/Sparkle.tsx";
 
-export const SpinnerOverlay = () => {
+export const SearchSpinnerOverlay = () => {
     const {t} = useTranslationState()
 
     return (

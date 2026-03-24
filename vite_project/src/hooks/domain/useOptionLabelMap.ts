@@ -1,6 +1,7 @@
 import type {MagentoAggregation} from "../infra/useProductAttributeLayer.tsx";
 import {useMemo} from "react";
-import type {OptionLabelMap} from "../../state/OptionPreference/type.ts";
+import type {OptionLabelMap} from "../../domain/intent-discovery.types.ts";
+export type E = Map<string, Map<string, string>>
 
 export function useOptionLabelMap(
     aggregations?: MagentoAggregation[]

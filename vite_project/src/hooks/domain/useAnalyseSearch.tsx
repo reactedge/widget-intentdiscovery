@@ -1,14 +1,13 @@
-import {useAiRecommendations} from "../infra/useAiRecommendations.tsx";
-import type {MagentoAggregation} from "../infra/useProductAttributeLayer.tsx";
-import type {CategoryData} from "../../types/infra/magento/category.types.ts";
-import {useFindProducts} from "./useFindProducts.tsx";
+import { useAiRecommendations } from "../infra/useAiRecommendations.tsx";
+import type { MagentoAggregation } from "../infra/useProductAttributeLayer.tsx";
+import type { CategoryData } from "../../types/infra/magento/category.types.ts";
+import { useFindProducts } from "./useFindProducts.tsx";
 
 export function useAnalyseSearch(
     aggregations: MagentoAggregation[] | undefined,
     categoryData: CategoryData,
     enabled: boolean,
 ) {
-
     const {
         productData,
         productLoading,

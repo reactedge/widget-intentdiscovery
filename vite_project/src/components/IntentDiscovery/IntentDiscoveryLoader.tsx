@@ -4,7 +4,8 @@ import type {IntentDiscoveryDataConfig} from "../../domain/intent-discovery.type
 import type {CategoryData} from "../../types/infra/magento/category.types.ts";
 import {activity} from "../../activity";
 import {IntentDiscoveryLayout} from "./IntentDiscoveryLayout.tsx";
-import {SpinnerOverlay} from "../SpinnerOverlay.tsx";
+import {SpinnerOverlay} from "../global/SpinnerOverlay.tsx";
+import {InteractionStateProvider} from "../../state/Interaction/InteractionStateProvider.tsx";
 
 type LoaderProps = {
     config: IntentDiscoveryDataConfig
@@ -23,10 +24,12 @@ export const IntentDiscoveryLoader = ({ config, categoryData }: LoaderProps) => 
     activity('attribute-layer', 'Attribute Layer', attributeLayerData);
 
     return (
-        <IntentDiscoveryLayout
-            config={config}
-            categoryData={categoryData}
-            attributeLayerData={attributeLayerData}
-        />
+        <InteractionStateProvider>
+            <IntentDiscoveryLayout
+                config={config}
+                categoryData={categoryData}
+                attributeLayerData={attributeLayerData}
+            />
+        </InteractionStateProvider>
     )
 }

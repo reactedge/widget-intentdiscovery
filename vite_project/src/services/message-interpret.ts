@@ -1,6 +1,6 @@
 import type {AiInterpretationRequest, AiInterpretationResponse} from "../hooks/infra/useAiInterpreter.tsx";
-import type {IntentApiClient} from "../state/System/type.ts";
 import {activity} from "../activity";
+import type {IntentApiClient} from "../integration/intent/intentApiClient.ts";
 
 export async function sendRequestToAi({
         payload,

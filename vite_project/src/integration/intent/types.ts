@@ -13,7 +13,10 @@ export type IntentState = {
 }
 
 export type IntentSignal =
+    | { type: "status_updated"; status: IntentStatus }
+    | { type: "text_updated"; text: string }
     | { type: "category_view"; id: string }
+    | { type: "filter_toggle"; attribute: string; value: string }
     | { type: "filter_select"; attribute: string; value: string }
     | { type: "filter_deselect"; attribute: string; value: string }
     | { type: "product_view"; sku: string }

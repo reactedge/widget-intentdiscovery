@@ -50,6 +50,7 @@
 }
 
 .intent-ai-threshold {
+    order: 2;
     font-size: 12px;
     color: #666;
     margin-top: 4px;
@@ -83,3 +84,29 @@
     cursor: not-allowed;
 }
 
+.intent-feedback {
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 12px;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+}
+
+@media (max-width: 640px) {
+    .intent-explanations {
+        flex-direction: column;
+    }
+
+    .intent-ai-threshold {
+        order: 1;
+    }
+
+    .intent-subtitle {
+        order: 2;
+    }
+
+    .filter-apply-button {
+        width: 100%;
+        right: 0;
+    }
+}

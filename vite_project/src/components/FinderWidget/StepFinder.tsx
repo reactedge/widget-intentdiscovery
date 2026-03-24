@@ -1,10 +1,9 @@
 import { unescapeHtml } from "../../lib/string.ts";
 import { useFindAttributeOptionsByCode } from "../../hooks/domain/useFindAttributeOptionsByCode.tsx";
-import { useOptionPreferenceState } from "../../state/OptionPreference/useOptionPreferenceState.ts";
-import { useActiveAttributeState } from "../../state/ActiveAttribute/useActiveAttributeState.ts";
 import type {MagentoAggregationOption, MagentoProducts} from "../../hooks/infra/useProductAttributeLayer.tsx";
+import {useSystemState} from "../../state/System/useSystemState.ts";
+import {useInteractionState} from "../../state/Interaction/useInteractionState.ts";
 import {activity} from "../../activity";
-
 
 interface StepFinderProps {
     optionCode: string
@@ -12,39 +11,21 @@ interface StepFinderProps {
 }
 
 export const StepFinder: React.FC<StepFinderProps> = ({ optionCode, attributeLayerData }: StepFinderProps) => {
-    const { optionState, toggleOptionSelection } = useOptionPreferenceState()
-    const { setActiveAttributeCode } = useActiveAttributeState()
+    const { setActiveAttribute, setFocusedOption } = useInteractionState()
     const { attributeData } = useFindAttributeOptionsByCode(optionCode, attributeLayerData)
+    const { setPreference } = useSystemState()
+    const {intentState} = useSystemState()
 
-    // find the currently selected value for this option code
-    const currentSelection = optionState.optionSelection.find(sel => sel.code === optionCode);
+    const handleOnClick = async (option: MagentoAggregationOption) => {
+        setActiveAttribute(optionCode);
+        setPreference(optionCode, option.value)
+        setFocusedOption(option.value)
 
-    const onChange = async (option: MagentoAggregationOption) => {
-        setActiveAttributeCode(optionCode);
-        const action = toggleOptionSelection(optionCode, attributeData.label, option.value, option.label);
-
-        activity('select-options', `Select ${optionCode}`, action);
-
-        if (action === 'select') {
-            window.ReactEdgeIntent.emit({
-                type: 'filter_select',
-                attribute: optionCode,
-                value: option.value
-            });
-        } else {
-            window.ReactEdgeIntent.emit({
-                type: 'filter_deselect',
-                attribute: optionCode,
-                value: option.value
-            });
-        }
+        activity('intent-discovery-option', 'Intent Option Selection', {intentState, optionCode, value: option.value});
     };
 
-    // check if current option value is selected (handles both single and multiple selections)
-    const isOptionSelected = (optionValue: string): boolean => {
-        if (!currentSelection) return false;
-        return currentSelection.value === optionValue;
-    };
+    const selectedMap = intentState.attributeScore?.[optionCode] || {};
+    const isOptionSelected = (value: string) => value in selectedMap;
 
     return (
             <div className="step-finder">
@@ -59,8 +40,10 @@ export const StepFinder: React.FC<StepFinderProps> = ({ optionCode, attributeLay
                         <input
                             type="radio"
                             name="preference"
+                            checked={isOptionSelected(option.value)}
                             value={option.value}
-                            onChange={() => onChange(option)}
+                            onClick={() => handleOnClick(option)}
+                            readOnly
                         />
 
                         <span className={`choice-tile__label ${isOptionSelected(option.value) ? 'choice-tile__label--active' : ''}`}>

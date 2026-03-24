@@ -1,12 +1,13 @@
-import {useActiveAttributeState} from "../../state/ActiveAttribute/useActiveAttributeState.ts";
+import { useSelectedPreferences } from "../SelectionsSummary/selectedPreferencesUtils.ts";
+import { useState } from "react";
+import { useIntentAttributes } from "../../hooks/domain/useIntentAttributes.tsx";
+import { AttributeTile } from "./AttributeTile.tsx";
+import { useTranslationState } from "../../state/Translation/useTranslationState.ts";
+import type { IntentDiscoveryDataConfig } from "../../domain/intent-discovery.types.ts";
+import type { MagentoAggregation } from "../../hooks/infra/useProductAttributeLayer.tsx";
+import { useInteractionState } from "../../state/Interaction/useInteractionState.ts";
 import {useSystemState} from "../../state/System/useSystemState.ts";
-import {useSelectedPreferences} from "../SelectionsSummary/selectedPreferencesUtils.ts";
-import {useState} from "react";
-import {useIntentAttributes} from "../../hooks/domain/useIntentAttributes.tsx";
-import {AttributeTile} from "./AttributeTile.tsx";
-import {useTranslationState} from "../../state/Translation/useTranslationState.ts";
-import type {IntentDiscoveryDataConfig} from "../../domain/intent-discovery.types.ts";
-import type {MagentoAggregation} from "../../hooks/infra/useProductAttributeLayer.tsx";
+import {NoResult} from "../global/NoResult.tsx";
 
 type Props = {
     isDisabled: boolean
@@ -15,25 +16,25 @@ type Props = {
 }
 
 export const AttributeSelectorLayer = ({
-       isDisabled,
-       aggregations,
-       config
-   }: Props) => {
-    const { intentState } = useSystemState()
-    const { setActiveAttributeCode } = useActiveAttributeState();
+    isDisabled,
+    aggregations,
+    config
+}: Props) => {
+    const { setActiveAttribute } = useInteractionState();
     const [showAll, setShowAll] = useState(false);
+    const {intentState} = useSystemState()
 
     const allAttributes = useIntentAttributes(aggregations, config)
     const visibleAttributes = showAll ? allAttributes : allAttributes.slice(0, 3);
-    const { valueFor: prefValue } =
+    const { displayFor } =
         useSelectedPreferences(aggregations, intentState);
-    const {t} = useTranslationState()
+    const { t } = useTranslationState()
 
     const isAttributeSelected = (code: string) =>
         code in (intentState?.attributeScore ?? {}) ||
         (code === 'price' && Object.keys(intentState?.priceAffinity ?? {}).length > 0);
 
-    if (!aggregations?.length) return null;
+    if (!aggregations?.length) return <NoResult />;
 
     return (
         <div className={`step-finder ${isDisabled ? 'step-finder--disabled' : ''}`}>
@@ -46,8 +47,8 @@ export const AttributeSelectorLayer = ({
                         key={code}
                         attr={attr}
                         isSelected={isSelected}
-                        value={prefValue(code)}
-                        onClick={() => setActiveAttributeCode(code)}
+                        value={displayFor(code)}
+                        onClick={() => setActiveAttribute(code)}
                     />
                 );
             })}

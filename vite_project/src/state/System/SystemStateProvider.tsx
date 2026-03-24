@@ -3,9 +3,8 @@ import {LocalSystemStateContext} from "./SystemState.tsx";
 import {createGraphqlClient} from "../../lib/graphql.ts";
 import type {ReactEdgeRuntimeIntegrations} from "../../domain/intent-discovery.types.ts";
 import {createIntentEngine} from "../../integration/intent/IntentEngine.ts";
-import type {AiRecommendationRequest} from "../../hooks/infra/useAiRecommendations.tsx";
 import type {IntentSignal, IntentStatus} from "../../integration/intent/types.ts";
-import type {AiInterpretationRequest} from "../../hooks/infra/useAiInterpreter.tsx";
+import {createIntentApiClient} from "../../integration/intent/intentApiClient.ts";
 
 interface SystemStateProviderProps {
     children: ReactNode;
@@ -19,78 +18,41 @@ export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ childr
     if (!config?.magentoGraphql?.api) {
         throw new Error('GraphQL client cannot be created without API endpoint');
     }
-    if (!config?.intentApi?.baseUrl || !config?.intentApi?.promptVersion) {
-        throw new Error('intentApi endpoint is required');
-    }
 
     const graphqlClient = useMemo(
         () => createGraphqlClient(config.magentoGraphql.api, store),
-        [config.magentoGraphql?.api]
+        [config.magentoGraphql?.api, store]
     );
+
+    const intentApi = config.intentApi;
+
+    if (!intentApi?.baseUrl || !intentApi?.promptVersion) {
+        throw new Error('intentApi endpoint is required');
+    }
+
+    const intentApiClient = useMemo(() => {
+        return createIntentApiClient({
+            baseUrl: intentApi.baseUrl,
+            store,
+            promptVersion: intentApi.promptVersion,
+        });
+    }, [
+        intentApi.baseUrl,
+        intentApi.promptVersion,
+        store
+    ]);
 
     // ✅ One single engine instance
     const intentEngine = useMemo(
-        () => createIntentEngine(),
-        []
+        () => createIntentEngine({
+            intentApiClient
+        }),
+        [intentApiClient]
     );
 
-    const intentApiClient = useMemo(() => {
-        const baseUrl = config.intentApi?.baseUrl ?? "";
-
-        return {
-            suggest: async (payload: AiRecommendationRequest) => {
-                const response = await fetch(`${baseUrl}/intent/suggest`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Store": store,
-                        "X-Prompt-Version": config.intentApi?.promptVersion as string
-                    },
-                    body: JSON.stringify(payload),
-                });
-
-                if (!response.ok) {
-                    throw new Error("Intent API request failed");
-                }
-
-                return response.json();
-            },
-            interpret: async (payload: AiInterpretationRequest) => {
-                const response = await fetch(`${baseUrl}/intent/interpret`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Store": store,
-                        "X-Prompt-Version": config.intentApi?.promptVersion as string
-                    },
-                    body: JSON.stringify(payload),
-                });
-
-                if (!response.ok) {
-                    throw new Error("Intent API request failed");
-                }
-
-                return response.json();
-            },
-            dummy: async (payload: AiInterpretationRequest) => {
-                const response = await fetch(`${baseUrl}/intent/dummy`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Store": store,
-                        "X-Prompt-Version": config.intentApi?.promptVersion as string
-                    },
-                    body: JSON.stringify(payload),
-                });
-
-                if (!response.ok) {
-                    throw new Error("Intent API request failed");
-                }
-
-                return response.json();
-            }
-        };
-    }, [config.intentApi?.baseUrl]);
+    const [intentState, setIntentState] = useState(
+        intentEngine.getState()
+    );
 
     const setPreference = (attributeCode: string, optionValue: string) => {
         setIntentState(prev => {
@@ -124,16 +86,11 @@ export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ childr
         }))
     }
 
-    const [intentState, setIntentState] = useState(
-        intentEngine.getState()
-    );
-
     useEffect(() => {
         const handler = (event: Event) => {
             const customEvent = event as CustomEvent<IntentSignal>;
 
             const signal = customEvent.detail;
-
             intentEngine.handle(signal);
             setIntentState({ ...intentEngine.getState() });
         };
@@ -149,7 +106,6 @@ export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ childr
         <LocalStateProvider
             value={{
                 graphqlClient,
-                intentApiClient,
                 intentEngine,
                 intentState,
                 setIntentText,
