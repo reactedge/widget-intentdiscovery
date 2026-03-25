@@ -14,12 +14,13 @@ export const IntentDiscoveryWidgetWrapper = ({ host }: Props) => {
 
     if (!config) return null;
     if (error) return <ErrorState error={error}  />
-    if (loading) return <SpinnerOverlay />
 
     return  <SystemStateProvider config={config.integrations} store={config.storeCode}>
-                <TranslationStateProvider translations={config.translations}>
-                    <IntentLookup config={config} />
-                </TranslationStateProvider>
-            </SystemStateProvider>
+        <TranslationStateProvider translations={config.translations}>
+            <div className="intent-widget-container">
+                {loading ? <SpinnerOverlay /> : <IntentLookup config={config} />}
+            </div>
+        </TranslationStateProvider>
+    </SystemStateProvider>
 };
 
