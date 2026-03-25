@@ -23,6 +23,7 @@ export const AttributeSelectorLayer = ({
     const { setActiveAttribute } = useInteractionState();
     const [showAll, setShowAll] = useState(false);
     const {intentState} = useSystemState()
+    const { interactionState } = useInteractionState()
 
     const allAttributes = useIntentAttributes(aggregations, config)
     const visibleAttributes = showAll ? allAttributes : allAttributes.slice(0, 3);
@@ -30,9 +31,9 @@ export const AttributeSelectorLayer = ({
         useSelectedPreferences(aggregations, intentState);
     const { t } = useTranslationState()
 
-    const isAttributeSelected = (code: string) =>
-        code in (intentState?.attributeScore ?? {}) ||
-        (code === 'price' && Object.keys(intentState?.priceAffinity ?? {}).length > 0);
+    const isAttributeSelected = (code: string) => {
+        return interactionState?.navigation.activeAttribute === code;
+    }
 
     if (!aggregations?.length) return <NoResult />;
 

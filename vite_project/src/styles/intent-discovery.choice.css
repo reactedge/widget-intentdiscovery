@@ -25,6 +25,13 @@
     position: relative;
 }
 
+.choice-tile[data-intent-active='true'] {
+    border-color: #c7d2fe;
+    background: #f5f7ff;
+    color: #1d4ed8;
+    font-weight: 500;
+}
+
 .choice-tile .intent-icon {
     top: unset;
 }

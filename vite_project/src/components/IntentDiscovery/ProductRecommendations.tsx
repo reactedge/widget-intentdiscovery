@@ -49,7 +49,6 @@ export const ProductRecommendations = ({
     return (
         <SuggestionContainer
             data={aiRecommendation}
-            loading={searchLoading}
             error={error?.message ?? null}
             title={t("AI suggestions")}
         />

@@ -3,7 +3,6 @@ import {SuggestionCard} from "./SuggestionCard.tsx";
 
 type Props = {
     data?: AiRecommendationResponse | null
-    loading?: boolean
     error?: string | null
     onClose?: () => void
     title?: string
@@ -11,25 +10,10 @@ type Props = {
 
 export const SuggestionContainer: React.FC<Props> = ({
      data,
-     loading = false,
      error = null,
      onClose,
      title = "Suggestions",
     }) => {
-    if (loading) {
-        return (
-            <section className="re-intent-card" aria-busy="true">
-                <header className="re-intent-header">
-                    <div className="re-intent-header-left">
-                        <div className="re-intent-title">{title}</div>
-                    </div>
-                </header>
-
-                <div className="re-intent-body">Finding matches…</div>
-            </section>
-        )
-    }
-
     if (error) {
         return (
             <section className="re-intent-card" role="status">

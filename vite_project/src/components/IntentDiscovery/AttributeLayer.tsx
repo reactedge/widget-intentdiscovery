@@ -1,9 +1,7 @@
 import { useState} from "react";
 import type {IntentDiscoveryDataConfig} from "../../domain/intent-discovery.types.ts";
-import {useSystemState} from "../../state/System/useSystemState.ts";
 import type {MagentoAggregation} from "../../hooks/infra/useProductAttributeLayer.tsx";
 import type {IntentControllerState} from "../../domain/intent.types.ts";
-import {useOptionLabelMap} from "../../hooks/domain/useOptionLabelMap.ts";
 import {useAskAi} from "../../hooks/domain/useAiInterpretation.tsx";
 import {AttributeSelectorLayer} from "../AttributeLayer/AttributeSelectorLayer.tsx";
 import {IntentExplanation} from "../AttributeLayer/IntentExplanation.tsx";
@@ -24,21 +22,12 @@ export const AttributeLayer = ({
        aggregations,
        disabled
     }: Props) => {
-    const { setIntentText, setIntentStatus, setPreference, intentEngine, intentState } = useSystemState()
-    const optionLabelMap = useOptionLabelMap(aggregations);
     const [loading, setLoading] = useState(false);
-    const intentApiClient = intentEngine.getApiClient()
 
     const handleAsk = useAskAi({
-        intentState,
         intent,
         aggregations,
-        optionLabelMap,
         config,
-        intentApiClient,
-        setIntentText,
-        setIntentStatus,
-        setPreference,
         setLoading
     });
 
