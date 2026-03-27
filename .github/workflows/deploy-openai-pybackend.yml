@@ -39,6 +39,7 @@ jobs:
 
       - name: Run tests
         run: |
+          cd pyintent-service
           pytest
 
       - name: Login to Docker Hub
