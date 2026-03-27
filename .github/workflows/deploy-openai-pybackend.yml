@@ -1,0 +1,72 @@
+name: Deploy Intent Service
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.WIDGET_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+          if [ -z "${{ secrets.WIDGET_SSH_HOST }}" ]; then
+            echo "ERROR: WIDGET_SSH_HOST not set (environment secrets not visible)"
+            exit 1
+          fi
+
+          ssh-keyscan -H "${{ secrets.WIDGET_SSH_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          pip install -r docker/py_service/requirements.txt   
+          pip install pytest
+
+      - name: Run tests
+        run: |
+          pytest
+
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build image
+        run: docker build -f docker/py_service/Dockerfile \
+          -t reactedge/intent-service:${{ github.ref_name }} \
+          -t reactedge/intent-service:latest .
+
+      - name: Push image
+        run: |
+          docker push reactedge/intent-service:${{ github.ref_name }}
+          docker push reactedge/intent-service:latest
+
+      - name: Deploy to server
+        run: |
+          ssh -o StrictHostKeyChecking=no \
+          ${{ secrets.WIDGET_SSH_USER }}@${{ secrets.WIDGET_SSH_HOST }} "
+            docker pull your-dockerhub/intent-service:latest &&
+            docker stop intent-service || true &&
+            docker rm intent-service || true &&
+            docker run -d -p 8000:8000 \
+              -e FRONTEND_URL=http://localhost:5173,https://mageos-docker.magsite.co.uk,https://mageos-docker.magsite.fr \
+              -e PROMPT_URL=https://pyopenai-service/cdn/intent-prompt.v1.json \
+              -e OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
+              -e OPENAI_PERFORMANCE=0.2 \
+              -e OPENAI_MODEL=gpt-4o-mini \
+              -e CDN_FOLDER=cdn \
+              --name intent-service \
+              your-dockerhub/intent-service:latest
+          "

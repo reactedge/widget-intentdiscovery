@@ -18,3 +18,5 @@ www
 test-results
 node-backend/build
 README-dev.md
+venv
+.cache
