@@ -1,4 +1,9 @@
 {
+  "scripts": {
+    "release:patch": "cd vite_project && npm version patch && cd .. && git push --follow-tags",
+    "release:minor": "cd vite_project && npm version minor && cd .. && git push --follow-tags",
+    "release:major": "cd vite_project && npm version major && cd .. && git push --follow-tags"
+  },
   "devDependencies": {
     "@playwright/test": "^1.57.0"
   }
