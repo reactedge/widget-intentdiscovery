@@ -6,8 +6,9 @@ on:
       - "v*"
 
 jobs:
-  build-and-deploy:
+  deploy-pyintent:
     runs-on: ubuntu-latest
+    environment: reactedge
 
     steps:
       - name: Checkout
