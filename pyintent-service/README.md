@@ -30,8 +30,8 @@ curl -X POST http://127.0.0.1:8000/api/intent/interpret   -H "Content-Type: appl
 
 ## Launch Python dcker service
 ```bash
-docker build -f docker/py_service/Dockerfile -t intent-service .
-docker run -p 8000:8000 -v $(pwd)/intent-service:/app intent-service
+docker build -f docker/py_service/Dockerfile -t pyintent-service .
+docker run -p 8000:8000 -v $(pwd)/pyintent-service:/app pyintent-service
 ```
 
 ## Test sentences

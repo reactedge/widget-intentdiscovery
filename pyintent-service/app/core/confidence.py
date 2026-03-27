@@ -11,4 +11,4 @@ def compute_confidence(filters: dict, intent: str) -> float:
     if len(intent.split()) > 5:
         score += 0.1
 
-    return min(score, 1)
+    return round(min(score, 1), 2)

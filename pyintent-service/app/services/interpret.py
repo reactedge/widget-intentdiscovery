@@ -18,8 +18,7 @@ def interpret_intent(req, prompt_override=None):
         raw = call_model_with_cache(prompt, intent)
     except Exception:
         print("[ERR] Failed to call openAI model:")
-        response {}
-
+        raw = {}
 
     signals = normalize(raw)
     confidence = compute_confidence(signals, intent)
