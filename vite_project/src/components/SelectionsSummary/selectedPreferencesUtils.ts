@@ -21,25 +21,23 @@ export function isAttributeSelected(
     return false;
 }
 
-export function renderPreferenceValue(
+export function getSelectedValues(
     attributeCode: string,
     aggregations: MagentoAggregation[],
     intent?: IntentRecord
-): string {
+): string[] {
     const scores = intent?.attributeScore?.[attributeCode];
-    if (!scores) return "";
+    if (!scores) return [];
 
     const aggregation = aggregations.find(a => a.attribute_code === attributeCode);
 
     return Object.entries(scores)
-        .map(([val, score]) => {
+        .map(([val]) => {
             const option = aggregation?.options.find(o => String(o.value) === String(val));
             const label = option?.label ?? val;
-            const count = option?.count ?? score;
 
-            return `${label} (${count})`;
+            return label;
         })
-        .join(", ");
 }
 
 export function getSelectedAttributes(
@@ -76,8 +74,8 @@ export function useSelectedPreferences(
         return valid ? String(valid.value) : null;
     };
 
-    const displayFor = (code: string): string => {
-        return renderPreferenceValue(code, aggregations, intent);
+    const displayFor = (code: string): string[] => {
+        return getSelectedValues(code, aggregations, intent);
     };
 
     return { selected, valueFor, displayFor };

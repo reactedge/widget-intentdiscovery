@@ -38,7 +38,6 @@ export const SuggestionContainer: React.FC<Props> = ({
             <header className="re-intent-header">
                 <div className="re-intent-header-left">
                     <div className="re-intent-title">{title}</div>
-                    <div className="re-intent-subtitle">{data.message}</div>
                 </div>
 
                 {onClose && (
@@ -54,7 +53,7 @@ export const SuggestionContainer: React.FC<Props> = ({
 
             <div className="re-intent-grid">
                 {data.suggestions.map((s) => (
-                    <SuggestionCard key={s.title} suggestion={s}/>
+                    <SuggestionCard key={s.sku} suggestion={s}/>
                 ))}
             </div>
         </section>

@@ -6,12 +6,13 @@ import {useAskAi} from "../../hooks/domain/useAiInterpretation.tsx";
 import {AttributeSelectorLayer} from "../AttributeLayer/AttributeSelectorLayer.tsx";
 import {IntentExplanation} from "../AttributeLayer/IntentExplanation.tsx";
 import {SearchSpinnerOverlay} from "../global/SearchSpinnerOverlay.tsx";
+import {useIntentState} from "../../state/Intent/useIntentState.ts";
 
 type Props = {
     config: IntentDiscoveryDataConfig
     intent: IntentControllerState
     searchPossible: boolean
-    aggregations: MagentoAggregation[]
+    aggregations: MagentoAggregation[],
     disabled: boolean
 }
 
@@ -23,13 +24,22 @@ export const AttributeLayer = ({
        disabled
     }: Props) => {
     const [loading, setLoading] = useState(false);
+    const { setIntentStatus } = useIntentState()
 
-    const handleAsk = useAskAi({
+    const askAi = useAskAi({
         intent,
         aggregations,
         config,
         setLoading
-    });
+    })
+
+    const handleAsk = () => {
+        if (intent.text?.trim()) {
+            askAi()
+        } else {
+            setIntentStatus("readyToSearch")
+        }
+    }
 
     if (loading) return <SearchSpinnerOverlay />
 

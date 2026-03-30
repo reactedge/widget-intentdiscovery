@@ -1,17 +1,18 @@
 import {formatPrice} from "../../lib/price.ts";
+import type {EnrichedSuggestion} from "../../types/infra/magento/product.types.ts";
 
-export const SuggestionCard: React.FC<{ suggestion: any }> = ({ suggestion }) => {
+export const SuggestionCard: React.FC<{ suggestion: EnrichedSuggestion }> = ({ suggestion }) => {
     const content = (
         <>
             <a
-                key={suggestion.title}
-                href={suggestion.productUrl}
+                key={suggestion.sku}
+                href={suggestion.product.url}
                 className="re-intent-card-item"
             >
-                {suggestion.imageUrl && (
+                {suggestion.product.imageUrl && (
                     <img
-                        src={suggestion.imageUrl}
-                        alt={suggestion.title}
+                        src={suggestion.product.imageUrl}
+                        alt={suggestion.product.title}
                         loading="lazy"
                         className="re-intent-image"
                     />
@@ -19,17 +20,29 @@ export const SuggestionCard: React.FC<{ suggestion: any }> = ({ suggestion }) =>
 
                 <div className="re-intent-card-body">
                     <div className="re-intent-product-title">
-                        {suggestion.title}
+                        {suggestion.product.title}
+                    </div>
+                    <div className="rec-attributes">
+                        {Object.entries(suggestion.product?.attributes || {})
+                            .flatMap(([attr, values]) =>
+                                values?.map(value => ({attr, value}))
+                            )
+                            .slice(0, 4)
+                            .map(({attr, value}) => (
+                                <span key={`${attr}-${value}`}>
+                                    {value}
+                                  </span>
+                            ))}
                     </div>
 
                     <div className="re-intent-meta-row">
                         <span className="re-intent-pill">
-                          {Math.round(suggestion.confidence * 100)}% match
+                          {suggestion.match}% match
                         </span>
 
-                        {suggestion.price && (
+                        {suggestion.product.price && (
                             <span className="re-intent-price">
-                            {formatPrice(suggestion.price.value, suggestion.price.currency)}
+                            {formatPrice(suggestion.product.price.value, suggestion.product.price.currency)}
                           </span>
                         )}
                     </div>
@@ -42,13 +55,11 @@ export const SuggestionCard: React.FC<{ suggestion: any }> = ({ suggestion }) =>
         </>
     )
 
-    // Link only if provided (Magento-safe)
-    // Link only if provided (Magento-safe)
-    return suggestion.productUrl ? (
+    return suggestion.product.url ? (
         <a
-            href={suggestion.productUrl}
+            href={suggestion.product.url}
             className="re-intent-card-item"
-            aria-label={suggestion.title}
+            aria-label={suggestion.product.title}
         >
             {content}
         </a>

@@ -1,30 +1,28 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSystemState } from "../../state/System/useSystemState.ts";
 import type { MagentoAggregation } from "./useProductAttributeLayer.tsx";
-import type { GraphqlProduct } from "./useMagentoProducts.tsx";
 import { activity } from "../../activity";
 import { buildAiRecommendationPayload } from "../../lib/ai-recommendations.ts";
 import { useOptionLabelMap } from "../domain/useOptionLabelMap.ts";
+import type {AttributeFilters} from "../../integration/intent/types.ts";
+import type {EnrichedSuggestion, GraphqlProduct} from "../../types/infra/magento/product.types.ts";
+import {enrichSuggestions} from "../../services/mappers/suggestions/enrichSuggestions.ts";
+import {useIntentState} from "../../state/Intent/useIntentState.ts";
 
 export interface AiRecommendationRequest {
     intent: {
         signals: Record<string, Record<string, number>>
     }
     products: {
+        sku: string
         title: string
         shortDescription?: string
         attributes: Record<string, string[]>
     }[]
 }
 
-interface APISugggestion {
-    title: string
-    confidence?: number
-    reason: string
-}
 export interface AiRecommendationResponse {
-    suggestions: APISugggestion[]
-    message: string
+    suggestions: EnrichedSuggestion[] | null
 }
 
 export function useAiRecommendations(
@@ -32,8 +30,9 @@ export function useAiRecommendations(
     productData: GraphqlProduct[] | undefined,
     enabled: boolean
 ) {
-    const { intentEngine } = useSystemState()
-    const intentState = intentEngine.getState()
+    const {intentState} = useIntentState()
+    const {intentEngine} = useSystemState()
+    const { attributeScore } = intentState;
 
     const [data, setData] = useState<AiRecommendationResponse | null>(null)
     const [loading, setLoading] = useState(false)
@@ -41,23 +40,34 @@ export function useAiRecommendations(
     const optionLabelMap = useOptionLabelMap(attributeData);
     const intentApiClient = intentEngine.getApiClient()
 
-    const load = useCallback(async () => {
-        if (!intentState || !attributeData?.length || !productData?.length || !enabled) return
+    async function fetchSuggestions(payload: AiRecommendationRequest) {
+        return intentApiClient.suggest(payload);
+    }
+
+    const load = useCallback(async (attributeScore: AttributeFilters) => {
+        if (!attributeScore || Object.keys(attributeScore).length === 0 || !attributeData?.length || !productData?.length || !enabled) return
 
         setLoading(true)
         setError(null)
 
         try {
             const payload = buildAiRecommendationPayload(
-                intentState,
+                attributeScore,
+                productData,
+                optionLabelMap
+            );
+            activity('ai-recommendations', 'AI recommendations API payload', payload);
+
+            const json = await fetchSuggestions(payload);
+            activity('ai-engine', 'AI Engine Recommendations', {json, productData})
+
+            const enriched = enrichSuggestions(
+                json.suggestions ?? [],
                 productData,
                 optionLabelMap
             );
 
-            const json = await intentApiClient.suggest(payload);
-            activity('ai-recommendations', 'AI recommendations API ran', json);
-
-            setData(json)
+            setData({ suggestions: enriched ?? [] })
         } catch (err: unknown) {
             activity('ai-recommendations', 'AI recommendations Error', {
                 error: (err as Error).message
@@ -66,11 +76,11 @@ export function useAiRecommendations(
         } finally {
             setLoading(false)
         }
-    }, [intentState, attributeData, productData])
+    }, [attributeScore, attributeData, productData])
 
     useEffect(() => {
-        load()
-    }, [load])
+        load(attributeScore)
+    }, [load, attributeScore])
 
     return {
         data,

@@ -4,15 +4,7 @@ import { getError } from "../../lib/error.ts";
 import { useOptionSelectionFilter } from "../domain/useOptionSelectionFilter.tsx";
 import type { CategoryData } from "../../types/infra/magento/category.types.ts";
 import {useFindIntentProducts} from "../domain/useIntentAttributes.tsx";
-
-type BaseProduct = {
-    name: string
-    short_description?: {
-        html: string
-    }
-}
-
-export type GraphqlProduct = BaseProduct & Record<string, string | null | undefined>
+import type {GraphqlProduct} from "../../types/infra/magento/product.types.ts";
 
 type ProductsResponse = {
     products: {items: GraphqlProduct[]}
@@ -24,7 +16,18 @@ function buildProductQuery(dynamicFields: string) {
           products(filter: $filter) {           
             items {
               id
+              sku
               name    
+              url_key
+              small_image { url }
+              price_range {
+                minimum_price {
+                  final_price {
+                    value
+                    currency
+                  }
+                }
+              }
               short_description {
                 html
               }  

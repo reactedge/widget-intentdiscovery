@@ -4,6 +4,7 @@ import {SystemStateProvider} from "./state/System/SystemStateProvider.tsx";
 import {IntentLookup} from "./components/IntentLookup.tsx";
 import {TranslationStateProvider} from "./state/Translation/TranslationStateProvider.tsx";
 import {SpinnerOverlay} from "./components/global/SpinnerOverlay.tsx";
+import {IntentStateProvider} from "./state/Intent/IntentStateProvider.tsx";
 
 type Props = {
     host: HTMLElement;
@@ -16,11 +17,13 @@ export const IntentDiscoveryWidgetWrapper = ({ host }: Props) => {
     if (error) return <ErrorState error={error}  />
 
     return  <SystemStateProvider config={config.integrations} store={config.storeCode}>
-        <TranslationStateProvider translations={config.translations}>
-            <div className="intent-widget-container">
-                {loading ? <SpinnerOverlay /> : <IntentLookup config={config} />}
-            </div>
-        </TranslationStateProvider>
-    </SystemStateProvider>
+                <IntentStateProvider>
+                    <TranslationStateProvider translations={config.translations}>
+                        <div className="intent-widget-container">
+                            {loading ? <SpinnerOverlay /> : <IntentLookup config={config} />}
+                        </div>
+                    </TranslationStateProvider>
+                </IntentStateProvider>
+            </SystemStateProvider>
 };
 

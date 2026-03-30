@@ -3,10 +3,10 @@ import {
     type MagentoProducts,
 } from "../infra/useProductAttributeLayer.tsx";
 import {enrichWithIntent} from "../../lib/option-match.ts";
-import {useSystemState} from "../../state/System/useSystemState.ts";
+import {useIntentState} from "../../state/Intent/useIntentState.ts";
 
 export const useFindAttributeOptionsByCode = (code: string, attributeLayerData: MagentoProducts) => {
-    const {intentState} = useSystemState()
+    const {intentState} = useIntentState()
 
     const result = attributeLayerData?.aggregations.filter((attribute: MagentoAggregation) => attribute.attribute_code === code).map((attribute) => {
         const enrichedAttribute = enrichWithIntent(attribute, intentState)

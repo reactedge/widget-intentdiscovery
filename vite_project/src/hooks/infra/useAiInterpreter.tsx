@@ -15,5 +15,11 @@ export type AiInterpretationRequest = {
 }
 
 export type AiInterpretationResponse = {
-    filters: Record<string, string>
+    filters: [
+        {
+            "attribute": string,
+            "value" : string,
+            "label": string
+        }
+    ]
 }

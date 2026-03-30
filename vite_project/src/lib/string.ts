@@ -17,3 +17,13 @@ export const unescapeHtml = (html: string) => {
     div.innerHTML = html;
     return div.innerText;
 }
+
+export const decodeHtmlEntities = (str:string) => {
+    const txt = document.createElement("textarea");
+    txt.innerHTML = str;
+    return txt.value;
+}
+
+export function stripHtml(html?: string): string | undefined {
+    return html?.replace(/<[^>]+>/g, '');
+}

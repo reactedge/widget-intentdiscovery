@@ -10,7 +10,7 @@ export function useFindProducts(categoryData: CategoryData, enabled: boolean) {
         refetch,
     } = useMagentoProducts(categoryData, enabled);
 
-    const productData = magentoProducts?.items
+    const productData = magentoProducts?.items //?.map(mapProduct).filter((p): p is BaseProduct => p !== null);;
 
     return {
         productData,

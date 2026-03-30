@@ -32,6 +32,12 @@
     font-weight: 500;
 }
 
+.choice-tile[data-intent-activated='true'] {
+    border-color: #cfcfcf;
+    background: #fafafa;
+    color: #1f2937;              /* neutral but clear */
+}
+
 .choice-tile .intent-icon {
     top: unset;
 }
@@ -58,6 +64,13 @@
 .choice-tile:hover {
     border-color: #cfcfcf;
     background: #fafafa;
+}
+
+.choice-tile .badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    background: #eef2ff;
+    font-size: 12px;
 }
 
 /* Hide radio visually but keep accessibility */

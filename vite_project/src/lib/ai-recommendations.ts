@@ -1,23 +1,21 @@
-import type {GraphqlProduct} from "../hooks/infra/useMagentoProducts.tsx";
-import type {IntentState} from "../integration/intent/types.ts";
+import type {AttributeFilters, IntentEngineState} from "../integration/intent/types.ts";
 import type {AiRecommendationRequest} from "../hooks/infra/useAiRecommendations.tsx";
 import type {MagentoAggregation} from "../hooks/infra/useProductAttributeLayer.tsx";
 import type {AiInterpretationRequest} from "../hooks/infra/useAiInterpreter.tsx";
 import type {IntentDiscoveryDataConfig, OptionLabelMap} from "../domain/intent-discovery.types.ts";
+import type {GraphqlProduct} from "../types/infra/magento/product.types.ts";
 
 export function buildAiRecommendationPayload(
-    intentState: IntentState,
+    rawSignals: AttributeFilters,
     products: GraphqlProduct[],
     optionLabelMap: OptionLabelMap
 ): AiRecommendationRequest {
-
-    const rawSignals = intentState.attributeScore ?? {};
-
     const signals = buildIntentSignals(rawSignals, optionLabelMap);
 
     const relevantAttributes = Object.keys(signals);
 
     const transformedProducts = products.map(product => ({
+        sku: product.sku,
         title: product.name,
         shortDescription: product.short_description?.html,
         attributes: resolveProductAttributes(
@@ -34,7 +32,7 @@ export function buildAiRecommendationPayload(
 }
 
 export function buildAiInterpretationPayload(
-    intentState: IntentState,
+    intentState: IntentEngineState,
     aggregations: MagentoAggregation[],
     intentText: string,
     optionLabelMap: OptionLabelMap,

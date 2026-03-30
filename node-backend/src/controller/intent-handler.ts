@@ -4,7 +4,7 @@ import {preScoreProducts} from "../model/context-intent-handler/scoring";
 import {AiRecommendationRequest} from "../types/intent-recommendations-context";
 import {AiInterpretationRequest} from "../types/intent-interpretation-context";
 import {Stores} from "../types/intent-accepted-store";
-import {getIntentInterpretationPrompt, getIntentPrompt} from "../model/prompt-handler/loader";
+import {getIntentPrompt} from "../model/prompt-handler/loader";
 
 export class IntentHandler {
     buildContextSuggestion = async (req: Request, res: Response): Promise<void> => {
