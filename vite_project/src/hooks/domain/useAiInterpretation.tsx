@@ -20,7 +20,7 @@ export const useAskAi = ({
       setLoading
   }: UseAskAiParams) => {
     const optionLabelMap = useOptionLabelMap(aggregations);
-    const { intentState, setIntentText, setIntentStatus, setPreference, intentEngine} = useSystemState()
+    const { intentState, setIntentText, setIntentStatus, setPreference, resetPreference, intentEngine} = useSystemState()
     const intentApiClient = intentEngine.getApiClient()
 
     return async () => {
@@ -37,13 +37,18 @@ export const useAskAi = ({
             intentApiClient,
             setLoading,
             onSuccess: (json) => {
+                resetPreference()
+                setIntentStatus("readyToSearch")
                 if (!json?.filters) return
 
                 setIntentText(intent.text)
-                setIntentStatus("readyToSearch")
 
-                for (const [attribute, value] of Object.entries(json?.filters)) {
-                    setPreference(attribute, value)
+                for (const filter of json?.filters || []) {
+                    if (!filter.attribute || !filter.value) {
+                        continue
+                    }
+
+                    setPreference(filter.attribute, filter.value)
                 }
             }
         })

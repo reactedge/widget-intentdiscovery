@@ -1,9 +1,8 @@
 import {useEffect, useState} from "react";
 import {useSystemState} from "../../state/System/useSystemState.ts";
 import {getError} from "../../lib/error.ts";
-import {type MagentoProductFilter} from "../domain/useOptionSelectionFilter.tsx";
+import {type MagentoProductFilter, useOptionSelectionFilter} from "../domain/useOptionSelectionFilter.tsx";
 import type {CategoryData} from "../../types/infra/magento/category.types.ts";
-import {useCategoryFilter} from "../domain/useCategoryFilter.tsx";
 
 const QUERY = `
      query MagentoProducts($filter: ProductAttributeFilterInput!) {
@@ -45,13 +44,13 @@ type ProductAttributesResponse = {
     products: MagentoProducts;
 }
 
-export const useProductAttributeLayer = (categoryData: CategoryData) => {
+export const useProductFilteredAttributeLayer = (categoryData: CategoryData) => {
     const [data, setData] = useState<ProductAttributesResponse>();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
     const { graphqlClient } = useSystemState()
 
-    const filter = useCategoryFilter(categoryData)
+    const filter = useOptionSelectionFilter(categoryData)
 
     const load = async (filter: MagentoProductFilter) => {
         if (!filter) return;

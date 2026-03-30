@@ -5,8 +5,7 @@ import type {MagentoAggregation} from "../infra/useProductAttributeLayer"
 import type { IntentDiscoveryDataConfig } from "../../domain/intent-discovery.types"
 
 export function useFindIntentProducts() {
-    const {intentEngine} = useSystemState()
-    const intentState = intentEngine.getState()
+    const {intentState} = useSystemState()
     const intentAttributes = Object.keys(intentState.attributeScore)
 
     return intentAttributes.join("\n")

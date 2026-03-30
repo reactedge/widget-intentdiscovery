@@ -12,12 +12,14 @@ import {NoResult} from "../global/NoResult.tsx";
 type Props = {
     isDisabled: boolean
     aggregations: MagentoAggregation[]
+    filteredAggregations: MagentoAggregation[]
     config: IntentDiscoveryDataConfig
 }
 
 export const AttributeSelectorLayer = ({
     isDisabled,
     aggregations,
+    filteredAggregations,
     config
 }: Props) => {
     const { setActiveAttribute } = useInteractionState();

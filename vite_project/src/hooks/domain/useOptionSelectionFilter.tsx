@@ -31,8 +31,16 @@ export function useOptionSelectionFilter(categoryData?: CategoryData) {
         };
 
         Object.entries(intentFilter).forEach(([attribute, value]) => {
-            filter[attribute] = { eq: value };
-        });
+            if (Array.isArray(value)) {
+                if (value.length === 1) {
+                    filter[attribute] = { eq: value[0] }
+                } else if (value.length > 1) {
+                    filter[attribute] = { in: value }
+                }
+            } else {
+                filter[attribute] = { eq: value }
+            }
+        })
 
         return filter;
 

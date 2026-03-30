@@ -183,3 +183,23 @@
     opacity: 0.5;
     pointer-events: none;
 }
+
+.rec-attributes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+    margin-bottom: 10px;
+}
+
+.rec-attributes span {
+    font-size: 12px;
+    line-height: 1;
+    padding: 4px 8px;
+    border-radius: 12px;
+
+    background: #f3f4f6;      /* soft grey */
+    color: #374151;           /* readable but not dominant */
+
+    border: 1px solid #e5e7eb;
+}

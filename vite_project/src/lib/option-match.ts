@@ -21,24 +21,17 @@ export function enrichWithIntent(attribute: any, intent: any) {
 export function intentToFilter(intentState: IntentState) {
     const { attributeScore } = intentState;
 
-    const filter: Record<string, string> = {};
+    const filter: Record<string, string[]> = {};
 
     for (const [attribute, options] of Object.entries(attributeScore)) {
         if (!options) continue;
 
-        const bestOption = Object.entries(options).reduce(
-            (best, current) => {
-                const [value, score] = current;
-                if (!best || score > best.score) {
-                    return { value, score };
-                }
-                return best;
-            },
-            null as { value: string; score: number } | null
-        );
+        const values = Object.entries(options)
+            .filter(([_, score]) => score > 0)
+            .map(([value]) => value);
 
-        if (bestOption) {
-            filter[attribute] = bestOption.value;
+        if (values.length > 0) {
+            filter[attribute] = values;
         }
     }
 

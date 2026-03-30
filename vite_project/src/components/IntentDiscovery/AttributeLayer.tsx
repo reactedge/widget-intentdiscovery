@@ -11,7 +11,8 @@ type Props = {
     config: IntentDiscoveryDataConfig
     intent: IntentControllerState
     searchPossible: boolean
-    aggregations: MagentoAggregation[]
+    aggregations: MagentoAggregation[],
+    filteredAggregations: MagentoAggregation[],
     disabled: boolean
 }
 
@@ -20,6 +21,7 @@ export const AttributeLayer = ({
        intent,
        searchPossible,
        aggregations,
+       filteredAggregations,
        disabled
     }: Props) => {
     const [loading, setLoading] = useState(false);
@@ -43,6 +45,7 @@ export const AttributeLayer = ({
                 <AttributeSelectorLayer
                     isDisabled={disabled}
                     aggregations={aggregations}
+                    filteredAggregations={filteredAggregations}
                     config={config}
                 />
             </div>

@@ -1,7 +1,9 @@
+export type AttributeFilters = Record<string, Record<string, number>>
+
 export type IntentState = {
     intentText: string
     categoryScore: Record<string, number>
-    attributeScore: Record<string, Record<string, number>>
+    attributeScore: AttributeFilters
     productScore: Record<string, number>
     priceAffinity: {
         min?: number

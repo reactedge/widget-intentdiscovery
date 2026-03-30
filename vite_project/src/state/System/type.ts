@@ -8,5 +8,6 @@ export interface SystemState {
     intentState: IntentState;
     setIntentText: (text: string) => void
     setIntentStatus: (status: IntentStatus) => void
-    setPreference: (attributeCode: string, optionValue: string) => void
+    setPreference: (attributeCode: string, optionValue: string) => void,
+    resetPreference: () => void
 }

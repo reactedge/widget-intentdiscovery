@@ -9,6 +9,9 @@ import {ProductRecommendations} from "./ProductRecommendations.tsx";
 import type {MagentoProducts} from "../../hooks/infra/useProductAttributeLayer.tsx";
 import {useIntentSearch} from "../../hooks/domain/useIntentSearch.tsx";
 import {useSystemState} from "../../state/System/useSystemState.ts";
+import {SpinnerOverlay} from "../global/SpinnerOverlay.tsx";
+import {ErrorState} from "../global/ErrorState.tsx";
+import {useFindFilteredAttributeLayer} from "../../hooks/domain/useFindFilteredAttributeLayer.tsx";
 
 export interface Props {
     config: IntentDiscoveryDataConfig
@@ -24,14 +27,21 @@ export const IntentDiscoveryLayout = ({ config, categoryData, attributeLayerData
         setIsSearching
     } = useIntentLayoutState()
 
+    const { attributeFilteredLayerData, attributeFilteredLayerLoading, attributeFilteredLayerError } =
+        useFindFilteredAttributeLayer(categoryData)
+
     const { intent } = useIntentController(config)
 
     const { searchPossible } = useIntentSearch(
-        attributeLayerData,
+        attributeFilteredLayerData,
         config
     )
 
     const { intentState } = useSystemState()
+
+    if (attributeFilteredLayerLoading) return <SpinnerOverlay />
+    if (attributeFilteredLayerError) return <ErrorState error={attributeFilteredLayerError} />
+    if (!attributeFilteredLayerData) return null
 
     return (
         <div className="intent-widget">
@@ -43,6 +53,7 @@ export const IntentDiscoveryLayout = ({ config, categoryData, attributeLayerData
                         intent={intent}
                         searchPossible={searchPossible}
                         aggregations={attributeLayerData?.aggregations}
+                        filteredAggregations={attributeFilteredLayerData?.aggregations}
                         disabled={isSearching}
                     />
                     <IntentDiscoveryOptions
@@ -55,7 +66,7 @@ export const IntentDiscoveryLayout = ({ config, categoryData, attributeLayerData
                     <ProductRecommendations
                         config={config}
                         categoryData={categoryData}
-                        attributeLayerData={attributeLayerData}
+                        attributeLayerData={attributeFilteredLayerData}
                         setIsSearching={setIsSearching}
                         shouldSearch={ searchPossible && intentState.status === "readyToSearch" }
                         onVisibilityChange={setShowRightColumn}

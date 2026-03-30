@@ -20,8 +20,7 @@ export async function sendRequestToAi({
 
         const json = await intentApiClient.interpret(payload)
         //const json = await intentApiClient.dummy(payload)
-
-        activity('ai-interpretation', 'AI interpretation API ran', json)
+        activity('ai-engine', 'AI Engine result', json)
 
         onSuccess(json)
 

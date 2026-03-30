@@ -12,7 +12,6 @@ export interface ReactEdgeRuntimeIntegrations {
     };
     readonly intentApi?: {
         readonly baseUrl: string;
-        readonly promptVersion: string;
     };
 }
 

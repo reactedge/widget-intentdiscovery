@@ -26,19 +26,17 @@ export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ childr
 
     const intentApi = config.intentApi;
 
-    if (!intentApi?.baseUrl || !intentApi?.promptVersion) {
+    if (!intentApi?.baseUrl) {
         throw new Error('intentApi endpoint is required');
     }
 
     const intentApiClient = useMemo(() => {
         return createIntentApiClient({
             baseUrl: intentApi.baseUrl,
-            store,
-            promptVersion: intentApi.promptVersion,
+            store
         });
     }, [
         intentApi.baseUrl,
-        intentApi.promptVersion,
         store
     ]);
 
@@ -70,6 +68,13 @@ export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ childr
                 attributeScore
             }
         })
+    }
+
+    const resetPreference = () => {
+        setIntentState(prev => ({
+            ...prev,
+            attributeScore: {}
+        }))
     }
 
     const setIntentStatus = (status: IntentStatus) => {
@@ -110,7 +115,8 @@ export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ childr
                 intentState,
                 setIntentText,
                 setIntentStatus,
-                setPreference
+                setPreference,
+                resetPreference
             }}
         >
             {children}
