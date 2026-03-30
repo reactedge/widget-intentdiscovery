@@ -1,4 +1,4 @@
-import type {AttributeFilters, IntentState} from "../integration/intent/types.ts";
+import type {AttributeFilters, IntentEngineState} from "../integration/intent/types.ts";
 import type {AiRecommendationRequest} from "../hooks/infra/useAiRecommendations.tsx";
 import type {MagentoAggregation} from "../hooks/infra/useProductAttributeLayer.tsx";
 import type {AiInterpretationRequest} from "../hooks/infra/useAiInterpreter.tsx";
@@ -32,7 +32,7 @@ export function buildAiRecommendationPayload(
 }
 
 export function buildAiInterpretationPayload(
-    intentState: IntentState,
+    intentState: IntentEngineState,
     aggregations: MagentoAggregation[],
     intentText: string,
     optionLabelMap: OptionLabelMap,
@@ -40,7 +40,6 @@ export function buildAiInterpretationPayload(
 ): AiInterpretationRequest {
 
     const rawSignals = intentState.attributeScore ?? {};
-    console.log('aggregations', aggregations)
 
     const signals = buildIntentSignals(rawSignals, optionLabelMap);
 
@@ -57,7 +56,6 @@ export function buildAiInterpretationPayload(
                 count: option.count
             }))
         }));
-    console.log('attributes', {aggregations, attributes})
 
     return {
         intent: {

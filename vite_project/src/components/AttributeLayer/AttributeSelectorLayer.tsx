@@ -6,25 +6,23 @@ import { useTranslationState } from "../../state/Translation/useTranslationState
 import type { IntentDiscoveryDataConfig } from "../../domain/intent-discovery.types.ts";
 import type { MagentoAggregation } from "../../hooks/infra/useProductAttributeLayer.tsx";
 import { useInteractionState } from "../../state/Interaction/useInteractionState.ts";
-import {useSystemState} from "../../state/System/useSystemState.ts";
 import {NoResult} from "../global/NoResult.tsx";
+import {useIntentState} from "../../state/Intent/useIntentState.ts";
 
 type Props = {
     isDisabled: boolean
     aggregations: MagentoAggregation[]
-    filteredAggregations: MagentoAggregation[]
     config: IntentDiscoveryDataConfig
 }
 
 export const AttributeSelectorLayer = ({
     isDisabled,
     aggregations,
-    filteredAggregations,
     config
 }: Props) => {
     const { setActiveAttribute } = useInteractionState();
     const [showAll, setShowAll] = useState(false);
-    const {intentState} = useSystemState()
+    const {intentState} = useIntentState()
     const { interactionState } = useInteractionState()
 
     const allAttributes = useIntentAttributes(aggregations, config)

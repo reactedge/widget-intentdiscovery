@@ -1,7 +1,7 @@
 import type { CategoryData } from "../../types/infra/magento/category.types.ts";
 import { useProductFilteredAttributeLayer } from "../infra/useProductFilteredAttributeLayer.tsx";
 
-                export function useFindFilteredAttributeLayer(categoryData: CategoryData) {
+export function useFindFilteredAttributeLayer(categoryData: CategoryData) {
     const {
         magentoAttributesLayer: attributeFilteredLayerData,
         loading: attributeFilteredLayerLoading,

@@ -8,10 +8,10 @@ import {IntentDiscoveryOptions} from "./IntentDiscoveryOptions.tsx";
 import {ProductRecommendations} from "./ProductRecommendations.tsx";
 import type {MagentoProducts} from "../../hooks/infra/useProductAttributeLayer.tsx";
 import {useIntentSearch} from "../../hooks/domain/useIntentSearch.tsx";
-import {useSystemState} from "../../state/System/useSystemState.ts";
 import {SpinnerOverlay} from "../global/SpinnerOverlay.tsx";
 import {ErrorState} from "../global/ErrorState.tsx";
 import {useFindFilteredAttributeLayer} from "../../hooks/domain/useFindFilteredAttributeLayer.tsx";
+import {useIntentState} from "../../state/Intent/useIntentState.ts";
 
 export interface Props {
     config: IntentDiscoveryDataConfig
@@ -37,7 +37,7 @@ export const IntentDiscoveryLayout = ({ config, categoryData, attributeLayerData
         config
     )
 
-    const { intentState } = useSystemState()
+    const { intentState } = useIntentState()
 
     if (attributeFilteredLayerLoading) return <SpinnerOverlay />
     if (attributeFilteredLayerError) return <ErrorState error={attributeFilteredLayerError} />
@@ -53,7 +53,6 @@ export const IntentDiscoveryLayout = ({ config, categoryData, attributeLayerData
                         intent={intent}
                         searchPossible={searchPossible}
                         aggregations={attributeLayerData?.aggregations}
-                        filteredAggregations={attributeFilteredLayerData?.aggregations}
                         disabled={isSearching}
                     />
                     <IntentDiscoveryOptions

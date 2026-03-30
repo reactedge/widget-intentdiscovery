@@ -5,6 +5,7 @@ import type {MagentoAggregation} from "../infra/useProductAttributeLayer.tsx";
 import type {IntentDiscoveryDataConfig} from "../../domain/intent-discovery.types.ts";
 import {useOptionLabelMap} from "./useOptionLabelMap.ts";
 import {useSystemState} from "../../state/System/useSystemState.ts";
+import {useIntentState} from "../../state/Intent/useIntentState.ts";
 
 type UseAskAiParams = {
     intent: IntentControllerState;
@@ -20,7 +21,8 @@ export const useAskAi = ({
       setLoading
   }: UseAskAiParams) => {
     const optionLabelMap = useOptionLabelMap(aggregations);
-    const { intentState, setIntentText, setIntentStatus, setPreference, resetPreference, intentEngine} = useSystemState()
+    const { intentEngine} = useSystemState()
+    const { intentState, setIntentText, setIntentStatus, setPreference, resetPreference} = useIntentState()
     const intentApiClient = intentEngine.getApiClient()
 
     return async () => {

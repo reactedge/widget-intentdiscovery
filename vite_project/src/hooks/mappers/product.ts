@@ -18,13 +18,13 @@ export function mapProduct(p: GraphqlProduct, optionLabelMap: OptionLabelMap): B
 
 function extractAttributes(
     p: GraphqlProduct,
-    optionLabelMap: Map<string, Record<string, string>>
+    optionLabelMap: OptionLabelMap
 ): Record<string, string[]> {
 
     const attributes: Record<string, string[]> = {}
 
     for (const [attributeCode, valueMap] of optionLabelMap.entries()) {
-        const rawValue = (p as any)[attributeCode]
+        const rawValue = p[attributeCode]
         if (!rawValue) continue
 
         const valueIds = normalizeRawValue(rawValue)

@@ -5,24 +5,36 @@ import {decodeHtmlEntities} from "../../lib/string.ts";
 type AttributeTileProps = {
     attr: MagentoAggregation;
     isSelected: boolean;
-    value?: string;
+    value?: string[];
     onClick: () => void;
 };
 
-export const AttributeTile = ({ attr, isSelected, value, onClick }: AttributeTileProps) => (
-    <div
-        className="choice-tile"
-        data-intent-card={attr.attribute_code}
-        data-intent-active={isSelected}
-        data-intent-activated={value !== ''}
-        onClick={onClick}
-    >
-        <span className={`choice-tile__label ${isSelected ? 'choice-tile__label--selected' : ''}`}>
-            {attr.label}
-        </span>
+export const AttributeTile = ({ attr, isSelected, value, onClick }: AttributeTileProps) => {
+    const visible = value && value.slice(0, 1) || []
+    const remaining = value && visible && value?.length - visible.length || 0
 
-        {value && <span className="choice-tile__info">{decodeHtmlEntities(value)}</span>}
+    return (
+        <div
+            className="choice-tile"
+            data-intent-card={attr.attribute_code}
+            data-intent-active={isSelected}
+            data-intent-activated={value && value?.length > 0}
+            onClick={onClick}
+        >
+            <span className={`choice-tile__label ${isSelected ? 'choice-tile__label--selected' : ''}`}>
+                {attr.label}
+            </span>
 
-        <Icon attribute_code={attr.attribute_code} />
-    </div>
-);
+            {value && <span className="choice-tile__info">
+            {visible.map(v => (
+                <span key={v} className="badge">{decodeHtmlEntities(v)}</span>
+            ))}
+                {remaining > 0 && (
+                    <span className="badge badge--more">+{remaining}</span>
+                )}
+            </span>}
+
+            <Icon attribute_code={attr.attribute_code}/>
+        </div>
+    )
+}

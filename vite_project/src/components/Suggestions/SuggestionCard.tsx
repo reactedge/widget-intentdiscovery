@@ -2,8 +2,6 @@ import {formatPrice} from "../../lib/price.ts";
 import type {EnrichedSuggestion} from "../../types/infra/magento/product.types.ts";
 
 export const SuggestionCard: React.FC<{ suggestion: EnrichedSuggestion }> = ({ suggestion }) => {
-    console.log('SuggestionCard', suggestion)
-
     const content = (
         <>
             <a

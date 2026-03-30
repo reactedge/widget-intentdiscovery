@@ -1,10 +1,10 @@
-import type {IntentSignal, IntentState} from "./types.ts";
+import type {IntentEngineState, IntentSignal} from "./types.ts";
 import type {IntentApiClient} from "./intentApiClient.ts";
 
-type Listener = (state: IntentState) => void;
+type Listener = (state: IntentEngineState) => void;
 
 export class IntentEngine {
-    private state: IntentState = {
+    private state: IntentEngineState = {
         intentText: '',
         categoryScore: {},
         attributeScore: {},
@@ -32,6 +32,29 @@ export class IntentEngine {
         this.state.currentUrl = lastSegment
     }
 
+    applySignals(signals: Record<string, Record<string, number>>) {
+        // 1. reset relevant parts of state
+        this.state.attributeScore = {}
+        this.state.categoryScore = {}
+        this.state.productScore = {}
+
+        // (optional: keep intentText / status if you want)
+
+        // 2. replay signals as events
+        for (const attribute in signals) {
+            for (const value in signals[attribute]) {
+                this.handle({
+                    type: "filter_select",
+                    attribute,
+                    value
+                })
+            }
+        }
+
+        // 3. no need to call notify() here
+        // handle() already does it
+    }
+
     subscribe(listener: Listener) {
         this.listeners.add(listener);
         return () => this.listeners.delete(listener);
@@ -39,7 +62,7 @@ export class IntentEngine {
 
     private notify() {
         // IMPORTANT: emit a new reference so React state updates reliably
-        const snapshot: IntentState = {
+        const snapshot: IntentEngineState = {
             intentText: this.state.intentText,
             categoryScore: { ...this.state.categoryScore },
             attributeScore: Object.fromEntries(

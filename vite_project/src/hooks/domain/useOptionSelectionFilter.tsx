@@ -1,8 +1,8 @@
 import type {CategoryData} from "../../types/infra/magento/category.types.ts";
 import {categoryLayereIds} from "../../lib/category.ts";
 import {useMemo} from "react";
-import {useSystemState} from "../../state/System/useSystemState.ts";
 import {intentToFilter} from "../../lib/option-match.ts";
+import {useIntentState} from "../../state/Intent/useIntentState.ts";
 
 type FilterValue =
     | { eq: string | number }
@@ -11,7 +11,7 @@ type FilterValue =
 export type MagentoProductFilter = Record<string, FilterValue>;
 
 export function useOptionSelectionFilter(categoryData?: CategoryData) {
-    const {intentState} = useSystemState()
+    const {intentState} = useIntentState()
 
     const categoryIds = useMemo(
         () => categoryLayereIds(categoryData),

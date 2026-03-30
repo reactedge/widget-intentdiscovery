@@ -7,6 +7,7 @@ import { useOptionLabelMap } from "../domain/useOptionLabelMap.ts";
 import type {AttributeFilters} from "../../integration/intent/types.ts";
 import type {EnrichedSuggestion, GraphqlProduct} from "../../types/infra/magento/product.types.ts";
 import {enrichSuggestions} from "../../services/mappers/suggestions/enrichSuggestions.ts";
+import {useIntentState} from "../../state/Intent/useIntentState.ts";
 
 export interface AiRecommendationRequest {
     intent: {
@@ -29,7 +30,8 @@ export function useAiRecommendations(
     productData: GraphqlProduct[] | undefined,
     enabled: boolean
 ) {
-    const {intentState, intentEngine} = useSystemState()
+    const {intentState} = useIntentState()
+    const {intentEngine} = useSystemState()
     const { attributeScore } = intentState;
 
     const [data, setData] = useState<AiRecommendationResponse | null>(null)
@@ -57,7 +59,7 @@ export function useAiRecommendations(
             activity('ai-recommendations', 'AI recommendations API payload', payload);
 
             const json = await fetchSuggestions(payload);
-            activity('ai-engine', 'AI Engine result', {json, productData})
+            activity('ai-engine', 'AI Engine Recommendations', {json, productData})
 
             const enriched = enrichSuggestions(
                 json.suggestions ?? [],

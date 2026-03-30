@@ -1,6 +1,6 @@
-import type {IntentState} from "../integration/intent/types.ts";
+import type {IntentEngineState} from "../integration/intent/types.ts";
 
-export function enrichWithIntent(attribute: any, intent: any) {
+export function enrichWithIntent(attribute: any, intent: IntentEngineState) {
     const intentScores =
         intent?.attributeScore?.[attribute.attribute_code] || {};
 
@@ -18,7 +18,7 @@ export function enrichWithIntent(attribute: any, intent: any) {
     };
 }
 
-export function intentToFilter(intentState: IntentState) {
+export function intentToFilter(intentState: IntentEngineState) {
     const { attributeScore } = intentState;
 
     const filter: Record<string, string[]> = {};

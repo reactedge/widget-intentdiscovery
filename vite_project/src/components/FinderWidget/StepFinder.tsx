@@ -1,9 +1,9 @@
 import { unescapeHtml } from "../../lib/string.ts";
 import { useFindAttributeOptionsByCode } from "../../hooks/domain/useFindAttributeOptionsByCode.tsx";
 import type {MagentoAggregationOption, MagentoProducts} from "../../hooks/infra/useProductAttributeLayer.tsx";
-import {useSystemState} from "../../state/System/useSystemState.ts";
 import {useInteractionState} from "../../state/Interaction/useInteractionState.ts";
 import {activity} from "../../activity";
+import {useIntentState} from "../../state/Intent/useIntentState.ts";
 
 interface StepFinderProps {
     optionCode: string
@@ -13,8 +13,7 @@ interface StepFinderProps {
 export const StepFinder: React.FC<StepFinderProps> = ({ optionCode, attributeLayerData }: StepFinderProps) => {
     const { setActiveAttribute, setFocusedOption } = useInteractionState()
     const { attributeData } = useFindAttributeOptionsByCode(optionCode, attributeLayerData)
-    const { setPreference } = useSystemState()
-    const {intentState} = useSystemState()
+    const { setPreference, intentState } = useIntentState()
 
     const handleOnClick = async (option: MagentoAggregationOption) => {
         setActiveAttribute(optionCode);

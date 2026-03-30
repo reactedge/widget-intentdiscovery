@@ -1,6 +1,6 @@
 export type AttributeFilters = Record<string, Record<string, number>>
 
-export type IntentState = {
+export type IntentEngineState = {
     intentText: string
     categoryScore: Record<string, number>
     attributeScore: AttributeFilters
