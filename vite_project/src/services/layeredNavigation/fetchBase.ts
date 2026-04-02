@@ -10,7 +10,7 @@ const baseCache = new Map()
 //     products: {items: GraphqlProduct[]}
 // }
 
-type ProductsResponse = {
+export type ProductsResponse = {
     products: MagentoProducts
 }
 

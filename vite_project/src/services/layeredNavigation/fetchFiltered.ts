@@ -1,11 +1,10 @@
 import {
-    LAYERER_ATTRIBUTE_DATA,
-    type MagentoProducts,
-    type ProductsResponse
+    LAYERER_ATTRIBUTE_DATA
 } from "../../hooks/infra/useMagentoLayeredData.tsx";
 import {getAttributesFilter} from "./buildFilter.ts";
 import type {GraphqlClient} from "../../lib/graphql.ts";
 import type {IntentEngineState} from "../../integration/intent/types.ts";
+import type {MagentoProducts, ProductsResponse} from "./fetchBase.ts";
 
 const filteredCache = new Map()
 

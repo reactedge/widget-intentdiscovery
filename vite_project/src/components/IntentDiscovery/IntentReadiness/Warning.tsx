@@ -37,15 +37,13 @@ export const Warning = ({
 
         // 4. Not enough results (below threshold)
         if (coveragePct < 100) {
-            if (coveragePct < 50) {
-                message = "Add more detail or refine your preferences"
-            }
-
             if (coveragePct < 80) {
                 message = "Getting closer — refine a bit more"
             }
 
-            message = "Almost there — just a bit more detail"
+            if (coveragePct < 50) {
+                message = "Add more detail or refine your preferences"
+            }
         }
 
         // 5. Enough results but too broad

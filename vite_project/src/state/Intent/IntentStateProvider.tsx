@@ -24,7 +24,7 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
         const base = attributeLayerData.baseTotalCount ?? 0
         const filtered = attributeLayerData.totalCount ?? 0
 
-        if (!base || base === filtered) {
+        if (!base || !filtered || base === filtered) {
             return 0
         }
 
@@ -37,21 +37,12 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
 
         const coverage = (currentCoverage) / fullCoverage
         const coveragePct = Math.round(coverage * 100)
-
+        console.log('getAiReadiness', coveragePct)
         return coveragePct
     }
 
     function transition(state: IntentEngineState, event: IntentEvent): IntentEngineState {
         switch (event.type) {
-            // case "RESULTS_UPDATED": {
-            //     const gap = getGapToAiReadiness(event.totalFiltered)
-            //
-            //     return {
-            //         ...state,
-            //         searchReady: gap <= 0 && event.totalFiltered > 0
-            //     }
-            // }
-
             case "INTERPRETATION_READY":
                 return { ...state,
                     intentInterpretationReady: true,

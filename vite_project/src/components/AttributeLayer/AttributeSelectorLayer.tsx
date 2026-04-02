@@ -5,7 +5,6 @@ import { AttributeTile } from "./AttributeTile.tsx";
 import { useTranslationState } from "../../state/Translation/useTranslationState.ts";
 import type { IntentDiscoveryDataConfig } from "../../domain/intent-discovery.types.ts";
 import { useInteractionState } from "../../state/Interaction/useInteractionState.ts";
-import {NoResult} from "../global/NoResult.tsx";
 import {useIntentState} from "../../state/Intent/useIntentState.ts";
 import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNavigation.tsx";
 import type {MergedAttribute} from "../../hooks/infra/useMagentoLayeredData.tsx";
@@ -35,8 +34,6 @@ export const AttributeSelectorLayer = ({
     }
 
     const isDisabled = intentState.status === "suggestionProcessing"
-
-    if (!attributeLayerData?.totalCount) return <NoResult />;
 
     return (
         <div className={`step-finder ${isDisabled ? 'step-finder--disabled' : ''}`}>

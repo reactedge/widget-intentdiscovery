@@ -66,18 +66,7 @@ export class IntentEngine {
     }
 
     private notify() {
-        // IMPORTANT: emit a new reference so React state updates reliably
-        const snapshot: IntentEngineState = {
-            intentText: this.state.intentText,
-            categoryScore: { ...this.state.categoryScore },
-            attributeScore: Object.fromEntries(
-                Object.entries(this.state.attributeScore).map(([k, v]) => [k, { ...(v as any) }])
-            ),
-            productScore: { ...this.state.productScore },
-            priceAffinity: { ...this.state.priceAffinity },
-            status: this.state.status
-        };
-
+        const snapshot: IntentEngineState = structuredClone(this.state);
         for (const listener of this.listeners) listener(snapshot);
     }
 

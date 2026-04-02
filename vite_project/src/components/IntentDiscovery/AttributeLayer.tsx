@@ -4,7 +4,6 @@ import type {IntentControllerState} from "../../domain/intent.types.ts";
 import {useAskAi} from "../../hooks/domain/useAiInterpretation.tsx";
 import {AttributeSelectorLayer} from "../AttributeLayer/AttributeSelectorLayer.tsx";
 import {IntentExplanation} from "../AttributeLayer/IntentExplanation.tsx";
-import {SearchSpinnerOverlay} from "../global/SearchSpinnerOverlay.tsx";
 import {useIntentState} from "../../state/Intent/useIntentState.ts";
 import {useAnalyseSearch} from "../../hooks/domain/useAnalyseSearch.tsx";
 import type {CategoryData} from "../../types/infra/magento/category.types.ts";
@@ -68,7 +67,7 @@ export const AttributeLayer = ({
         askAi()
     }
 
-    if (loading) return <SearchSpinnerOverlay />
+    if (loading) return null
 
     return (
             <div className="finder">

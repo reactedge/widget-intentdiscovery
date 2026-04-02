@@ -20,8 +20,6 @@ export type IntentEngineState = {
     intentInterpreted: boolean;
     intentInterpretationReady: boolean;
     searchReady: boolean;
-    initialTotalAggregations: number;
-    totalFilteredAggregations: number;
 }
 
 export type IntentSignal =

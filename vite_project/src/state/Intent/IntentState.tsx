@@ -10,7 +10,12 @@ const initialState: IntentEngineState = {
     attributeScore: {},
     productScore: {},
     priceAffinity: {},
-    status: 'idle'
+    status: 'idle',
+    recommendations: [],
+    resultCount: 0,
+    intentInterpreted: false,
+    intentInterpretationReady: false,
+    searchReady: false
 };
 export function loadIntentState(): IntentEngineState {
     try {
