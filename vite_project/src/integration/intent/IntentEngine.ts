@@ -10,7 +10,12 @@ export class IntentEngine {
         attributeScore: {},
         productScore: {},
         priceAffinity: {},
-        status: 'idle'
+        recommendations: [],
+        resultCount: 0,
+        status: 'idle',
+        intentInterpreted: false,
+        intentInterpretationReady: false,
+        searchReady: false,
     };
 
     private intentApiClient

@@ -1,24 +1,24 @@
-import type {MagentoAggregation} from "../hooks/infra/useProductAttributeLayer.tsx";
 import type {IntentDiscoveryDataConfig} from "../domain/intent-discovery.types.ts";
+import type {MergedAttribute} from "../hooks/infra/useMagentoLayeredData.tsx";
 
 export function getOrderedAttributes(
-    attributes: MagentoAggregation[],
+    attributes: MergedAttribute[],
     config: IntentDiscoveryDataConfig
-): MagentoAggregation[] {
+): MergedAttribute[] {
 
     const filtered = (attributes || [])
         .filter(attr =>
-            !config.attributeExcludedInLayer?.includes(attr.attribute_code)
+            !config.attributeExcludedInLayer?.includes(attr.code)
         )
         .map(attr => ({
             ...attr,
-            label: config.labelMap?.[attr.attribute_code] ?? attr.label
+            label: config.labelMap?.[attr.code] ?? attr.label
         }));
 
     const order = config.attributeOrder || [];
 
-    const ordered: MagentoAggregation[] = [];
-    const remaining = new Map(filtered.map(a => [a.attribute_code, a]));
+    const ordered: MergedAttribute[] = [];
+    const remaining = new Map(filtered.map(a => [a.code, a]));
 
     // bring contract attributes first
     order.forEach(code => {

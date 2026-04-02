@@ -5,6 +5,7 @@ import layer from "./intent-discovery.layer.css?inline";
 import message from "./intent-discovery.message.css?inline";
 import suggestions from "./intent-discovery.suggestions.css?inline";
 import overlay from "./intent-discovery.overlay.css?inline";
+import readiness from "./intent-discovery.readiness.css?inline";
 
 export const intentDiscoveryStyles = [
     styles,
@@ -13,5 +14,6 @@ export const intentDiscoveryStyles = [
     layer,
     suggestions,
     overlay,
-    message
+    message,
+    readiness
 ];

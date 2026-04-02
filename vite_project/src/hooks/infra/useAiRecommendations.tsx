@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSystemState } from "../../state/System/useSystemState.ts";
-import type { MagentoAggregation } from "./useProductAttributeLayer.tsx";
 import { activity } from "../../activity";
 import { buildAiRecommendationPayload } from "../../lib/ai-recommendations.ts";
 import { useOptionLabelMap } from "../domain/useOptionLabelMap.ts";
@@ -8,6 +7,7 @@ import type {AttributeFilters} from "../../integration/intent/types.ts";
 import type {EnrichedSuggestion, GraphqlProduct} from "../../types/infra/magento/product.types.ts";
 import {enrichSuggestions} from "../../services/mappers/suggestions/enrichSuggestions.ts";
 import {useIntentState} from "../../state/Intent/useIntentState.ts";
+import type {MergedAttribute} from "./useMagentoLayeredData.tsx";
 
 export interface AiRecommendationRequest {
     intent: {
@@ -26,7 +26,7 @@ export interface AiRecommendationResponse {
 }
 
 export function useAiRecommendations(
-    attributeData: MagentoAggregation[] | undefined,
+    attributeData: MergedAttribute[] | undefined,
     productData: GraphqlProduct[] | undefined,
     enabled: boolean
 ) {
@@ -39,6 +39,7 @@ export function useAiRecommendations(
     const [error, setError] = useState<Error | null>(null)
     const optionLabelMap = useOptionLabelMap(attributeData);
     const intentApiClient = intentEngine.getApiClient()
+    const { dispatch } = useIntentState()
 
     async function fetchSuggestions(payload: AiRecommendationRequest) {
         return intentApiClient.suggest(payload);
@@ -65,6 +66,11 @@ export function useAiRecommendations(
                 json.suggestions ?? [],
                 productData,
                 optionLabelMap
+            );
+
+            dispatch( enriched.length > 0 ?
+                { type: "SUGGESTION_SUCCESS", recommendations: enriched }:
+                { type: "SUGGESTION_EMPTY"}
             );
 
             setData({ suggestions: enriched ?? [] })

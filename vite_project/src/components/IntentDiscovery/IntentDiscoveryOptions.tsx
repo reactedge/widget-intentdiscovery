@@ -4,22 +4,23 @@ import { StepPriceFinder } from "../FinderWidget/StepPriceFinder.tsx";
 import { FinderRow } from "../FinderRow.tsx";
 import type { CategoryData } from "../../types/infra/magento/category.types.ts";
 import { activity } from "../../activity";
-import type {MagentoProducts} from "../../hooks/infra/useProductAttributeLayer.tsx";
 import {Icon} from "../AttributeLayer/Icon.tsx";
 import {useInteractionState} from "../../state/Interaction/useInteractionState.ts";
+import {useIntentState} from "../../state/Intent/useIntentState.ts";
+import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNavigation.tsx";
 
 export interface Props {
     categoryData: CategoryData
-    attributeLayerData: MagentoProducts
-    isSearching: boolean
+    attributeLayerData: MagentoLayeredNavigation
 }
 
 export const IntentDiscoveryOptions = ({
-       attributeLayerData,
-       isSearching
+       attributeLayerData
    }: Props) => {
     const { navigation } = useInteractionState().interactionState;
     const stepCode = navigation.activeAttribute
+    const { intentState } = useIntentState()
+    const isSearching = intentState.status === "suggestionProcessing"
 
     useEffect(() => {
         if (stepCode !== null) {

@@ -6,11 +6,11 @@ import type { CategoryData } from "../../types/infra/magento/category.types.ts";
 import {useFindIntentProducts} from "../domain/useIntentAttributes.tsx";
 import type {GraphqlProduct} from "../../types/infra/magento/product.types.ts";
 
-type ProductsResponse = {
+export type ProductsResponse = {
     products: {items: GraphqlProduct[]}
 }
 
-function buildProductQuery(dynamicFields: string) {
+export function buildProductQuery(dynamicFields: string) {
     return `
       query GetIntentProducts($filter: ProductAttributeFilterInput!) {
           products(filter: $filter) {           
