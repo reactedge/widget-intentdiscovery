@@ -1,8 +1,8 @@
 import { useMemo } from "react"
 import { getOrderedAttributes } from "../../lib/attributes"
-import type {MagentoAggregation} from "../infra/useProductAttributeLayer"
 import type { IntentDiscoveryDataConfig } from "../../domain/intent-discovery.types"
 import {useIntentState} from "../../state/Intent/useIntentState.ts";
+import type {MergedAttribute} from "../infra/useMagentoLayeredData.tsx";
 
 export function useFindIntentProducts() {
     const {intentState} = useIntentState()
@@ -12,7 +12,7 @@ export function useFindIntentProducts() {
 }
 
 export function useIntentAttributes(
-    attributeData: MagentoAggregation[],
+    attributeData: MergedAttribute[],
     config: IntentDiscoveryDataConfig
 ) {
     return useMemo(

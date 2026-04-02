@@ -1,4 +1,4 @@
-import type { MagentoAggregation } from "../../hooks/infra/useProductAttributeLayer.tsx";
+import type {MergedAttribute} from "../../hooks/infra/useMagentoLayeredData.tsx";
 
 export type IntentRecord = Record<string, any> | undefined;
 
@@ -23,13 +23,13 @@ export function isAttributeSelected(
 
 export function getSelectedValues(
     attributeCode: string,
-    aggregations: MagentoAggregation[],
+    aggregations: MergedAttribute[],
     intent?: IntentRecord
 ): string[] {
     const scores = intent?.attributeScore?.[attributeCode];
     if (!scores) return [];
 
-    const aggregation = aggregations.find(a => a.attribute_code === attributeCode);
+    const aggregation = aggregations.find(a => a.code === attributeCode);
 
     return Object.entries(scores)
         .map(([val]) => {
@@ -41,21 +41,21 @@ export function getSelectedValues(
 }
 
 export function getSelectedAttributes(
-    aggregations: MagentoAggregation[] | undefined,
+    aggregations: MergedAttribute[] | undefined,
     intent?: IntentRecord
 ) {
     return (
-        aggregations?.filter((attr: MagentoAggregation) =>
-            isAttributeSelected(attr.attribute_code, intent)
+        aggregations?.filter((attr: MergedAttribute) =>
+            isAttributeSelected(attr.code, intent)
         ) || []
     );
 }
 
 export function useSelectedPreferences(
-    aggregations: MagentoAggregation[],
+    attributes: MergedAttribute[],
     intent?: IntentRecord
 ) {
-    const selected = getSelectedAttributes(aggregations, intent);
+    const selected = getSelectedAttributes(attributes, intent);
 
     const valueFor = (code: string): string | null => {
         const scores = intent?.attributeScore?.[code];
@@ -66,7 +66,7 @@ export function useSelectedPreferences(
 
         if (!bestValue) return null;
 
-        const aggregation = aggregations.find(a => a.attribute_code === code);
+        const aggregation = attributes.find(a => a.code === code);
         if (!aggregation) return null;
 
         const valid = aggregation.options.find(o => String(o.value) === String(bestValue));
@@ -75,7 +75,7 @@ export function useSelectedPreferences(
     };
 
     const displayFor = (code: string): string[] => {
-        return getSelectedValues(code, aggregations, intent);
+        return getSelectedValues(code, attributes, intent);
     };
 
     return { selected, valueFor, displayFor };

@@ -1,20 +1,18 @@
-import {
-    type MagentoAggregation,
-    type MagentoProducts,
-} from "../infra/useProductAttributeLayer.tsx";
 import {enrichWithIntent} from "../../lib/option-match.ts";
 import {useIntentState} from "../../state/Intent/useIntentState.ts";
+import type {MagentoLayeredNavigation} from "./useLayeredNavigation.tsx";
+import type {MergedAttribute} from "../infra/useMagentoLayeredData.tsx";
 
-export const useFindAttributeOptionsByCode = (code: string, attributeLayerData: MagentoProducts) => {
+export const useFindAttributeOptionsByCode = (code: string, attributeLayerData: MagentoLayeredNavigation) => {
     const {intentState} = useIntentState()
 
-    const result = attributeLayerData?.aggregations.filter((attribute: MagentoAggregation) => attribute.attribute_code === code).map((attribute) => {
+    const result = attributeLayerData?.attributes?.filter((attribute: MergedAttribute) => attribute.code === code).map((attribute) => {
         const enrichedAttribute = enrichWithIntent(attribute, intentState)
         return enrichedAttribute
     })
 
     return {
-        totalCount: attributeLayerData?.total_count,
+        totalCount: attributeLayerData?.totalCount,
         attributeData: result && result?.length>0? result[0]: null
     };
 }

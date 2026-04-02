@@ -1,27 +1,27 @@
-import type {MagentoAggregation} from "../infra/useProductAttributeLayer.tsx";
 import {useMemo} from "react";
 import type {OptionLabelMap} from "../../domain/intent-discovery.types.ts";
+import type {MergedAttribute} from "../infra/useMagentoLayeredData.tsx";
 export type E = Map<string, Map<string, string>>
 
 export function useOptionLabelMap(
-    aggregations?: MagentoAggregation[]
-) {
+    attributes?: MergedAttribute[] | null
+): OptionLabelMap {
     return useMemo(() => {
-        if (!aggregations) return new Map();
+        if (!attributes) return new Map();
 
         const map: OptionLabelMap = new Map<string, Map<string, string>>();
 
-        for (const agg of aggregations) {
+        for (const attribute of attributes) {
             const optionMap = new Map<string, string>();
 
-            for (const opt of agg.options) {
+            for (const opt of attribute.options) {
                 optionMap.set(opt.value, opt.label);
             }
 
-            map.set(agg.attribute_code, optionMap);
+            map.set(attribute.code, optionMap);
         }
 
         return map;
 
-    }, [aggregations]);
+    }, [attributes]);
 }

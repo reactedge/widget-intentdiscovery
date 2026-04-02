@@ -4,20 +4,19 @@ import { useIntentAttributes } from "../../hooks/domain/useIntentAttributes.tsx"
 import { AttributeTile } from "./AttributeTile.tsx";
 import { useTranslationState } from "../../state/Translation/useTranslationState.ts";
 import type { IntentDiscoveryDataConfig } from "../../domain/intent-discovery.types.ts";
-import type { MagentoAggregation } from "../../hooks/infra/useProductAttributeLayer.tsx";
 import { useInteractionState } from "../../state/Interaction/useInteractionState.ts";
 import {NoResult} from "../global/NoResult.tsx";
 import {useIntentState} from "../../state/Intent/useIntentState.ts";
+import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNavigation.tsx";
+import type {MergedAttribute} from "../../hooks/infra/useMagentoLayeredData.tsx";
 
 type Props = {
-    isDisabled: boolean
-    aggregations: MagentoAggregation[]
+    attributeLayerData: MagentoLayeredNavigation
     config: IntentDiscoveryDataConfig
 }
 
 export const AttributeSelectorLayer = ({
-    isDisabled,
-    aggregations,
+    attributeLayerData,
     config
 }: Props) => {
     const { setActiveAttribute } = useInteractionState();
@@ -25,22 +24,24 @@ export const AttributeSelectorLayer = ({
     const {intentState} = useIntentState()
     const { interactionState } = useInteractionState()
 
-    const allAttributes = useIntentAttributes(aggregations, config)
+    const allAttributes = useIntentAttributes(attributeLayerData.attributes as MergedAttribute[], config)
     const visibleAttributes = showAll ? allAttributes : allAttributes.slice(0, 3);
     const { displayFor } =
-        useSelectedPreferences(aggregations, intentState);
+        useSelectedPreferences(attributeLayerData.attributes as MergedAttribute[], intentState);
     const { t } = useTranslationState()
 
     const isAttributeSelected = (code: string) => {
         return interactionState?.navigation.activeAttribute === code;
     }
 
-    if (!aggregations?.length) return <NoResult />;
+    const isDisabled = intentState.status === "suggestionProcessing"
+
+    if (!attributeLayerData?.totalCount) return <NoResult />;
 
     return (
         <div className={`step-finder ${isDisabled ? 'step-finder--disabled' : ''}`}>
             {visibleAttributes.map((attr) => {
-                const code = attr.attribute_code;
+                const code = attr.code;
                 const isSelected = isAttributeSelected(code);
 
                 return (

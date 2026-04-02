@@ -1,9 +1,9 @@
-import type {MagentoAggregation} from "../../hooks/infra/useProductAttributeLayer.tsx";
 import {Icon} from "./Icon.tsx";
 import {decodeHtmlEntities} from "../../lib/string.ts";
+import type {MergedAttribute} from "../../hooks/infra/useMagentoLayeredData.tsx";
 
 type AttributeTileProps = {
-    attr: MagentoAggregation;
+    attr: MergedAttribute;
     isSelected: boolean;
     value?: string[];
     onClick: () => void;
@@ -16,7 +16,7 @@ export const AttributeTile = ({ attr, isSelected, value, onClick }: AttributeTil
     return (
         <div
             className="choice-tile"
-            data-intent-card={attr.attribute_code}
+            data-intent-card={attr.code}
             data-intent-active={isSelected}
             data-intent-activated={value && value?.length > 0}
             onClick={onClick}
@@ -34,7 +34,7 @@ export const AttributeTile = ({ attr, isSelected, value, onClick }: AttributeTil
                 )}
             </span>}
 
-            <Icon attribute_code={attr.attribute_code}/>
+            <Icon attribute_code={attr.code}/>
         </div>
     )
 }

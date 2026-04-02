@@ -1,9 +1,9 @@
 import type {AttributeFilters, IntentEngineState} from "../integration/intent/types.ts";
 import type {AiRecommendationRequest} from "../hooks/infra/useAiRecommendations.tsx";
-import type {MagentoAggregation} from "../hooks/infra/useProductAttributeLayer.tsx";
 import type {AiInterpretationRequest} from "../hooks/infra/useAiInterpreter.tsx";
 import type {IntentDiscoveryDataConfig, OptionLabelMap} from "../domain/intent-discovery.types.ts";
 import type {GraphqlProduct} from "../types/infra/magento/product.types.ts";
+import type {MergedAttribute} from "../hooks/infra/useMagentoLayeredData.tsx";
 
 export function buildAiRecommendationPayload(
     rawSignals: AttributeFilters,
@@ -33,7 +33,7 @@ export function buildAiRecommendationPayload(
 
 export function buildAiInterpretationPayload(
     intentState: IntentEngineState,
-    aggregations: MagentoAggregation[],
+    mergedAttributes: MergedAttribute[],
     intentText: string,
     optionLabelMap: OptionLabelMap,
     config: IntentDiscoveryDataConfig
@@ -43,17 +43,17 @@ export function buildAiInterpretationPayload(
 
     const signals = buildIntentSignals(rawSignals, optionLabelMap);
 
-    const attributes = aggregations
+    const attributes = mergedAttributes
         .filter(attr =>
-            !config.attributeExcludedInLayer?.includes(attr.attribute_code)
+            !config.attributeExcludedInLayer?.includes(attr.code)
         ).
         map(attr => ({
-            code: attr.attribute_code,
+            code: attr.code,
             label: attr.label,
             options: attr.options.map(option => ({
                 label: option.label,
                 value: option.value,
-                count: option.count
+                count: option.filteredCount
             }))
         }));
 

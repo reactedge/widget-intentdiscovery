@@ -1,44 +1,71 @@
-import { useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import type {IntentDiscoveryDataConfig} from "../../domain/intent-discovery.types.ts";
-import type {MagentoAggregation} from "../../hooks/infra/useProductAttributeLayer.tsx";
 import type {IntentControllerState} from "../../domain/intent.types.ts";
 import {useAskAi} from "../../hooks/domain/useAiInterpretation.tsx";
 import {AttributeSelectorLayer} from "../AttributeLayer/AttributeSelectorLayer.tsx";
 import {IntentExplanation} from "../AttributeLayer/IntentExplanation.tsx";
 import {SearchSpinnerOverlay} from "../global/SearchSpinnerOverlay.tsx";
 import {useIntentState} from "../../state/Intent/useIntentState.ts";
+import {useAnalyseSearch} from "../../hooks/domain/useAnalyseSearch.tsx";
+import type {CategoryData} from "../../types/infra/magento/category.types.ts";
+import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNavigation.tsx";
 
 type Props = {
     config: IntentDiscoveryDataConfig
     intent: IntentControllerState
-    searchPossible: boolean
-    aggregations: MagentoAggregation[],
-    disabled: boolean
+    attributeLayerData: MagentoLayeredNavigation,
+    categoryData: CategoryData
 }
 
 export const AttributeLayer = ({
-       config,
-       intent,
-       searchPossible,
-       aggregations,
-       disabled
-    }: Props) => {
+   config,
+   intent,
+   attributeLayerData,
+   categoryData
+}: Props) => {
     const [loading, setLoading] = useState(false);
-    const { setIntentStatus } = useIntentState()
+    const { dispatch, intentState } = useIntentState()
 
     const askAi = useAskAi({
         intent,
-        aggregations,
+        attributeLayerData,
         config,
         setLoading
     })
 
-    const handleAsk = () => {
-        if (intent.text?.trim()) {
-            askAi()
-        } else {
-            setIntentStatus("readyToSearch")
+    const askAiRecommendations = useAnalyseSearch({
+        attributeLayerData,
+        categoryData,
+        intentState
+    });
+
+    useEffect(() => {
+        if (intentState.status === "readyToRecommend") {
+            askAiRecommendations()
         }
+    }, [intentState.status])
+
+    const prevRemaining = useRef<number | null>(null);
+
+    useEffect(() => {
+        const prev = prevRemaining.current;
+        const current = intent.remainingChars;
+
+        const crossedThreshold =
+            prev !== null &&
+            prev > 0 &&
+            current <= 0;
+
+        if (crossedThreshold) {
+            dispatch({ type: "INTERPRETATION_READY" });
+        }
+
+        prevRemaining.current = current;
+    }, [intent.remainingChars, intent.text]);
+
+    const handleAsk = () => {
+        dispatch({ type: "INTERPRETATION_READY" })
+        askAi()
     }
 
     if (loading) return <SearchSpinnerOverlay />
@@ -46,15 +73,17 @@ export const AttributeLayer = ({
     return (
             <div className="finder">
                 <IntentExplanation
+                    attributeLayerData={attributeLayerData}
+                    intent={intent}
                     remainingChars={intent.remainingChars}
-                    searchPossible={searchPossible}
                     onAsk={handleAsk}
                 />
                 <AttributeSelectorLayer
-                    isDisabled={disabled}
-                    aggregations={aggregations}
+                    attributeLayerData={attributeLayerData}
                     config={config}
                 />
             </div>
     );
 };
+
+

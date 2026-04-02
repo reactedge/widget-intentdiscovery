@@ -1,9 +1,10 @@
 import {useFindAttributeOptionsByCode} from "../../hooks/domain/useFindAttributeOptionsByCode.tsx";
 import {formatRange} from "../../lib/price.ts";
-import type {MagentoAggregationOption, MagentoProducts} from "../../hooks/infra/useProductAttributeLayer.tsx";
+import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNavigation.tsx";
+import type {MergedAttributeOption} from "../../hooks/infra/useMagentoLayeredData.tsx";
 
 interface StepFinderProps {
-    attributeLayerData: MagentoProducts
+    attributeLayerData: MagentoLayeredNavigation
 }
 
 export const StepPriceFinder = ({attributeLayerData}: StepFinderProps) => {
@@ -16,7 +17,7 @@ export const StepPriceFinder = ({attributeLayerData}: StepFinderProps) => {
 
     return (
         <div className="step-finder">
-            {attributeData?.options.map((option: MagentoAggregationOption) => (
+            {attributeData?.options.map((option: MergedAttributeOption) => (
                 <label
                     key={option.value}
                     className="choice-tile"
