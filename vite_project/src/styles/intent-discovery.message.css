@@ -83,6 +83,7 @@
 @media (max-width: 640px) {
     .intent-explanations {
         flex-direction: column;
+        gap:0;
     }
 
     .intent-ai-threshold {
@@ -94,7 +95,9 @@
     }
 
     .filter-apply-button {
+        position: relative;
         width: 100%;
         right: 0;
+        top: 0;
     }
 }

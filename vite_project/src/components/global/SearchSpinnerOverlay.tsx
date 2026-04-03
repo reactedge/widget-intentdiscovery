@@ -6,7 +6,7 @@ export const SearchSpinnerOverlay = () => {
     const {t} = useTranslationState()
 
     return (
-        <div className="intent-evaluation-overlay">
+        <div className="intent-search-overlay">
             <Spinner/>
             <div className="intent-text">{t("Searching your best match…")}</div>
 

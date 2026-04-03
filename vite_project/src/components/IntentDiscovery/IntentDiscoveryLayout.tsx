@@ -7,6 +7,7 @@ import {useIntentState} from "../../state/Intent/useIntentState.ts";
 import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNavigation.tsx";
 import {IntentDiscoveryOptions} from "./IntentDiscoveryOptions.tsx";
 import {ProductRecommendations} from "./ProductRecommendations.tsx";
+import {SearchSpinnerOverlay} from "../global/SearchSpinnerOverlay.tsx";
 
 export interface Props {
     config: IntentDiscoveryDataConfig
@@ -18,8 +19,13 @@ export const IntentDiscoveryLayout = ({ config, categoryData, attributeLayerData
     const { intent } = useIntentController(config)
     const { intentState } = useIntentState()
 
+    const isProcessing =
+        intentState.status === "suggestionProcessing" ||
+        intentState.status === "readyToRecommend";
+
     return (
         <div className="intent-widget">
+            {isProcessing && <SearchSpinnerOverlay />}
             <div className={intentState.status === "suggestionSent" ? "re-intent-layout re-intent-layout--two" : "re-intent-layout"}>
                 <div className="re-intent-col re-intent-col--left">
                     <IntentMessage intent={intent} />

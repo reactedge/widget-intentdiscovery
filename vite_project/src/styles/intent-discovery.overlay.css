@@ -1,4 +1,4 @@
-.intent-evaluation-overlay {
+.intent-evaluation-overlay, .intent-search-overlay {
     display: flex;
     flex-direction: column;
     align-items: center;
