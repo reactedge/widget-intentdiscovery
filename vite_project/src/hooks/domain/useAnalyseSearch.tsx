@@ -17,36 +17,6 @@ type UseAskAnalyseSearch = {
     intentState: IntentEngineState
 };
 
-// export function useAnalyseSearch({
-//      attributes,
-//      categoryData
-//  }: UseAskAnalyseSearch) {
-//     const { intentState } = useIntentState()
-//     const enabled = intentState.status === "readyToRecommend"
-//
-//     console.log('useAnalyseSearch', enabled)
-//
-//     const {
-//         productData,
-//         productLoading,
-//         productError,
-//     } = useFindProducts(categoryData, enabled);
-//
-//     const {
-//         data: aiRecommendation,
-//         loading: aiLoading,
-//         error: aiError,
-//     } = useAiRecommendations(attributes, productData, enabled);
-//
-//     const searchLoading = productLoading || aiLoading;
-//
-//     return {
-//         aiRecommendation,
-//         searchLoading,
-//         error: productError ?? aiError,
-//     };
-// }
-
 export type AnalyseSearchResult = {
     aiRecommendation: EnrichedSuggestion[] | null,
     searchLoading: boolean,

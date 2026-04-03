@@ -15,13 +15,11 @@ export const StepFinder: React.FC<StepFinderProps> = ({ optionCode, attributeLay
     const { setActiveAttribute, setFocusedOption } = useInteractionState()
     const { attributeData } = useFindAttributeOptionsByCode(optionCode, attributeLayerData)
     const { setPreference, intentState } = useIntentState()
-    //const { dispatch } = useIntentState()
 
     const handleOnClick = async (option: MergedAttributeOption) => {
         setActiveAttribute(optionCode);
         setPreference(optionCode, option.value)
         setFocusedOption(option.value)
-        //dispatch( { type : "FILTER_CHANGED", attributeLayerData})
 
         activity('intent-discovery-option', 'Intent Option Selection', {intentState, optionCode, value: option.value});
     };

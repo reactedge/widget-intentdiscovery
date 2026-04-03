@@ -5,6 +5,7 @@ import type {IntentSignal, IntentEngineState, IntentStatus, IntentEvent} from ".
 import {useSystemState} from "../System/useSystemState.ts";
 import type {IntentDiscoveryDataConfig} from "../../domain/intent-discovery.types.ts";
 import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNavigation.tsx";
+import {activity} from "../../activity";
 
 interface IntentStateProviderProps {
     children: ReactNode;
@@ -37,7 +38,6 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
 
         const coverage = (currentCoverage) / fullCoverage
         const coveragePct = Math.round(coverage * 100)
-        console.log('getAiReadiness', coveragePct)
         return coveragePct
     }
 
@@ -159,7 +159,7 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
     }, [intentEngine]);
 
     useEffect(() => {
-        console.log('state changed', intentState.status)
+        activity('intent-state', 'Intent State Update', {status: intentState.status});
     }, [intentState.status])
 
     return (
