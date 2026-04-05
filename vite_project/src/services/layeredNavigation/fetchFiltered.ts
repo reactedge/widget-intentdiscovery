@@ -1,10 +1,10 @@
 import {
-    LAYERER_ATTRIBUTE_DATA
+    FILTER_LAYERED_ATTRIBUTE_DATA
 } from "../../hooks/infra/useMagentoLayeredData.tsx";
 import {getAttributesFilter} from "./buildFilter.ts";
 import type {GraphqlClient} from "../../lib/graphql.ts";
 import type {IntentEngineState} from "../../integration/intent/types.ts";
-import type {MagentoProducts, ProductsResponse} from "./fetchBase.ts";
+import type {MagentoProducts, ProductAttributesResponse} from "../../hooks/infra/useProductFilteredAttributeLayer.tsx";
 
 const filteredCache = new Map()
 
@@ -23,8 +23,8 @@ export async function fetchFiltered(
     }
 
     const filter = getAttributesFilter(categoryIds, intentState);
-    const result = await graphqlClient<ProductsResponse>(
-        LAYERER_ATTRIBUTE_DATA,
+    const result = await graphqlClient<ProductAttributesResponse>(
+        FILTER_LAYERED_ATTRIBUTE_DATA,
         { filter }
     );
     filteredCache.set(key, structuredClone(result?.products))

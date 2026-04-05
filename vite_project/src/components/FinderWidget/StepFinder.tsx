@@ -27,6 +27,34 @@ export const StepFinder: React.FC<StepFinderProps> = ({ optionCode, attributeLay
     const selectedMap = intentState.attributeScore?.[optionCode] || {};
     const isOptionSelected = (value: string) => value in selectedMap;
 
+    const renderOptionVisual = (option: MergedAttributeOption) => {
+        if (!option.visual) return null
+
+        const { type, value } = option.visual
+
+        if (type === "color") {
+            //return 'color to show ' + option.visual.value
+            return (
+                <span
+                    className="swatch swatch--color"
+                    style={{backgroundColor: value}}
+                />
+            )
+        }
+
+        /*if (type === "swatch") {
+            return (
+                <img
+                    src={value}
+                    alt={option.label}
+                    className="w-4 h-4 rounded-full object-cover"
+                />
+            )
+        }*/
+
+        return null
+    }
+
     return (
             <div className="step-finder">
                 {attributeData?.options.map((option: MergedAttributeOption) => (
@@ -45,6 +73,8 @@ export const StepFinder: React.FC<StepFinderProps> = ({ optionCode, attributeLay
                             onClick={() => handleOnClick(option)}
                             readOnly
                         />
+
+                        {renderOptionVisual(option)}
 
                         <span className={`choice-tile__label ${isOptionSelected(option.value) ? 'choice-tile__label--active' : ''}`}>
                             {unescapeHtml(option.label)} ({option.filteredCount})

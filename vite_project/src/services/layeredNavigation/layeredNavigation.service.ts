@@ -62,7 +62,16 @@ export function mergeLayerData(
                     label: baseOpt.label,
                     totalCount: baseOpt.count,
                     filteredCount,
-                    isAvailable: filteredCount > 0
+                    isAvailable: filteredCount > 0,
+                    visual: baseOpt.swatch_data
+                        ? {
+                            type:
+                                baseOpt.swatch_data.type === "ColorSwatchData"
+                                    ? "color"
+                                    : "image",
+                            value: baseOpt.swatch_data.value,
+                        }
+                        : undefined
                 }
             })
         }
