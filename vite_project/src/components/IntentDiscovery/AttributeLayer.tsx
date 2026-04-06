@@ -8,6 +8,7 @@ import {useIntentState} from "../../state/Intent/useIntentState.ts";
 import {useAnalyseSearch} from "../../hooks/domain/useAnalyseSearch.tsx";
 import type {CategoryData} from "../../types/infra/magento/category.types.ts";
 import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNavigation.tsx";
+import {getFiltersHash} from "../../lib/attributes.ts";
 
 type Props = {
     config: IntentDiscoveryDataConfig
@@ -43,6 +44,27 @@ export const AttributeLayer = ({
             askAiRecommendations()
         }
     }, [intentState.status])
+
+    useEffect(() => {
+        if (intentState.status === "suggestionLoaded") return;
+
+        const stored = sessionStorage.getItem("reactedge:suggestions");
+
+        if (!stored) return;
+
+        try {
+            const parsed = JSON.parse(stored);
+
+            const currentHash = getFiltersHash(intentState.attributeScore);
+
+            if (parsed.filtersHash === currentHash) {
+                sessionStorage.removeItem("reactedge:suggestions")
+                dispatch({type: "SUGGESTION_LOAD", recommendations: parsed.recommendations, filters: parsed.filters, intent: parsed.intent });
+            }
+        } catch (e) {
+            // fail silently
+        }
+    }, [intentState.status, intentState.attributeScore]);
 
     const prevRemaining = useRef<number | null>(null);
 

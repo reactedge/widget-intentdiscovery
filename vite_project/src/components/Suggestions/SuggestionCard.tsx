@@ -1,5 +1,6 @@
 import {formatPrice} from "../../lib/price.ts";
 import type {EnrichedSuggestion} from "../../types/infra/magento/product.types.ts";
+import {unescapeHtml} from "../../lib/string.ts";
 
 export const SuggestionCard: React.FC<{ suggestion: EnrichedSuggestion }> = ({ suggestion }) => {
     const content = (
@@ -25,7 +26,7 @@ export const SuggestionCard: React.FC<{ suggestion: EnrichedSuggestion }> = ({ s
                         .slice(0, 4)
                         .map(({attr, value}) => (
                             <span key={`${attr}-${value}`}>
-                                {value}
+                                {unescapeHtml(value)}
                               </span>
                         ))}
                 </div>

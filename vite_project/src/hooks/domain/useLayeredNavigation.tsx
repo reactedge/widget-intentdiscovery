@@ -5,6 +5,7 @@ import type {IntentEngineState} from "../../integration/intent/types.ts";
 import type {MergedAttribute} from "../infra/useMagentoLayeredData.tsx";
 import {useSystemState} from "../../state/System/useSystemState.ts";
 import {getError} from "../../lib/error.ts";
+import type {IntentDiscoveryDataConfig} from "../../domain/intent-discovery.types.ts";
 
 export type MagentoLayeredNavigation = {
     attributes: MergedAttribute[] | null
@@ -21,7 +22,8 @@ type UseLayeredNavigationResult = {
 
 export const useLayeredNavigation = (
     categoryData: CategoryData,
-    intentState: IntentEngineState
+    intentState: IntentEngineState,
+    config: IntentDiscoveryDataConfig
 ): UseLayeredNavigationResult => {
     const { graphqlClient } = useSystemState()
 
@@ -37,7 +39,8 @@ export const useLayeredNavigation = (
             const data = await getLayeredNavigation(
                 categoryData,
                 intentState,
-                graphqlClient
+                graphqlClient,
+                config
             )
 
             if (isCancelled?.()) return

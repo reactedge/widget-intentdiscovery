@@ -15,10 +15,11 @@ type LoaderProps = {
 
 export const IntentDiscoveryLoader = ({ config, categoryData }: LoaderProps) => {
     const { intentState } = useIntentState()
+
     const {
         attributeLayerData,
         attributeLayerLoading, attributeLayerError
-    } = useLayeredNavigation(categoryData, intentState)
+    } = useLayeredNavigation(categoryData, intentState, config)
 
     if (attributeLayerLoading) return <SpinnerOverlay />
     if (attributeLayerError) return <ErrorState error={attributeLayerError} />

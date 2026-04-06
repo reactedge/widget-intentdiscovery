@@ -3,14 +3,14 @@ import {stripHtml} from "../../lib/string.ts";
 import type {OptionLabelMap} from "../../domain/intent-discovery.types.ts";
 
 export function mapProduct(p: GraphqlProduct, optionLabelMap: OptionLabelMap): BaseProduct | null {
-    if (!p.small_image ||  !p.price_range) return null
+    if (!p.matched_variant_image.url ||  !p.price_range) return null
 
     return {
         sku: p.sku,
         title: p.name,
         description: stripHtml(p.short_description?.html),
         url: `/${p.url_key}`,
-        imageUrl: p.small_image.url,
+        imageUrl: p.matched_variant_image.url,
         price: p.price_range.minimum_price?.final_price,
         attributes: extractAttributes(p, optionLabelMap)
     }

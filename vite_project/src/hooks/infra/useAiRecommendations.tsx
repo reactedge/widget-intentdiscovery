@@ -69,7 +69,7 @@ export function useAiRecommendations(
             );
 
             dispatch( enriched.length > 0 ?
-                { type: "SUGGESTION_SUCCESS", recommendations: enriched }:
+                { type: "SUGGESTION_SUCCESS", recommendations: enriched, filters: attributeScore, intent: intentState.intentText  }:
                 { type: "SUGGESTION_EMPTY"}
             );
 

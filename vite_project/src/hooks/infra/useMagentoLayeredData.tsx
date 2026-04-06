@@ -10,9 +10,13 @@ export type MergedAttributeOption = {
     totalCount: number
     filteredCount: number
     isAvailable: boolean
+    visual?: {
+        type: "color" | "image"
+        value: string
+    }
 }
 
-export const LAYERER_ATTRIBUTE_DATA = `
+export const LAYERED_ATTRIBUTE_DATA = `
   query MagentoProducts($filter: ProductAttributeFilterInput!) {
       products(filter: $filter) {
         total_count
@@ -24,6 +28,10 @@ export const LAYERER_ATTRIBUTE_DATA = `
             count
             label
             value
+            swatch_data {
+                value
+                type
+            }
           }
         }
       }

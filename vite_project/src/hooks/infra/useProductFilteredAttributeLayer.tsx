@@ -26,6 +26,10 @@ export interface MagentoAggregationOption {
     count: number;
     label: string;
     value: string;
+    swatch_data?: {
+        value: string // "#000000" OR image URL depending on type
+        type: "ColorSwatchData" | "ImageSwatchData"
+    } | null
 }
 
 export interface MagentoAggregation {
@@ -40,7 +44,7 @@ export interface MagentoProducts {
     aggregations: MagentoAggregation[];
 };
 
-type ProductAttributesResponse = {
+export type ProductAttributesResponse = {
     products: MagentoProducts;
 }
 

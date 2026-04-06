@@ -12,7 +12,10 @@
 }
 
 .choice-tile {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
     padding: 14px 16px;
 
     border: 1px solid #e5e5e5;
@@ -87,6 +90,20 @@
 
 .choice-tile input:checked {
     /* parent highlight */
+}
+
+.swatch {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+.swatch--color {
+    /* backgroundColor injected inline */
 }
 
 .choice-tile:has(input:checked) {

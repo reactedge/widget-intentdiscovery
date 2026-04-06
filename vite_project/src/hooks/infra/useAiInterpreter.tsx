@@ -14,12 +14,12 @@ export type AiInterpretationRequest = {
     }[]
 }
 
+export type AttributeFilter = {
+    "attribute": string,
+    "value" : string,
+    "label": string
+}
+
 export type AiInterpretationResponse = {
-    filters: [
-        {
-            "attribute": string,
-            "value" : string,
-            "label": string
-        }
-    ]
+    filters: AttributeFilter[]
 }

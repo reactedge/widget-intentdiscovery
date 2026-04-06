@@ -18,35 +18,6 @@ export type AnalyseSearchParams = {
     intentState: IntentEngineState
 }
 
-// export async const analyseSearch = ({
-//         intentEngine,
-//         attributeScore,
-//         attributes,
-//         optionLabelMap,
-//         filter,
-//         intentState,
-//         graphqlClient
-//     }: AnalyseSearchParams
-// ) => {
-//     const dynamicAttributes = getDynamicAttributes(intentState)
-//     const intentApiClient = intentEngine.getApiClient()
-//
-//     const products = await findProducts({
-//         filter,
-//         dynamicAttributes,
-//         graphqlClient
-//     })
-//
-//     const ai = await fetchRecommendations({
-//             attributeScore,
-//             attributes,
-//             productData: products,
-//             optionLabelMap,
-//             intentApiClient
-//     })
-//
-//     return { products, ai }
-// }
 export async function analyseSearch(params: AnalyseSearchParams) {
     const products = await findProducts(params)
 
@@ -56,8 +27,4 @@ export async function analyseSearch(params: AnalyseSearchParams) {
     })
 
     return { products, ai }
-}
-
-export async function runAnalyseSearch(params: AnalyseSearchParams) {
-    return analyseSearch(params)
 }

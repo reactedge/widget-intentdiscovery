@@ -14,18 +14,36 @@ interface StepFinderProps {
 export const StepFinder: React.FC<StepFinderProps> = ({ optionCode, attributeLayerData }: StepFinderProps) => {
     const { setActiveAttribute, setFocusedOption } = useInteractionState()
     const { attributeData } = useFindAttributeOptionsByCode(optionCode, attributeLayerData)
-    const { setPreference, intentState } = useIntentState()
+    const { setPreference, intentState, dispatch } = useIntentState()
 
     const handleOnClick = async (option: MergedAttributeOption) => {
         setActiveAttribute(optionCode);
         setPreference(optionCode, option.value)
         setFocusedOption(option.value)
+        dispatch({type: "FILTER_CHANGED", attributeCode: optionCode, optionValue: option.value})
 
         activity('intent-discovery-option', 'Intent Option Selection', {intentState, optionCode, value: option.value});
     };
 
     const selectedMap = intentState.attributeScore?.[optionCode] || {};
     const isOptionSelected = (value: string) => value in selectedMap;
+
+    const renderOptionVisual = (option: MergedAttributeOption) => {
+        if (!option.visual) return null
+
+        const { type, value } = option.visual
+
+        if (type === "color") {
+            return (
+                <span
+                    className="swatch swatch--color"
+                    style={{backgroundColor: value}}
+                />
+            )
+        }
+
+        return null
+    }
 
     return (
             <div className="step-finder">
@@ -45,6 +63,8 @@ export const StepFinder: React.FC<StepFinderProps> = ({ optionCode, attributeLay
                             onClick={() => handleOnClick(option)}
                             readOnly
                         />
+
+                        {renderOptionVisual(option)}
 
                         <span className={`choice-tile__label ${isOptionSelected(option.value) ? 'choice-tile__label--active' : ''}`}>
                             {unescapeHtml(option.label)} ({option.filteredCount})
