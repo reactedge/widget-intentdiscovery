@@ -43,8 +43,9 @@ export const useAskAi = ({
             intentApiClient,
             setLoading,
             onSuccess: (json) => {
-                resetPreference()
+                //dispatch({ type: "INTERPRETATION_DONE", filters: json.filters, intent: payload.intent.text});
                 dispatch({ type: "INTERPRETATION_DONE"});
+                resetPreference()
 
                 if (!json?.filters?.length && payload.intent.text!== "") {
                     dispatch({ type: "SUGGESTION_EMPTY"});

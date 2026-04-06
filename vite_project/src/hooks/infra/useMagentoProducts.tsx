@@ -1,9 +1,3 @@
-import { useEffect, useState } from "react";
-import { useSystemState } from "../../state/System/useSystemState.ts";
-import { getError } from "../../lib/error.ts";
-import { useOptionSelectionFilter } from "../domain/useOptionSelectionFilter.tsx";
-import type { CategoryData } from "../../types/infra/magento/category.types.ts";
-import {useFindIntentProducts} from "../domain/useIntentAttributes.tsx";
 import type {GraphqlProduct} from "../../types/infra/magento/product.types.ts";
 
 export type ProductsResponse = {
@@ -18,8 +12,18 @@ export function buildProductQuery(dynamicFields: string) {
               id
               sku
               name    
-              url_key
-              small_image { url }
+              url_key             
+              ... on ConfigurableProduct {
+                matched_variant_image {  
+                   url              
+                }   
+                variants {
+                  attributes {
+                    code
+                    value_index
+                  }                 
+                }
+              }
               price_range {
                 minimum_price {
                   final_price {
@@ -36,39 +40,4 @@ export function buildProductQuery(dynamicFields: string) {
           }
         }
     `;
-}
-
-export function useMagentoProducts(categoryData: CategoryData, enabled: boolean) {
-    const [data, setData] = useState<ProductsResponse>();
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<Error | null>(null);
-    const { graphqlClient } = useSystemState()
-    const dynamicAttributes = useFindIntentProducts()
-
-    const filter = useOptionSelectionFilter(categoryData)
-    const load = async () => {
-        if (!filter) return;
-        if (!enabled) return;
-
-        setLoading(true);
-        setError(null);
-
-        try {
-            const result = await graphqlClient<ProductsResponse>(
-                buildProductQuery(dynamicAttributes),
-                { filter }
-            );
-            setData(result);
-        } catch (err: unknown) {
-            setError(getError(err));
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        load();
-    }, [filter]);
-
-    return { magentoProducts: data?.products, loading, error, refetch: load };
 }

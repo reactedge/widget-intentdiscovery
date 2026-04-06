@@ -18,7 +18,7 @@ export type MagentoProduct = {
         html: string
     }
     url_key: string
-    small_image: {
+    matched_variant_image: {
         url: string
     }
     price_range: {
@@ -30,6 +30,7 @@ export type MagentoProduct = {
         }
     }
 }
+
 
 export type GraphqlProduct = MagentoProduct & Record<string, string | null | undefined>
 

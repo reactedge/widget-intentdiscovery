@@ -1,5 +1,4 @@
 import type {EnrichedSuggestion} from "../../types/infra/magento/product.types.ts";
-import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNavigation.tsx";
 
 export type AttributeFilters = Record<string, Record<string, number>>
 
@@ -36,22 +35,30 @@ export type IntentSignal =
 export type IntentStatus =
     | "idle"
     | "ready"
+    | "filterChanged"
+    | "filtersUpdated"
+    | "filterRestored"
+    | "readyToApplyFilters"
     | "canBeInterpreted"
     | "interpreting"
     | "readyToRecommend"
     | "suggestionProcessing"
     | "suggestionSent"
+    | "suggestionLoaded"
     | "noSuggestionFound";
 
 export type IntentEvent =
     | { type: "RESULTS_UPDATED"; totalFiltered: number }
-    | { type: "FILTER_CHANGED"; attributeLayerData: MagentoLayeredNavigation }
+    | { type: "FILTER_CHANGED"; attributeCode:string, optionValue:string }
+    | { type: "FILTERS_UPDATE" }
+    | { type: "FILTER_RESTORED" }
     | { type: "INTERPRETATION_STARTED" }
     | { type: "INTERPRETATION_PROCESSING" }
     | { type: "INTERPRETATION_READY" }
-    | { type: "INTERPRETATION_DONE" }
+    | { type: "INTERPRETATION_DONE" }//; filters: AttributeFilter[], intent: string  }
     | { type: "SUGGEST_CLICKED" }
-    | { type: "SUGGESTION_SUCCESS"; recommendations: EnrichedSuggestion[] }
+    | { type: "SUGGESTION_SUCCESS"; recommendations: EnrichedSuggestion[], filters: AttributeFilters, intent: string }
+    | { type: "SUGGESTION_LOAD"; recommendations: EnrichedSuggestion[], filters: AttributeFilters, intent: string }
     | { type: "SEARCH_PROCESSING" }
     | { type: "SUGGESTION_EMPTY" }
     | { type: "CLEAR_FILTERS" };

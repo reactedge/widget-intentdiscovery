@@ -3,3 +3,8 @@ export interface MagentoAttribute {
     frontend_input: string
     label: string
 }
+
+export interface MagentoAttributeOption {
+    attribute: string
+    value: number
+}

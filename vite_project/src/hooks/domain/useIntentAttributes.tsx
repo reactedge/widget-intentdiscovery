@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { getOrderedAttributes } from "../../lib/attributes"
+import {applyIntentConfig} from "../../lib/attributes"
 import type { IntentDiscoveryDataConfig } from "../../domain/intent-discovery.types"
 import {useIntentState} from "../../state/Intent/useIntentState.ts";
 import type {MergedAttribute} from "../infra/useMagentoLayeredData.tsx";
@@ -16,7 +16,7 @@ export function useIntentAttributes(
     config: IntentDiscoveryDataConfig
 ) {
     return useMemo(
-        () => getOrderedAttributes(attributeData, config),
+        () => applyIntentConfig(attributeData, config),
         [attributeData, config]
     )
 }

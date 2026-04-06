@@ -7,13 +7,16 @@ import {categoryLayereIds} from "../../lib/category.ts";
 import type { MergedAttribute} from "../../hooks/infra/useMagentoLayeredData.tsx";
 import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNavigation.tsx";
 import type {MagentoProducts} from "../../hooks/infra/useProductFilteredAttributeLayer.tsx";
+import type {IntentDiscoveryDataConfig} from "../../domain/intent-discovery.types.ts";
+import {applyIntentConfig} from "../../lib/attributes.ts";
 
 
 
 export async function getLayeredNavigation(
     categoryData: CategoryData,
     intentState: IntentEngineState,
-    graphqlClient: GraphqlClient
+    graphqlClient: GraphqlClient,
+    config: IntentDiscoveryDataConfig
 ): Promise<MagentoLayeredNavigation> {
     const categoryIds = categoryLayereIds(categoryData)
 
@@ -22,7 +25,8 @@ export async function getLayeredNavigation(
         fetchFiltered(categoryIds, intentState, graphqlClient)
     ])
 
-    const attributes = mergeLayerData(base, filtered)
+    const merged = mergeLayerData(base, filtered)
+    const attributes = applyIntentConfig(merged, config);
 
     return {
         attributes,
@@ -62,7 +66,16 @@ export function mergeLayerData(
                     label: baseOpt.label,
                     totalCount: baseOpt.count,
                     filteredCount,
-                    isAvailable: filteredCount > 0
+                    isAvailable: filteredCount > 0,
+                    visual: baseOpt.swatch_data
+                        ? {
+                            type:
+                                baseOpt.swatch_data.type === "ColorSwatchData"
+                                    ? "color"
+                                    : "image",
+                            value: baseOpt.swatch_data.value,
+                        }
+                        : undefined
                 }
             })
         }

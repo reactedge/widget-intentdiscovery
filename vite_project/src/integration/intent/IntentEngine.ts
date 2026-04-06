@@ -43,8 +43,6 @@ export class IntentEngine {
         this.state.categoryScore = {}
         this.state.productScore = {}
 
-        // (optional: keep intentText / status if you want)
-
         // 2. replay signals as events
         for (const attribute in signals) {
             for (const value in signals[attribute]) {
@@ -55,9 +53,6 @@ export class IntentEngine {
                 })
             }
         }
-
-        // 3. no need to call notify() here
-        // handle() already does it
     }
 
     subscribe(listener: Listener) {
@@ -134,6 +129,11 @@ export class IntentEngine {
                 this.updatePriceAffinity(signal.price);
                 break;
         }
+        this.notify();
+    }
+
+    hydrateFromFilters(filters: Record<string, Record<string, number>>) {
+        this.state.attributeScore = filters;
         this.notify();
     }
 

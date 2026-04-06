@@ -1,11 +1,18 @@
 import {type ReactNode, useCallback, useEffect, useState} from "react";
 import {loadIntentState, LocalIntentStateContext} from "./IntentState.tsx";
 
-import type {IntentSignal, IntentEngineState, IntentStatus, IntentEvent} from "../../integration/intent/types.ts";
+import type {
+    IntentSignal,
+    IntentEngineState,
+    IntentStatus,
+    IntentEvent
+} from "../../integration/intent/types.ts";
 import {useSystemState} from "../System/useSystemState.ts";
 import type {IntentDiscoveryDataConfig} from "../../domain/intent-discovery.types.ts";
 import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNavigation.tsx";
 import {activity} from "../../activity";
+import {parseFiltersFromUrl} from "../../controller/load.ts";
+import {getFiltersHash} from "../../lib/attributes.ts";
 
 interface IntentStateProviderProps {
     children: ReactNode;
@@ -57,18 +64,50 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
             case "INTERPRETATION_DONE":
                 return { ...state,
                     intentInterpreted: true,
-                    status: "readyToRecommend" };
+                    status: "readyToRecommend"
+                };
+
+            case "FILTER_CHANGED":
+                window.dispatchEvent(
+                    new CustomEvent("reactedge:filter", {
+                        detail: event
+                    })
+                )
+                return { ...state,
+                    status: "filterChanged" };
+
+            case "FILTER_RESTORED":
+                return { ...state,
+                    status: "filterRestored" };
 
             case "SUGGEST_CLICKED":
                 if (state.resultCount === 0) return state;
                 return { ...state, status: "suggestionProcessing" };
 
             case "SUGGESTION_SUCCESS":
+                window.dispatchEvent(
+                    new CustomEvent("reactedge:syncfilters", {
+                        detail: event
+                    })
+                )
+
+                sessionStorage.setItem("reactedge:suggestions", JSON.stringify({
+                    intent: intentState.intentText,
+                    filtersHash: getFiltersHash(event.filters),
+                    recommendations: event.recommendations
+                }));
+
+                return {
+                    ...state
+                };
+
+            case "SUGGESTION_LOAD":
                 return {
                     ...state,
                     status: "suggestionSent",
                     recommendations: event.recommendations,
                 };
+                break;
 
             case "SEARCH_PROCESSING":
                 return { ...state, status: "suggestionProcessing", recommendations: [] };
@@ -143,6 +182,23 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
     }, []);
 
     useEffect(() => {
+        const allowedAttributes = ["color", "size", "climate", "pattern"];
+
+        const filters = parseFiltersFromUrl(
+            window.location.search,
+            allowedAttributes
+        );
+
+        if (Object.keys(filters).length > 0) {
+            intentEngine.hydrateFromFilters(filters);
+            Object.entries(filters).forEach(([attribute, value]) => {
+                const values = Object.keys(value)
+                values.forEach(value => {
+                    setPreference(attribute, value);
+                })
+            });
+        }
+
         const handler = (event: Event) => {
             const customEvent = event as CustomEvent<IntentSignal>;
 

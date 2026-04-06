@@ -58,7 +58,7 @@ export function useAnalyseSearch({
 
         dispatch(
             result.ai?.suggestions?.length
-                ? {type: "SUGGESTION_SUCCESS", recommendations: result.ai.suggestions}
+                ? {type: "SUGGESTION_SUCCESS", recommendations: result.ai.suggestions, filters: intentState.attributeScore, intent: intentState.intentText}
                 : {type: "SUGGESTION_EMPTY"}
         )
     }
