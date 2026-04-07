@@ -208,7 +208,7 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
     }, [intentEngine]);
 
     useEffect(() => {
-        activity('intent-state', 'Intent State Update', {status: intentState.status});
+        activity('intent-state', 'Intent State Update', intentState);
     }, [intentState.status])
 
     return (

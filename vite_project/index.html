@@ -23,6 +23,7 @@
             } else {
                 params.set(attributeCode, values.join(","));
             }
+            console.log('reload url')
             const url = `${window.location.pathname}?${params.toString()}`;
             window.location.href = url;
         });
@@ -38,6 +39,7 @@
                         params.set(attribute, value);
                     })
                 });
+                console.log('reload url')
                 const url = `${window.location.pathname}?${params.toString()}`;
                 window.location.href = url;
             }

@@ -1,9 +1,9 @@
-import type {GraphqlClient} from "../../lib/graphql.ts";
 import {buildProductQuery, type ProductsResponse} from "../../hooks/infra/useMagentoProducts.tsx";
 import type {MagentoProductFilter} from "../../hooks/domain/useOptionSelectionFilter.tsx";
 import type {GraphqlProduct} from "../../types/infra/magento/product.types.ts";
 import {getDynamicAttributes} from "./buildFilter.ts";
 import type {IntentEngineState} from "../../integration/intent/types.ts";
+import type {GraphqlClient} from "../graphql/graphqlClient.ts";
 
 export async function findProducts({
    filter,

@@ -1,6 +1,5 @@
-// infra/graphqlClient.ts
-import {activity} from "../activity";
-import { normalizeGraphqlResponse } from "./graphqlResponseNormalizer";
+import {activity} from "../../activity";
+import {normalizeGraphqlResponse} from "../../lib/graphqlResponseNormalizer.ts";
 
 export type GraphqlClient = <T>(
     query: string,
@@ -60,8 +59,4 @@ export function createGraphqlClient(apiEndpoint: string, storeCode: string) {
 
         return json?.data;
     };
-}
-
-export function asVariables<T extends object>(vars: T): Record<string, unknown> {
-    return vars as unknown as Record<string, unknown>;
 }
