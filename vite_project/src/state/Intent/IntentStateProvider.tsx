@@ -76,10 +76,6 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
                 return { ...state,
                     status: "filterChanged" };
 
-            case "FILTER_RESTORED":
-                return { ...state,
-                    status: "filterRestored" };
-
             case "SUGGEST_CLICKED":
                 if (state.resultCount === 0) return state;
                 return { ...state, status: "suggestionProcessing" };
@@ -102,6 +98,10 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
                 };
 
             case "SUGGESTION_LOAD":
+                window.dispatchEvent(new CustomEvent('reactedge:recommendations', {
+                    detail: { recommendations: event.recommendations }
+                }))
+
                 return {
                     ...state,
                     status: "suggestionSent",
@@ -114,13 +114,6 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
 
             case "SUGGESTION_EMPTY":
                 return { ...state, status: "noSuggestionFound", recommendations: [] };
-
-            case "CLEAR_FILTERS":
-                return {
-                    ...state,
-                    searchReady: false,
-                    resultCount: 0,
-                };
 
             default:
                 return state;
@@ -182,7 +175,7 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
     }, []);
 
     useEffect(() => {
-        const allowedAttributes = ["color", "size", "climate", "pattern"];
+        const allowedAttributes = ["color", "size", "climate", "pattern", "style_general"];
 
         const filters = parseFiltersFromUrl(
             window.location.search,

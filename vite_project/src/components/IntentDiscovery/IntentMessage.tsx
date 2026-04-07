@@ -1,16 +1,21 @@
 import type {IntentControllerState} from "../../domain/intent.types.ts";
 import {useTranslationState} from "../../state/Translation/useTranslationState.ts";
 import {type ChangeEvent} from "react";
+import {useIntentState} from "../../state/Intent/useIntentState.ts";
 
 type Props = {
     intent: IntentControllerState,
 };
 export const IntentMessage = ({intent}: Props) => {
     const {t} = useTranslationState()
+    const { intentState } = useIntentState()
 
     const handleTextChange = (e: ChangeEvent<HTMLInputElement>) => {
         intent.setIntent(e.target.value)
     }
+
+    if (intentState.status === "suggestionProcessing" ||
+        intentState.status === "readyToRecommend") return null;
 
     return (
         <div className="finder">

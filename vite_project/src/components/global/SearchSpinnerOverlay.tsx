@@ -8,7 +8,7 @@ export const SearchSpinnerOverlay = () => {
     return (
         <div className="intent-search-overlay">
             <Spinner/>
-            <div className="intent-text">{t("Searching your best match…")}</div>
+            <div className="search-overlay-text">{t("Searching your best match…")}</div>
 
             <Sparkle />
         </div>

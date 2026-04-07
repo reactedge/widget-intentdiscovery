@@ -1,10 +1,22 @@
-.intent-evaluation-overlay, .intent-search-overlay {
+.intent-search-overlay {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: start;
     min-height: 180px;
     color: #1f2937;
+}
+
+.standard-widget-loader-wrapper {
+    display: flex;
+    min-height: 180px;
+    position: absolute;
+    inset: 0; /* top:0 right:0 bottom:0 left:0 */
+    align-items: center;
+    justify-content: center;
+    /* inherit background instead of forcing white/transparent */
+    background: inherit;
+    z-index: 10; /* ensure it's above content */
 }
 
 .widget-loader-wrapper {
@@ -21,9 +33,9 @@
     to { transform: rotate(360deg); }
 }
 
-.intent-text {
-    font-size: 18px;
+.search-overlay-text {
     opacity: 0.9;
+    color: #888888;
 }
 
 .sparkles {

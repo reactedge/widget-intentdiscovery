@@ -90,6 +90,8 @@ export const AttributeLayer = ({
     }
 
     if (loading) return null
+    if (intentState.status === "suggestionProcessing" ||
+        intentState.status === "readyToRecommend") return null;
 
     return (
             <div className="finder">

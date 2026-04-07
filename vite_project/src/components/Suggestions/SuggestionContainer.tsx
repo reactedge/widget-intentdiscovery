@@ -1,5 +1,7 @@
 import {SuggestionCard} from "./SuggestionCard.tsx";
 import type {EnrichedSuggestion} from "../../types/infra/magento/product.types.ts";
+import {useState} from "react";
+import {useTranslationState} from "../../state/Translation/useTranslationState.ts";
 
 type Props = {
     recommendations?: EnrichedSuggestion[] | null
@@ -12,7 +14,12 @@ export const SuggestionContainer: React.FC<Props> = ({
      onClose,
      title = "Suggestions",
     }) => {
+    const [showAll, setShowAll] = useState(false);
+    const { t } = useTranslationState()
+
     if (!recommendations?.length) return null
+
+    const visibleCards = showAll ? recommendations : recommendations.slice(0, 1);
 
     return (
         <section className="re-intent-card">
@@ -33,9 +40,17 @@ export const SuggestionContainer: React.FC<Props> = ({
             </header>
 
             <div className="re-intent-grid">
-                {recommendations.map((s) => (
+                {visibleCards.map((s) => (
                     <SuggestionCard key={s.sku} suggestion={s}/>
                 ))}
+                {recommendations.length > 1 && (
+                    <button
+                        className="choice-tile choice-tile--view-all"
+                        onClick={() => setShowAll(prev => !prev)}
+                    >
+                        {showAll ? t("Show less") : t("View all")}
+                    </button>
+                )}
             </div>
         </section>
     )

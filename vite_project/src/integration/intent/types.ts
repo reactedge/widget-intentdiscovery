@@ -37,7 +37,6 @@ export type IntentStatus =
     | "ready"
     | "filterChanged"
     | "filtersUpdated"
-    | "filterRestored"
     | "readyToApplyFilters"
     | "canBeInterpreted"
     | "interpreting"
@@ -50,8 +49,6 @@ export type IntentStatus =
 export type IntentEvent =
     | { type: "RESULTS_UPDATED"; totalFiltered: number }
     | { type: "FILTER_CHANGED"; attributeCode:string, optionValue:string }
-    | { type: "FILTERS_UPDATE" }
-    | { type: "FILTER_RESTORED" }
     | { type: "INTERPRETATION_STARTED" }
     | { type: "INTERPRETATION_PROCESSING" }
     | { type: "INTERPRETATION_READY" }
@@ -60,5 +57,4 @@ export type IntentEvent =
     | { type: "SUGGESTION_SUCCESS"; recommendations: EnrichedSuggestion[], filters: AttributeFilters, intent: string }
     | { type: "SUGGESTION_LOAD"; recommendations: EnrichedSuggestion[], filters: AttributeFilters, intent: string }
     | { type: "SEARCH_PROCESSING" }
-    | { type: "SUGGESTION_EMPTY" }
-    | { type: "CLEAR_FILTERS" };
+    | { type: "SUGGESTION_EMPTY" };

@@ -6,23 +6,81 @@
     <script type="module" src="./src/widget.ts"></script>
 
     <script>
-        /*window.ReactEdgeIntent = window.ReactEdgeIntent || {
-            emit: (signal) => {
-                window.dispatchEvent(
-                    new CustomEvent("reactedge:intent", { detail: signal })
-                );
+        window.addEventListener("reactedge:filter", (event) => {
+            const { attributeCode, optionValue } = event.detail;
+            const params = new URLSearchParams(window.location.search);
+            const current = params.get(attributeCode);
+            let values = current ? current.split(",") : [];
+            if (values.includes(optionValue)) {
+                // REMOVE (toggle off)
+                values = values.filter(v => v !== optionValue);
+            } else {
+                // ADD (toggle on)
+                values.push(optionValue);
             }
+            if (values.length === 0) {
+                params.delete(attributeCode);
+            } else {
+                params.set(attributeCode, values.join(","));
+            }
+            const url = `${window.location.pathname}?${params.toString()}`;
+            window.location.href = url;
+        });
+        window.addEventListener("reactedge:syncfilters", (event) => {
+            const { filters } = event.detail;
+
+            const params = new URLSearchParams(window.location.search);
+
+            if (Object.keys(filters).length > 0) {
+                Object.entries(filters).forEach(([attribute, value]) => {
+                    const values = Object.keys(value)
+                    values.forEach(value => {
+                        params.set(attribute, value);
+                    })
+                });
+                const url = `${window.location.pathname}?${params.toString()}`;
+                window.location.href = url;
+            }
+        });
+
+        window.addEventListener('reactedge:recommendations', (event) => {
+            const { recommendations } = event.detail
+
+            const scoreMap = new Map(
+                recommendations.map(r => [r.sku, r.match])
+            )
+
+            renderRecommendationBadges(scoreMap)
+        })
+
+        function renderRecommendationBadges(scoreMap) {
+            const nodes = document.querySelectorAll('[data-sku]')
+
+            nodes.forEach(node => {
+                const sku = node.getAttribute('data-sku')
+                if (!sku) return
+
+                const score = scoreMap.get(sku)
+                if (!score) return
+
+                // avoid duplicates
+                if (node.querySelector('.reactedge-score-badge')) return
+
+                const badge = document.createElement('div')
+                badge.className = `reactedge-score-badge ${getScoreClass(score)}`
+                badge.innerHTML = `
+                  <span class="reactedge-badge-label">Match</span>
+                  <span class="reactedge-badge-score">${score}%</span>`
+
+                node.appendChild(badge)
+            })
         }
-        function simulateCategory(category) {
-            window.dispatchEvent(
-                new CustomEvent("reactedge:intent", {
-                    detail: {
-                        type: "category_view",
-                        id: category
-                    }
-                })
-            );
-        }*/
+
+        function getScoreClass(score) {
+            if (score > 0.8) return 'is-high'
+            if (score > 0.5) return 'is-medium'
+            return 'is-low'
+        }
     </script>
 
     <div style="padding:20px; border:1px solid #ccc; margin-top:20px;">
@@ -56,6 +114,10 @@
             Simulate Filter Material Mesh
         </button>
 
+        <button onclick="ReactEdgeIntent.emit({ type: 'filter_select', attribute: 'climate', value: '203' })">
+            Simulate Climate Cool
+        </button>
+
         <button onclick="simulateCategory('men')">
             Simulate category: Mens
         </button>
@@ -63,10 +125,13 @@
         <button onclick="simulateCategory('jackets-men')">
             Simulate category: Tops
         </button>
+
+        <button onclick="simulateCoolFilters()">
+            Simulate Cool Filters
+        </button>
     </div>
 
     <intentdiscovery-widget data-contract="/cdn/default.json" />
-
 
 
     <script type="application/json" id="reactedge-runtime">
