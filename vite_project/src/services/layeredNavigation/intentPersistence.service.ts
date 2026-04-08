@@ -29,6 +29,23 @@ export const intentPersistence = {
         }
     },
 
+    isEmpty(): boolean {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return true;
+
+            const parsed = JSON.parse(raw) as PersistedIntentV1;
+
+            if (parsed.v !== 1) return true;
+
+            const isExpired = Date.now() - parsed.ts > TTL;
+            if (isExpired) return true;
+
+            return false;
+        } catch {
+            return true;
+        }
+    },
     load(): PersistedIntentV1 | null {
         try {
             const raw = localStorage.getItem(STORAGE_KEY);

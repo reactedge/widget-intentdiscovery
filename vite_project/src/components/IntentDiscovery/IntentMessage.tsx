@@ -4,6 +4,7 @@ import {type ChangeEvent, useState} from "react";
 import {useIntentState} from "../../state/Intent/useIntentState.ts";
 import {PreviousIntent} from "../Intent/PreviousIntent.tsx";
 import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNavigation.tsx";
+import {intentPersistence} from "../../services/layeredNavigation/intentPersistence.service.ts";
 
 type Props = {
     intent: IntentControllerState,
@@ -29,13 +30,15 @@ export const IntentMessage = ({intent, attributeLayerData}: Props) => {
                 <PreviousIntent attributeLayerData={attributeLayerData}/>
             </div>
             <div className="intent-input-wrapper">
-                <button className="intent-apply-left"
-                        onClick={() => setIsIntentOpen(prev => !prev)}
-                >
-                    <>
-                        {label} <br /> Filters
-                    </>
-                </button>
+                {!intentPersistence.isEmpty() &&
+                    <button className="intent-apply-left"
+                            onClick={() => setIsIntentOpen(prev => !prev)}
+                    >
+                        <>
+                            {label} <br /> Filters
+                        </>
+                    </button>
+                }
                 <input
                     type="text"
                     placeholder={t("Tell us what matters most for your purchase")}
