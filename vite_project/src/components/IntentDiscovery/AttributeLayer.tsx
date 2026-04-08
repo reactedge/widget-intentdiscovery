@@ -46,7 +46,7 @@ export const AttributeLayer = ({
     }, [intentState.status])
 
     useEffect(() => {
-        if (intentState.status === "suggestionLoaded") return;
+        if (intentState.status === "suggestionLoaded" || intentState.status === "readyToApplyFilters") return;
 
         const stored = sessionStorage.getItem("reactedge:suggestions");
 
@@ -58,8 +58,13 @@ export const AttributeLayer = ({
             const currentHash = getFiltersHash(intentState.attributeScore);
 
             if (parsed.filtersHash === currentHash) {
-                sessionStorage.removeItem("reactedge:suggestions")
-                dispatch({type: "SUGGESTION_LOAD", recommendations: parsed.recommendations, filters: parsed.filters, intent: parsed.intent });
+                //sessionStorage.removeItem("reactedge:suggestions")
+                dispatch({
+                    type: "SUGGESTION_LOAD",
+                    recommendations: parsed.recommendations,
+                    filters: parsed.filters,
+                    intent: parsed.intent
+                });
             }
         } catch (e) {
             // fail silently
@@ -90,6 +95,8 @@ export const AttributeLayer = ({
     }
 
     if (loading) return null
+    if (intentState.status === "suggestionProcessing" ||
+        intentState.status === "readyToRecommend") return null;
 
     return (
             <div className="finder">

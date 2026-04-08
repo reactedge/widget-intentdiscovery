@@ -1,4 +1,5 @@
 import type {EnrichedSuggestion} from "../../types/infra/magento/product.types.ts";
+import type {PersistedIntentV1} from "../../services/layeredNavigation/intentPersistence.service.ts";
 
 export type AttributeFilters = Record<string, Record<string, number>>
 
@@ -37,7 +38,6 @@ export type IntentStatus =
     | "ready"
     | "filterChanged"
     | "filtersUpdated"
-    | "filterRestored"
     | "readyToApplyFilters"
     | "canBeInterpreted"
     | "interpreting"
@@ -50,15 +50,14 @@ export type IntentStatus =
 export type IntentEvent =
     | { type: "RESULTS_UPDATED"; totalFiltered: number }
     | { type: "FILTER_CHANGED"; attributeCode:string, optionValue:string }
-    | { type: "FILTERS_UPDATE" }
-    | { type: "FILTER_RESTORED" }
     | { type: "INTERPRETATION_STARTED" }
     | { type: "INTERPRETATION_PROCESSING" }
+    | { type: "BOOTSTRAP_FROM_PERSISTED_INTENT", payload: PersistedIntentV1 }
+    | { type: "INTERPRETATION_REQUESTED" }
     | { type: "INTERPRETATION_READY" }
     | { type: "INTERPRETATION_DONE" }//; filters: AttributeFilter[], intent: string  }
     | { type: "SUGGEST_CLICKED" }
     | { type: "SUGGESTION_SUCCESS"; recommendations: EnrichedSuggestion[], filters: AttributeFilters, intent: string }
     | { type: "SUGGESTION_LOAD"; recommendations: EnrichedSuggestion[], filters: AttributeFilters, intent: string }
     | { type: "SEARCH_PROCESSING" }
-    | { type: "SUGGESTION_EMPTY" }
-    | { type: "CLEAR_FILTERS" };
+    | { type: "SUGGESTION_EMPTY" };

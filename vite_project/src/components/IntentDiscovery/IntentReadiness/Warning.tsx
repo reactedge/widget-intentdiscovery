@@ -30,6 +30,8 @@ export const Warning = ({
 
         const filtered = attributeLayerData.totalCount ?? 0
 
+        return `${attributeLayerData.totalCount} matches, Target < 30`
+
         // 3. No results (hard stop)
         if (filtered === 0) {
             message = "No results — try different keywords or remove filters"
@@ -55,12 +57,10 @@ export const Warning = ({
             message = "You can refine further for better matches"
         }
 
-        // 6. Ready
-        //return {t("%s%s", coveragePct, message)}
         return message
     }
 
-    if (intentState.status === "suggestionSent") return null
+    if (intentState.status === "suggestionSent" || intentState.status === "suggestionProcessing" || intentState.status === "readyToRecommend") return null;
 
     return (
         <div className={`intent-ai-threshold ${coveragePct === 100 ? "ready" : ""}`}>

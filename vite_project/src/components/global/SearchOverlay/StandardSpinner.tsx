@@ -5,10 +5,10 @@ type SpinnerProps = {
     size?: number;
 };
 
-export function Spinner({ size = 40 }: SpinnerProps) {
+export function StandardSpinner({ size = 40 }: SpinnerProps) {
 
     return (
-        <div className="widget-loader-wrapper" role="status" aria-label="Loading">
+        <div className="standard-widget-loader-wrapper" role="status" aria-label="Loading">
             <Circle size={size} />
         </div>
     );

@@ -1,6 +1,5 @@
 import {fetchBase} from "./fetchBase.ts";
 import type {IntentEngineState} from "../../integration/intent/types.ts";
-import type {GraphqlClient} from "../../lib/graphql.ts";
 import {fetchFiltered} from "./fetchFiltered.ts";
 import type {CategoryData} from "../../types/infra/magento/category.types.ts";
 import {categoryLayereIds} from "../../lib/category.ts";
@@ -9,6 +8,7 @@ import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNaviga
 import type {MagentoProducts} from "../../hooks/infra/useProductFilteredAttributeLayer.tsx";
 import type {IntentDiscoveryDataConfig} from "../../domain/intent-discovery.types.ts";
 import {applyIntentConfig} from "../../lib/attributes.ts";
+import type {GraphqlClient} from "../graphql/graphqlClient.ts";
 
 
 

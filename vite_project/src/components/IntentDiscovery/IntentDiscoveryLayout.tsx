@@ -28,7 +28,10 @@ export const IntentDiscoveryLayout = ({ config, categoryData, attributeLayerData
             {isProcessing && <SearchSpinnerOverlay />}
             <div className={intentState.status === "suggestionSent" ? "re-intent-layout re-intent-layout--two" : "re-intent-layout"}>
                 <div className="re-intent-col re-intent-col--left">
-                    <IntentMessage intent={intent} />
+                    <IntentMessage
+                        intent={intent}
+                        attributeLayerData={attributeLayerData}
+                    />
                     <AttributeLayer
                         config={config}
                         intent={intent}

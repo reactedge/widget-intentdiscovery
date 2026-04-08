@@ -13,6 +13,7 @@ import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNaviga
 import {activity} from "../../activity";
 import {parseFiltersFromUrl} from "../../controller/load.ts";
 import {getFiltersHash} from "../../lib/attributes.ts";
+import {intentPersistence} from "../../services/layeredNavigation/intentPersistence.service.ts";
 
 interface IntentStateProviderProps {
     children: ReactNode;
@@ -73,12 +74,9 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
                         detail: event
                     })
                 )
+
                 return { ...state,
                     status: "filterChanged" };
-
-            case "FILTER_RESTORED":
-                return { ...state,
-                    status: "filterRestored" };
 
             case "SUGGEST_CLICKED":
                 if (state.resultCount === 0) return state;
@@ -102,10 +100,26 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
                 };
 
             case "SUGGESTION_LOAD":
+                window.dispatchEvent(new CustomEvent('reactedge:recommendations', {
+                    detail: { recommendations: event.recommendations }
+                }))
+
                 return {
                     ...state,
                     status: "suggestionSent",
                     recommendations: event.recommendations,
+                };
+                break;
+
+            case "BOOTSTRAP_FROM_PERSISTED_INTENT":
+                return {
+                    ...state,
+                    attributeScore: event.payload.attributeScore,
+                    categoryScore: event.payload.categoryScore,
+                    intentInterpreted: true,
+                    intentInterpretationReady: true,
+                    searchReady: true,
+                    status: "readyToApplyFilters",
                 };
                 break;
 
@@ -114,13 +128,6 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
 
             case "SUGGESTION_EMPTY":
                 return { ...state, status: "noSuggestionFound", recommendations: [] };
-
-            case "CLEAR_FILTERS":
-                return {
-                    ...state,
-                    searchReady: false,
-                    resultCount: 0,
-                };
 
             default:
                 return state;
@@ -182,7 +189,7 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
     }, []);
 
     useEffect(() => {
-        const allowedAttributes = ["color", "size", "climate", "pattern"];
+        const allowedAttributes = ["color", "size", "climate", "pattern", "style_general"];
 
         const filters = parseFiltersFromUrl(
             window.location.search,
@@ -205,6 +212,12 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
             const signal = customEvent.detail;
             intentEngine.handle(signal);
             setIntentState({ ...intentEngine.getState() });
+
+            const state = intentEngine.getState()
+            intentPersistence.save({
+                categoryScore: state.categoryScore,
+                attributeScore: state.attributeScore
+            });
         };
 
         window.addEventListener("reactedge:intent", handler);
@@ -215,7 +228,7 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
     }, [intentEngine]);
 
     useEffect(() => {
-        activity('intent-state', 'Intent State Update', {status: intentState.status});
+        activity('intent-state', 'Intent State Update', intentState);
     }, [intentState.status])
 
     return (

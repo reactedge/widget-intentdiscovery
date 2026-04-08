@@ -6,6 +6,7 @@ import message from "./intent-discovery.message.css?inline";
 import suggestions from "./intent-discovery.suggestions.css?inline";
 import overlay from "./intent-discovery.overlay.css?inline";
 import readiness from "./intent-discovery.readiness.css?inline";
+import previousintent from "./intent-discovery.previousintent.css?inline";
 
 export const intentDiscoveryStyles = [
     styles,
@@ -15,5 +16,6 @@ export const intentDiscoveryStyles = [
     suggestions,
     overlay,
     message,
-    readiness
+    readiness,
+    previousintent
 ];

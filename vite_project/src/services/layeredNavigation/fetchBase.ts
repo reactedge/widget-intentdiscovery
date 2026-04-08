@@ -1,9 +1,9 @@
 import {
     LAYERED_ATTRIBUTE_DATA
 } from "../../hooks/infra/useMagentoLayeredData.tsx";
-import type {GraphqlClient} from "../../lib/graphql.ts";
 import {getCategoryFilter} from "./buildFilter.ts";
 import type {MagentoProducts, ProductAttributesResponse} from "../../hooks/infra/useProductFilteredAttributeLayer.tsx";
+import type {GraphqlClient} from "../graphql/graphqlClient.ts";
 
 const baseCache = new Map()
 

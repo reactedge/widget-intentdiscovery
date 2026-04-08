@@ -1,9 +1,9 @@
 import {type ReactNode, useMemo} from "react";
 import {LocalSystemStateContext} from "./SystemState.tsx";
-import {createGraphqlClient} from "../../lib/graphql.ts";
 import type {ReactEdgeRuntimeIntegrations} from "../../domain/intent-discovery.types.ts";
 import {createIntentEngine} from "../../integration/intent/IntentEngine.ts";
 import {createIntentApiClient} from "../../integration/intent/intentApiClient.ts";
+import {createGraphqlService} from "../../services/graphql/graphql.service.ts";
 
 interface SystemStateProviderProps {
     children: ReactNode;
@@ -19,7 +19,7 @@ export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ childr
     }
 
     const graphqlClient = useMemo(
-        () => createGraphqlClient(config.magentoGraphql.api, store),
+        () => createGraphqlService(config.magentoGraphql.api, store),
         [config.magentoGraphql?.api, store]
     );
 

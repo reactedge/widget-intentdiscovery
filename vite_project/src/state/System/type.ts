@@ -1,5 +1,5 @@
-import type {GraphqlClient} from "../../lib/graphql.ts";
 import type {IntentEngine} from "../../integration/intent/IntentEngine.ts";
+import type {GraphqlClient} from "../../services/graphql/graphqlClient.ts";
 
 export interface SystemState {
     graphqlClient: GraphqlClient;

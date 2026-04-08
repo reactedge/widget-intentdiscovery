@@ -1,9 +1,23 @@
 .intent-input-wrapper {
     width: 100%;
     margin: 16px 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.intent-quick-apply {
+    padding: 0 10px;
+    height: 100%;
+    border: none;
+    background: #eef2ff;
+    color: #2c4a9a;
+    font-size: 12px;
+    cursor: pointer;
 }
 
 .intent-input {
+    flex: 1;
     width: 100%;
     padding: 12px 16px;
     font-size: 14px;

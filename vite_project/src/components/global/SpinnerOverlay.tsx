@@ -1,10 +1,8 @@
-import {Spinner} from "./SearchOverlay/Spinner.tsx";
+import {StandardSpinner} from "./SearchOverlay/StandardSpinner.tsx";
 
 export const SpinnerOverlay = () => {
 
     return (
-        <div className="intent-evaluation-overlay">
-            <Spinner/>
-        </div>
+        <StandardSpinner/>
     )
 }
