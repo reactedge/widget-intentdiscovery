@@ -1,5 +1,5 @@
+import type {PersistedIntentV1} from "../../services/intentPersistence/intentPersistence.service.ts";
 import type {EnrichedSuggestion} from "../../types/infra/magento/product.types.ts";
-import type {PersistedIntentV1} from "../../services/layeredNavigation/intentPersistence.service.ts";
 
 export type AttributeFilters = Record<string, Record<string, number>>
 

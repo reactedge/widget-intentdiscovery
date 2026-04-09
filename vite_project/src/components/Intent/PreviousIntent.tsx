@@ -1,10 +1,10 @@
-import {intentPersistence, type PersistedIntentV1} from "../../services/layeredNavigation/intentPersistence.service.ts";
 import {useIntentState} from "../../state/Intent/useIntentState.ts";
 import type {AttributeFilters} from "../../integration/intent/types.ts";
 import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNavigation.tsx";
 import type {OptionLabelMap} from "../../domain/intent-discovery.types.ts";
 import {useOptionLabelMap} from "../../hooks/domain/useOptionLabelMap.ts";
 import type {MergedAttribute} from "../../hooks/infra/useMagentoLayeredData.tsx";
+import {intentPersistence, type PersistedIntentV1} from "../../services/intentPersistence/intentPersistence.service.ts";
 
 type Props = {
     attributeLayerData: MagentoLayeredNavigation

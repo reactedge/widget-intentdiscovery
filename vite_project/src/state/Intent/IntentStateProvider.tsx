@@ -13,7 +13,7 @@ import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNaviga
 import {activity} from "../../activity";
 import {parseFiltersFromUrl} from "../../controller/load.ts";
 import {getFiltersHash} from "../../lib/attributes.ts";
-import {intentPersistence} from "../../services/layeredNavigation/intentPersistence.service.ts";
+import {intentPersistence} from "../../services/intentPersistence/intentPersistence.service.ts";
 
 interface IntentStateProviderProps {
     children: ReactNode;
@@ -100,6 +100,7 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
                 };
 
             case "SUGGESTION_LOAD":
+                activity('recommendations-loaded', 'Recommendations Loaded', event.recommendations);
                 window.dispatchEvent(new CustomEvent('reactedge:recommendations', {
                     detail: { recommendations: event.recommendations }
                 }))

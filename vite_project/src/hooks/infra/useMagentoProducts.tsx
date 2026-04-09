@@ -12,6 +12,9 @@ export function buildProductQuery(dynamicFields: string) {
               id
               sku
               name    
+              small_image {
+                url
+              }
               url_key             
               ... on ConfigurableProduct {
                 matched_variant_image {  

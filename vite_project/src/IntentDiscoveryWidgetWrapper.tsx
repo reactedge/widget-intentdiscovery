@@ -20,7 +20,7 @@ export const IntentDiscoveryWidgetWrapper = ({ host }: Props) => {
                 <IntentStateProvider config={config.data}>
                     <TranslationStateProvider translations={config.translations}>
                         <div className="intent-widget-container">
-                            {loading ? <SpinnerOverlay /> : <IntentLookup config={config} />}
+                            {loading ? <SpinnerOverlay /> : <IntentLookup config={config} host={host} />}
                         </div>
                     </TranslationStateProvider>
                 </IntentStateProvider>

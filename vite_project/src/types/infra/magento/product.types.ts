@@ -17,6 +17,9 @@ export type MagentoProduct = {
     short_description?: {
         html: string
     }
+    small_image: {
+        url: string
+    }
     url_key: string
     matched_variant_image: {
         url: string

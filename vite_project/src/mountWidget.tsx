@@ -11,5 +11,5 @@ export function mountWidget(hostElement: HTMLElement) {
     activity('bootstrap', 'Widget mounted', hostElement);
 
     const root = createRoot(mountedHost);
-    root.render(<IntentDiscoveryWidgetWrapper host={hostElement}/>);
+    root.render(<IntentDiscoveryWidgetWrapper host={hostElement} />);
 }

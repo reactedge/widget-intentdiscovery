@@ -4,7 +4,7 @@ import {type ChangeEvent, useState} from "react";
 import {useIntentState} from "../../state/Intent/useIntentState.ts";
 import {PreviousIntent} from "../Intent/PreviousIntent.tsx";
 import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNavigation.tsx";
-import {intentPersistence} from "../../services/layeredNavigation/intentPersistence.service.ts";
+import {intentPersistence} from "../../services/intentPersistence/intentPersistence.service.ts";
 
 type Props = {
     intent: IntentControllerState,

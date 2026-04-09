@@ -10,6 +10,7 @@ import type {MagentoLayeredNavigation} from "./useLayeredNavigation.tsx";
 import {useIntentState} from "../../state/Intent/useIntentState.ts";
 import type {EnrichedSuggestion} from "../../types/infra/magento/product.types.ts";
 import type {AiRecommendationResponse} from "../infra/useAiRecommendations.tsx";
+import {activity} from "../../activity";
 
 type UseAskAnalyseSearch = {
     attributeLayerData: MagentoLayeredNavigation
@@ -55,6 +56,8 @@ export function useAnalyseSearch({
             optionLabelMap,
             intentState
         })
+
+        activity('recommendations', 'Recommendations Received', result.ai.suggestions);
 
         dispatch(
             result.ai?.suggestions?.length
