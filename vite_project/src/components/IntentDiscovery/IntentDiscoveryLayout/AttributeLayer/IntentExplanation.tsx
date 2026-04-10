@@ -1,8 +1,8 @@
-import {useTranslationState} from "../../state/Translation/useTranslationState.ts";
-import {IntentReadiness} from "../IntentDiscovery/IntentReadiness.tsx";
-import {useIntentState} from "../../state/Intent/useIntentState.ts";
-import type {IntentControllerState} from "../../domain/intent.types.ts";
-import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNavigation.tsx";
+import type {MagentoLayeredNavigation} from "../../../../hooks/domain/useLayeredNavigation.tsx";
+import type {IntentControllerState} from "../../../../domain/intent.types.ts";
+import {useTranslationState} from "../../../../state/Translation/useTranslationState.ts";
+import {useIntentState} from "../../../../state/Intent/useIntentState.ts";
+import {IntentReadiness} from "./IntentExplanation/IntentReadiness.tsx";
 
 type IntentExplanationProps = {
     attributeLayerData: MagentoLayeredNavigation

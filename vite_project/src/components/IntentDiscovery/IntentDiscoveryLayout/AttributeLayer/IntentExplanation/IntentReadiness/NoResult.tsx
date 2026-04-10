@@ -1,4 +1,4 @@
-import {useTranslationState} from "../../../state/Translation/useTranslationState.ts";
+import {useTranslationState} from "../../../../../../state/Translation/useTranslationState.ts";
 
 export const NoResult = () => {
     const {t} = useTranslationState()

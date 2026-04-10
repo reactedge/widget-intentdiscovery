@@ -1,10 +1,14 @@
-import type {MergedAttribute} from "../../hooks/infra/useMagentoLayeredData.tsx";
+import type {MergedAttribute} from "../infra/useMagentoLayeredData.tsx";
+import type {IntentEngineState} from "../../integration/intent/types.ts";
 
-export type IntentRecord = Record<string, any> | undefined;
+type IntentLike = Pick<
+    IntentEngineState,
+    "attributeScore" | "categoryScore" | "priceAffinity"
+>;
 
 export function isAttributeSelected(
     attributeCode: string,
-    intent?: IntentRecord
+    intent?: IntentLike
 ): boolean {
     if (intent?.attributeScore && attributeCode in intent.attributeScore) {
         return true;
@@ -24,7 +28,7 @@ export function isAttributeSelected(
 export function getSelectedValues(
     attributeCode: string,
     aggregations: MergedAttribute[],
-    intent?: IntentRecord
+    intent?: IntentLike
 ): string[] {
     const scores = intent?.attributeScore?.[attributeCode];
     if (!scores) return [];
@@ -42,7 +46,7 @@ export function getSelectedValues(
 
 export function getSelectedAttributes(
     aggregations: MergedAttribute[] | undefined,
-    intent?: IntentRecord
+    intent?: IntentLike
 ) {
     return (
         aggregations?.filter((attr: MergedAttribute) =>
@@ -53,7 +57,7 @@ export function getSelectedAttributes(
 
 export function useSelectedPreferences(
     attributes: MergedAttribute[],
-    intent?: IntentRecord
+    intent?: IntentLike
 ) {
     const selected = getSelectedAttributes(attributes, intent);
 
@@ -61,8 +65,9 @@ export function useSelectedPreferences(
         const scores = intent?.attributeScore?.[code];
         if (!scores) return null;
 
-        const [bestValue] = Object.entries(scores)
-            .sort((a: Record<number, any>, b: Record<number, any>) => b[1] - a[1])[0] || [];
+        const [bestValue] =
+        Object.entries(scores)
+            .sort((a: [string, number], b: [string, number]) => b[1] - a[1])[0] || [];
 
         if (!bestValue) return null;
 

@@ -1,8 +1,8 @@
-import {useIntentState} from "../../state/Intent/useIntentState.ts";
-import {Warning} from "./IntentReadiness/Warning.tsx";
-import {Success} from "./IntentReadiness/Success.tsx";
+import type {MagentoLayeredNavigation} from "../../../../../hooks/domain/useLayeredNavigation.tsx";
+import {useIntentState} from "../../../../../state/Intent/useIntentState.ts";
 import {NoResult} from "./IntentReadiness/NoResult.tsx";
-import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNavigation.tsx";
+import {Success} from "./IntentReadiness/Success.tsx";
+import {Warning} from "./IntentReadiness/Warning.tsx";
 
 type Props = {
     attributeLayerData: MagentoLayeredNavigation

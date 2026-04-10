@@ -1,13 +1,13 @@
-import { useSelectedPreferences } from "../SelectionsSummary/selectedPreferencesUtils.ts";
-import { useState } from "react";
-import { useIntentAttributes } from "../../hooks/domain/useIntentAttributes.tsx";
-import { AttributeTile } from "./AttributeTile.tsx";
-import { useTranslationState } from "../../state/Translation/useTranslationState.ts";
-import type { IntentDiscoveryDataConfig } from "../../domain/intent-discovery.types.ts";
-import { useInteractionState } from "../../state/Interaction/useInteractionState.ts";
-import {useIntentState} from "../../state/Intent/useIntentState.ts";
-import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNavigation.tsx";
-import type {MergedAttribute} from "../../hooks/infra/useMagentoLayeredData.tsx";
+import {AttributeTile} from "./AttributeTile.tsx";
+import type {MagentoLayeredNavigation} from "../../../../hooks/domain/useLayeredNavigation.tsx";
+import type {IntentDiscoveryDataConfig} from "../../../../domain/intent-discovery.types.ts";
+import {useInteractionState} from "../../../../state/Interaction/useInteractionState.ts";
+import {useState} from "react";
+import {useIntentState} from "../../../../state/Intent/useIntentState.ts";
+import type {MergedAttribute} from "../../../../hooks/infra/useMagentoLayeredData.tsx";
+import {useIntentAttributes} from "../../../../hooks/domain/useIntentAttributes.tsx";
+import {useTranslationState} from "../../../../state/Translation/useTranslationState.ts";
+import {useSelectedPreferences} from "../../../../hooks/domain/useSelectedPreference.ts";
 
 type Props = {
     attributeLayerData: MagentoLayeredNavigation

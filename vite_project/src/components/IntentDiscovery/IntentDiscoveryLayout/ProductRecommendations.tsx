@@ -1,6 +1,6 @@
-import { SuggestionContainer } from "../Suggestions/SuggestionContainer.tsx";
-import { useTranslationState } from "../../state/Translation/useTranslationState.ts";
-import {useIntentState} from "../../state/Intent/useIntentState.ts";
+import {useIntentState} from "../../../state/Intent/useIntentState.ts";
+import {useTranslationState} from "../../../state/Translation/useTranslationState.ts";
+import {SuggestionContainer} from "./ProductRecommendations/SuggestionContainer.tsx";
 
 export const ProductRecommendations = () => {
     const { intentState } = useIntentState()

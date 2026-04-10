@@ -1,5 +1,5 @@
-import {useTranslationState} from "../../../state/Translation/useTranslationState.ts";
-import {useIntentState} from "../../../state/Intent/useIntentState.ts";
+import {useTranslationState} from "../../../../../../state/Translation/useTranslationState.ts";
+import {useIntentState} from "../../../../../../state/Intent/useIntentState.ts";
 
 export const Success = () => {
     const {t} = useTranslationState()

@@ -1,13 +1,13 @@
 import type {IntentDiscoveryDataConfig} from "../../domain/intent-discovery.types.ts";
 import type {CategoryData} from "../../types/infra/magento/category.types.ts";
 import {useIntentController} from "../../hooks/domain/useIntentController.tsx";
-import {IntentMessage} from "./IntentMessage.tsx";
-import {AttributeLayer} from "./AttributeLayer.tsx";
 import {useIntentState} from "../../state/Intent/useIntentState.ts";
 import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNavigation.tsx";
-import {IntentDiscoveryOptions} from "./IntentDiscoveryOptions.tsx";
-import {ProductRecommendations} from "./ProductRecommendations.tsx";
 import {SearchSpinnerOverlay} from "../global/SearchSpinnerOverlay.tsx";
+import {IntentMessage} from "./IntentDiscoveryLayout/IntentMessage.tsx";
+import {AttributeLayer} from "./IntentDiscoveryLayout/AttributeLayer.tsx";
+import {IntentDiscoveryOptions} from "./IntentDiscoveryLayout/IntentDiscoveryOptions.tsx";
+import {ProductRecommendations} from "./IntentDiscoveryLayout/ProductRecommendations.tsx";
 
 export interface Props {
     config: IntentDiscoveryDataConfig

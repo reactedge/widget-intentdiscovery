@@ -1,10 +1,10 @@
-import type {IntentControllerState} from "../../domain/intent.types.ts";
-import {useTranslationState} from "../../state/Translation/useTranslationState.ts";
+import type {IntentControllerState} from "../../../domain/intent.types.ts";
+import type {MagentoLayeredNavigation} from "../../../hooks/domain/useLayeredNavigation.tsx";
+import {useTranslationState} from "../../../state/Translation/useTranslationState.ts";
+import {useIntentState} from "../../../state/Intent/useIntentState.ts";
 import {type ChangeEvent, useState} from "react";
-import {useIntentState} from "../../state/Intent/useIntentState.ts";
-import {PreviousIntent} from "../Intent/PreviousIntent.tsx";
-import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNavigation.tsx";
-import {intentPersistence} from "../../services/intentPersistence/intentPersistence.service.ts";
+import {intentPersistence} from "../../../services/intentPersistence/intentPersistence.service.ts";
+import {PreviousIntent} from "./IntentMessage/PreviousIntent.tsx";
 
 type Props = {
     intent: IntentControllerState,
@@ -27,7 +27,7 @@ export const IntentMessage = ({intent, attributeLayerData}: Props) => {
         <div className="finder">
             <h2 className="finder__title">{t("May I ask why you came here to shop?")}</h2>
             <div className={`intent-drawer ${isIntentOpen ? "open" : ""}`}>
-                <PreviousIntent attributeLayerData={attributeLayerData}/>
+                {attributeLayerData.attributes && <PreviousIntent attributes={attributeLayerData.attributes}/>}
             </div>
             <div className="intent-input-wrapper">
                 {!intentPersistence.isEmpty() &&

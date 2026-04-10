@@ -1,7 +1,7 @@
-import {useFindAttributeOptionsByCode} from "../../hooks/domain/useFindAttributeOptionsByCode.tsx";
-import {formatRange} from "../../lib/price.ts";
-import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNavigation.tsx";
-import type {MergedAttributeOption} from "../../hooks/infra/useMagentoLayeredData.tsx";
+import type {MagentoLayeredNavigation} from "../../../../../hooks/domain/useLayeredNavigation.tsx";
+import {useFindAttributeOptionsByCode} from "../../../../../hooks/domain/useFindAttributeOptionsByCode.tsx";
+import type {MergedAttributeOption} from "../../../../../hooks/infra/useMagentoLayeredData.tsx";
+import {formatRange} from "../../../../../lib/price.ts";
 
 interface StepFinderProps {
     attributeLayerData: MagentoLayeredNavigation

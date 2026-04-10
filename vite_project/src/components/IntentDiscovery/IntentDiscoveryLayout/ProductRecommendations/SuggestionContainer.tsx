@@ -1,7 +1,7 @@
-import {SuggestionCard} from "./SuggestionCard.tsx";
-import type {EnrichedSuggestion} from "../../types/infra/magento/product.types.ts";
 import {useState} from "react";
-import {useTranslationState} from "../../state/Translation/useTranslationState.ts";
+import {useTranslationState} from "../../../../state/Translation/useTranslationState.ts";
+import type {EnrichedSuggestion} from "../../../../types/infra/magento/product.types.ts";
+import {SuggestionCard} from "./SuggestionCard.tsx";
 
 type Props = {
     recommendations?: EnrichedSuggestion[] | null

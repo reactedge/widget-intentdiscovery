@@ -1,7 +1,9 @@
 import type {PersistedIntentV1} from "../../services/intentPersistence/intentPersistence.service.ts";
 import type {EnrichedSuggestion} from "../../types/infra/magento/product.types.ts";
 
-export type AttributeFilters = Record<string, Record<string, number>>
+export type AttributeOptionScores = Record<string, number>;
+
+export type AttributeFilters = Record<string, AttributeOptionScores>;
 
 export type IntentEngineState = {
     intentText: string

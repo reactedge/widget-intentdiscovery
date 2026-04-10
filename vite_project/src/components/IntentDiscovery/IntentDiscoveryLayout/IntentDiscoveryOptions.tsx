@@ -1,13 +1,13 @@
+import {Icon} from "./AttributeLayer/Icon.tsx";
+import type {CategoryData} from "../../../types/infra/magento/category.types.ts";
+import type {MagentoLayeredNavigation} from "../../../hooks/domain/useLayeredNavigation.tsx";
+import {useInteractionState} from "../../../state/Interaction/useInteractionState.ts";
+import {useIntentState} from "../../../state/Intent/useIntentState.ts";
 import {useEffect} from "react";
-import { StepFinder } from "../FinderWidget/StepFinder.tsx";
-import { StepPriceFinder } from "../FinderWidget/StepPriceFinder.tsx";
-import { FinderRow } from "../FinderRow.tsx";
-import type { CategoryData } from "../../types/infra/magento/category.types.ts";
-import { activity } from "../../activity";
-import {Icon} from "../AttributeLayer/Icon.tsx";
-import {useInteractionState} from "../../state/Interaction/useInteractionState.ts";
-import {useIntentState} from "../../state/Intent/useIntentState.ts";
-import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNavigation.tsx";
+import {activity} from "../../../activity";
+import {FinderRow} from "./IntentDiscoveryOptions/FinderRow.tsx";
+import {StepPriceFinder} from "./IntentDiscoveryOptions/FinderWidget/StepPriceFinder.tsx";
+import {StepFinder} from "./IntentDiscoveryOptions/FinderWidget/StepFinder.tsx";
 
 export interface Props {
     categoryData: CategoryData
