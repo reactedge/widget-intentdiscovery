@@ -137,10 +137,12 @@ test.describe('Intent Discovery Widget', () => {
         await input.fill('blue running jacket in cold weather');
         await expect(readinessContainer).toContainText('AI ready to interpret your request');
 
+        await expect(suggestButton).toBeEnabled();
+
         // become not ready if intent text length is too small again
         await input.fill('blue running jacket');
         await expect(readinessContainer).toContainText('Add 11+ characters or refine your preferences');
 
-        await expect(suggestButton).toBeEnabled();
+        await expect(suggestButton).toBeDisabled();
     });
 });
