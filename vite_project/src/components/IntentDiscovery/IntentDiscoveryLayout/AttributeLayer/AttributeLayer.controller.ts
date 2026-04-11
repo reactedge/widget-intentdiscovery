@@ -68,8 +68,16 @@ export function useAttributeLayerController({
         const prev = prevRemaining.current;
         const current = intent.remainingChars;
 
-        if (prev !== null && prev > 0 && current <= 0) {
-            dispatch({ type: "INTERPRETATION_READY" });
+        if (prev !== null) {
+            // became ready
+            if (prev > 0 && current <= 0) {
+                dispatch({ type: "INTERPRETATION_READY" });
+            }
+
+            // became not ready again (user removed characters)
+            if (prev <= 0 && current > 0) {
+                dispatch({ type: "INTERPRETATION_STARTED" });
+            }
         }
 
         prevRemaining.current = current;

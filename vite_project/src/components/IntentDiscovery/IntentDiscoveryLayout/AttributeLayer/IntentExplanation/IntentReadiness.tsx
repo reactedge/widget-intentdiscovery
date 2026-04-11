@@ -3,6 +3,7 @@ import {useIntentState} from "../../../../../state/Intent/useIntentState.ts";
 import {NoResult} from "./IntentReadiness/NoResult.tsx";
 import {Success} from "./IntentReadiness/Success.tsx";
 import {Warning} from "./IntentReadiness/Warning.tsx";
+import {Ready} from "./IntentReadiness/Ready.tsx";
 
 type Props = {
     attributeLayerData: MagentoLayeredNavigation
@@ -23,10 +24,11 @@ export const IntentReadiness = ({
 
     if (intentState.status === "suggestionSent") return <Success />
 
+    if (canInterpretOrSuggest) return <Ready attributeLayerData={attributeLayerData} />
+
     return <Warning
                 attributeLayerData={attributeLayerData}
                 intentStarted={intentStarted}
                 remainingChars={remainingChars}
-                canInterpretOrSuggest={canInterpretOrSuggest}
     />
 }

@@ -94,6 +94,7 @@ intentApi: {
 ```bash
 npx playwright test --config=tests/playwright.dev.config.ts
 npx playwright test --config=tests/playwright.dev.config.ts --debug
+npx playwright test --config=tests/playwright.dev.config.ts -g "title is visible" 
 ```
 
 ------------------------------------------------------------------------

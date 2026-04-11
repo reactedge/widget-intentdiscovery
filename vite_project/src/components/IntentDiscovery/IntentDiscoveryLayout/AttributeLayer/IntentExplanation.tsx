@@ -19,9 +19,9 @@ export const IntentExplanation = ({
 }: IntentExplanationProps) => {
     const { t } = useTranslationState();
     const { intentState, getAiReadiness } = useIntentState()
-    const coveragePct = getAiReadiness(attributeLayerData)
+    const gap = getAiReadiness(attributeLayerData)
     const canInterpretOrSuggest =
-        intentState.intentInterpretationReady || coveragePct === 100;
+        intentState.intentInterpretationReady || gap === 100;
 
     const intentStarted = !!intent?.text?.trim()
 

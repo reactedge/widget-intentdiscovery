@@ -6,7 +6,7 @@ export const Success = () => {
     const { intentState } = useIntentState()
 
     return (
-        <div className="intent-banner success">
+        <div className="intent-banner success" data-state="success">
             {t("%s matching products found", intentState.recommendations.length)}
         </div>
     )

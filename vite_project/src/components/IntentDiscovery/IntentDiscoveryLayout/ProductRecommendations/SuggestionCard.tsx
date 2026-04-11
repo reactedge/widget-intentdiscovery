@@ -4,7 +4,7 @@ import type {EnrichedSuggestion} from "../../../../types/infra/magento/product.t
 
 export const SuggestionCard: React.FC<{ suggestion: EnrichedSuggestion }> = ({ suggestion }) => {
     const content = (
-        <>
+        <div data-role="recommendation">
             {suggestion.product.imageUrl && (
                 <img
                     src={suggestion.product.imageUrl}
@@ -47,7 +47,7 @@ export const SuggestionCard: React.FC<{ suggestion: EnrichedSuggestion }> = ({ s
                     {suggestion.reason}
                 </div>
             </div>
-        </>
+        </div>
     )
 
     return suggestion.product.url ? (

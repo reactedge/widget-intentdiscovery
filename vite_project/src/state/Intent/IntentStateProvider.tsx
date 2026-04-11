@@ -51,6 +51,11 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
 
     function transition(state: IntentEngineState, event: IntentEvent): IntentEngineState {
         switch (event.type) {
+            case "INTERPRETATION_STARTED":
+                return { ...state,
+                    intentInterpretationReady: false,
+                    status: "idle"
+                };
             case "INTERPRETATION_READY":
                 return { ...state,
                     intentInterpretationReady: true,
