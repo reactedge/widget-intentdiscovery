@@ -2,7 +2,7 @@
     height: 100%;
     border: none;
     cursor: pointer;
-    padding: 7px 10px 9px;
+    padding: 11px 10px 11px;
     border-radius: 10px;
     background: #4a78ff;
     color: white;
@@ -44,7 +44,7 @@
     padding: 12px;
     border: 1px solid #ddd;
     background: #f9f9f9;
-    z-index: 999;
+    z-index: 10;
     border-radius: 8px;
 }
 

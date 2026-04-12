@@ -5,6 +5,7 @@ import {useIntentState} from "../../../state/Intent/useIntentState.ts";
 import {type ChangeEvent, useState} from "react";
 import {intentPersistence} from "../../../services/intentPersistence/intentPersistence.service.ts";
 import {PreviousIntent} from "./IntentMessage/PreviousIntent.tsx";
+import {ChevronIcon} from "./IntentMessage/ChevronIcon.tsx";
 
 type Props = {
     intent: IntentControllerState,
@@ -14,7 +15,6 @@ export const IntentMessage = ({intent, attributeLayerData}: Props) => {
     const {t} = useTranslationState()
     const { intentState } = useIntentState()
     const [isIntentOpen, setIsIntentOpen] = useState(false);
-    const label = isIntentOpen ? "Close" : "View";
 
     const handleTextChange = (e: ChangeEvent<HTMLInputElement>) => {
         intent.setIntent(e.target.value)
@@ -34,9 +34,7 @@ export const IntentMessage = ({intent, attributeLayerData}: Props) => {
                     <button className="intent-apply-left"
                             onClick={() => setIsIntentOpen(prev => !prev)}
                     >
-                        <>
-                            {label} <br /> Filters
-                        </>
+                        <ChevronIcon direction={isIntentOpen ? 'down' : 'right'} />
                     </button>
                 }
                 <input

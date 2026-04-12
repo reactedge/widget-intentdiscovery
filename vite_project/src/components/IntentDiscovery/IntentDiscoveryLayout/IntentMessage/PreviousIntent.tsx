@@ -7,6 +7,7 @@ import {
     intentPersistence,
     type PersistedIntentV1
 } from "../../../../services/intentPersistence/intentPersistence.service.ts";
+import {useTranslationState} from "../../../../state/Translation/useTranslationState.ts";
 
 type Props = {
     attributes: MergedAttribute[]
@@ -21,6 +22,7 @@ export type IntentDisplayAttribute = {
 
 export const PreviousIntent = ({ attributes }: Props) => {
     const { dispatch } = useIntentState();
+    const {t} = useTranslationState()
 
     const optionLabelMap = useOptionLabelMap(attributes);
     const intent = intentPersistence.load();
@@ -45,12 +47,12 @@ export const PreviousIntent = ({ attributes }: Props) => {
     return (
         <div className="intent-resume">
             <div className="intent-resume__title">
-                <span>These filters you have used also appear in this category</span>
+                <span>{t("Reuse your previous filters in this category")}</span>
                 <button
                     className="intent-resume__button"
                     onClick={handleReuse}
                 >
-                    Apply
+                    {t("Apply")}
                 </button>
             </div>
 
