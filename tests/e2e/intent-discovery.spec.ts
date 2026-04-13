@@ -1,73 +1,57 @@
 import { test, expect } from '@playwright/test';
+import {IntentWidgetDriver} from "../drivers/intent-widget.driver";
 
 test.describe('Intent Discovery Widget', () => {
 
     let widget;
 
     test.beforeEach(async ({ page }) => {
-        await page.goto('/tops-men.html?re-debug=intentdiscovery');
-
-        widget = page.locator('intentdiscovery-widget');
-
-        await expect(widget).toBeVisible();
+        widget = new IntentWidgetDriver(page);
+        await page.goto('/tops-men.html');
+        await expect(widget.root).toBeVisible();
     });
 
-    test('Title is visible', async () => {
-
-        const title = widget.getByRole('heading', {
+    test('Title is visible', async ({ page }) => {
+        const title = page.getByRole('heading', {
             name: 'May I ask why you came here to shop?'
         });
 
         await expect(title).toBeVisible();
     });
 
-    test('Step finder cards are partially rendered', async () => {
+    test('Step finder cards are partially rendered', async ({ page }) => {
 
-        const subtitle = widget.locator('label.intent-subtitle', {
+        const subtitle = page.locator('label.intent-subtitle', {
             hasText: "Describe what you're looking for"
         });
-
         await expect(subtitle).toBeVisible();
-
-        const cards = widget.locator('[data-intent-card]');
-
+        const cards = page.locator('[data-intent-card]');
         await expect(cards).toHaveCount(3);
     });
 
-    test('Step finder cards toggle works', async () => {
-
-        const toggle = widget.locator('.choice-tile--view-all');
-
+    test('Step finder cards toggle works', async ({ page }) => {
+        const toggle = page.locator('.choice-tile--view-all');
         await expect(toggle).toHaveText('View all');
-
         await toggle.click();
-
         await expect(toggle).toHaveText('Show less');
-
-        const options = widget.locator('[data-intent-option]');
-
+        const options = page.locator('[data-intent-option]');
         await expect(options).not.toBeVisible();
     });
 
-    test('Step finder cards are all shown when view all is clicked', async () => {
+    test('Step finder cards are all shown when view all is clicked', async ({ page }) => {
 
-        const toggle = widget.locator('.choice-tile--view-all');
-
+        const toggle = page.locator('.choice-tile--view-all');
         await toggle.click();
-
-        const cards = widget.locator('[data-intent-card]');
-
+        const cards = page.locator('[data-intent-card]');
         await expect(cards).toHaveCount(6);
     });
 
-    test('Clicking a card reveals its options', async () => {
-
-        const weatherCard = widget.locator('[data-intent-card="climate"]');
-        const coldOption = widget.locator('[data-intent-option="Cold"]');
+    test('Clicking a card reveals its options', async ({ page }) => {
+        const weatherCard = widget.card("climate")
+        const coldOption =  widget.option("Cold")
 
         // option should not be visible initially
         await expect(coldOption).toBeHidden();
-
         await weatherCard.click();
 
         // option should now appear
@@ -75,114 +59,85 @@ test.describe('Intent Discovery Widget', () => {
 
     });
 
-    test('Selecting an option activates option and card', async () => {
-
-        const weatherCard = widget.locator('[data-intent-card="climate"]');
-        const coldOption = widget.locator('[data-intent-option="Cold"]');
-
+    test('Selecting an option activates option and card', async ({ page }) => {
+        const weatherCard = widget.card("climate")
+        const coldOption =  widget.option("Cold")
         await weatherCard.click();
 
-        await expect(coldOption).toHaveAttribute('data-intent-selected', 'false');
+        await widget.expectOptionNotSelected(coldOption)
         await coldOption.click();
 
         await weatherCard.click();
-        await expect(coldOption).toHaveAttribute('data-intent-selected', 'true');
-        await expect(weatherCard).toHaveAttribute('data-intent-active', 'true');
+        await widget.expectCardActive(weatherCard)
+        await widget.expectOptionSelected(coldOption)
     });
 
     test('AI evaluation is Ready when Product Matches count is low', async ({ page }) => {
 
-        const suggestButton = page.getByRole('button', { name: /suggest/i });
-        await expect(suggestButton).toBeDisabled();
+        await widget.expectWarningVisible();
+        await widget.expectNotReady();
 
-        const weatherCard = widget.locator('[data-intent-card="climate"]');
-        const coldOption = widget.locator('[data-intent-option="Spring"]');
-
+        const weatherCard = widget.card("climate")
+        const coldOption =  widget.option("Spring")
         await weatherCard.click();
         await coldOption.click();
 
-        await expect(
-            widget.getByText('Ready to suggest')
-        ).toBeVisible();
+        await expect(widget.warningBanner().getByText('Ready to suggest')).toBeVisible();
 
-        await expect(suggestButton).toBeEnabled();
-        await suggestButton.click();
+        await widget.expectReady();
+        await widget.clickSuggest();
 
-        const loader = widget.getByRole('status', { name: 'Loading' });
+        const loader = widget.loader();
         await expect(loader).toBeVisible();
 
         await page.waitForTimeout(3000);
 
-        const successBanner = widget.locator('[data-state="success"]');
-        await expect(successBanner).toBeVisible();
-
-        const recommendationCard = widget.locator('[data-role="recommendation"]');
-        await expect(recommendationCard).toBeVisible();
+        await widget.expectSuccess();
+        await widget.expectRecommendationsVisible();
     });
 
     test('AI Readiness changes when intent is interpreted', async ({ page }) => {
-        const warningBanner = widget.locator('[data-state="warning"]');
-        await expect(warningBanner).toBeVisible();
 
-        const suggestButton = page.getByRole('button', { name: /suggest/i });
-        await expect(suggestButton).toBeDisabled();
+        await widget.expectWarningVisible();
+        await widget.expectNotReady();
+        await widget.fillIntent('blue running jacket');
 
-        const input = page.getByRole('textbox');
-
-        // become not ready if intent text length is too small
-        await input.fill('blue running jacket');
-        const readinessContainer = widget.locator('[data-readiness-hint]')
+        const readinessContainer = widget.readinessHint()
         await expect(readinessContainer).toContainText('Add 11+ characters or refine your preferences');
 
-        await input.fill('blue running jacket in cold weather');
+        await widget.fillIntent('blue running jacket in cold weather');
         await expect(readinessContainer).toContainText('AI ready to interpret your request');
-
-        await expect(suggestButton).toBeEnabled();
+        await widget.expectReady();
 
         // become not ready if intent text length is too small again
-        await input.fill('blue running jacket');
+        await widget.fillIntent('blue running jacket');
         await expect(readinessContainer).toContainText('Add 11+ characters or refine your preferences');
 
-        await expect(suggestButton).toBeDisabled();
+        await widget.expectNotReady();
     });
 
     test('Intent produces recommendations', async ({ page }) => {
-        const input = page.getByRole('textbox');
-        await input.fill('blue top for cold weather running');
 
-        const readinessContainer = widget.locator('[data-readiness-hint]')
-        await expect(readinessContainer).toContainText('AI ready to interpret your request');
+        await widget.fillIntent('blue top for cold weather running');
+        await widget.expectReady();
 
-        const button = page.getByRole('button', { name: /suggest/i });
-        await button.click();
+        await widget.clickSuggest();
 
-        // validate success
-        await expect(page.locator('.intent-banner.success')).toContainText('matching products found');
-
-        const recommendationCard = widget.locator('[data-role="recommendation"]');
-        await expect(recommendationCard).toBeVisible();
+        await widget.expectSuccess();
+        await widget.expectRecommendationsVisible();
     });
 
     test('Reload restores recommendations', async ({ page }) => {
-        const input = page.getByRole('textbox');
-        await input.fill('blue top for cold weather running');
 
-        const readinessContainer = widget.locator('[data-readiness-hint]')
-        await expect(readinessContainer).toContainText('AI ready to interpret your request');
+        await widget.fillIntent('blue top for cold weather running');
+        await widget.expectReady();
 
-        const button = page.getByRole('button', { name: /suggest/i });
-        await button.click();
+        await widget.clickSuggest();
+        await widget.expectSuccess();
 
-        // validate success
-        await expect(page.locator('.intent-banner.success')).toContainText('matching products found');
+        await widget.reload();
 
-        // reload
-        await page.reload();
-
-        // ❗ no AI call here — restore should kick in
-        await expect(page.locator('.intent-banner.success')).toContainText('matching products found');
-
-        const recommendationCard = widget.locator('[data-role="recommendation"]');
-        await expect(recommendationCard).toBeVisible();
+        await widget.expectSuccess();
+        await widget.expectRecommendationsVisible();
     });
 });
