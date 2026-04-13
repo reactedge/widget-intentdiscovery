@@ -92,7 +92,7 @@ test.describe('Intent Discovery Widget', () => {
 
     test('AI evaluation is Ready when Product Matches count is low', async ({ page }) => {
 
-        const suggestButton = widget.getByRole('button', { name: 'Suggest' });
+        const suggestButton = page.getByRole('button', { name: /suggest/i });
         await expect(suggestButton).toBeDisabled();
 
         const weatherCard = widget.locator('[data-intent-card="climate"]');
@@ -124,7 +124,7 @@ test.describe('Intent Discovery Widget', () => {
         const warningBanner = widget.locator('[data-state="warning"]');
         await expect(warningBanner).toBeVisible();
 
-        const suggestButton = widget.getByRole('button', { name: 'Suggest' });
+        const suggestButton = page.getByRole('button', { name: /suggest/i });
         await expect(suggestButton).toBeDisabled();
 
         const input = page.getByRole('textbox');
@@ -144,5 +144,45 @@ test.describe('Intent Discovery Widget', () => {
         await expect(readinessContainer).toContainText('Add 11+ characters or refine your preferences');
 
         await expect(suggestButton).toBeDisabled();
+    });
+
+    test('Intent produces recommendations', async ({ page }) => {
+        const input = page.getByRole('textbox');
+        await input.fill('blue top for cold weather running');
+
+        const readinessContainer = widget.locator('[data-readiness-hint]')
+        await expect(readinessContainer).toContainText('AI ready to interpret your request');
+
+        const button = page.getByRole('button', { name: /suggest/i });
+        await button.click();
+
+        // validate success
+        await expect(page.locator('.intent-banner.success')).toContainText('matching products found');
+
+        const recommendationCard = widget.locator('[data-role="recommendation"]');
+        await expect(recommendationCard).toBeVisible();
+    });
+
+    test('Reload restores recommendations', async ({ page }) => {
+        const input = page.getByRole('textbox');
+        await input.fill('blue top for cold weather running');
+
+        const readinessContainer = widget.locator('[data-readiness-hint]')
+        await expect(readinessContainer).toContainText('AI ready to interpret your request');
+
+        const button = page.getByRole('button', { name: /suggest/i });
+        await button.click();
+
+        // validate success
+        await expect(page.locator('.intent-banner.success')).toContainText('matching products found');
+
+        // reload
+        await page.reload();
+
+        // ❗ no AI call here — restore should kick in
+        await expect(page.locator('.intent-banner.success')).toContainText('matching products found');
+
+        const recommendationCard = widget.locator('[data-role="recommendation"]');
+        await expect(recommendationCard).toBeVisible();
     });
 });

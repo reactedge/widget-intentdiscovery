@@ -24,6 +24,12 @@ export type IntentEngineState = {
     searchReady: boolean;
 }
 
+export type IntentSnapshot = {
+    intentText: string,
+    filtersHash: string,
+    recommendations: EnrichedSuggestion[]
+}
+
 export type IntentSignal =
     | { type: "status_updated"; status: IntentStatus }
     | { type: "text_updated"; text: string }
@@ -56,7 +62,7 @@ export type IntentEvent =
     | { type: "INTERPRETATION_PROCESSING" }
     | { type: "BOOTSTRAP_FROM_PERSISTED_INTENT", payload: PersistedIntentV1 }
     | { type: "INTERPRETATION_REQUESTED" }
-    | { type: "INTERPRETATION_READY" }
+    | { type: "INTERPRETATION_READY", payload: { intent: string } }
     | { type: "INTERPRETATION_DONE" }//; filters: AttributeFilter[], intent: string  }
     | { type: "SUGGEST_CLICKED" }
     | { type: "SUGGESTION_SUCCESS"; recommendations: EnrichedSuggestion[], filters: AttributeFilters, intent: string }

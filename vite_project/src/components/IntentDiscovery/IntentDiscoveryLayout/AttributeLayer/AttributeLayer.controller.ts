@@ -3,7 +3,9 @@ import type {Props} from "../AttributeLayer.tsx";
 import {useIntentState} from "../../../../state/Intent/useIntentState.ts";
 import {useAskAi} from "../../../../hooks/domain/useAiInterpretation.tsx";
 import {useAnalyseSearch} from "../../../../hooks/domain/useAnalyseSearch.tsx";
-import {getFiltersHash} from "../../../../lib/attributes.ts";
+import {isSnapshotCompatible} from "../../../../domain/intent/snapshotMatcher.ts";
+import {getInterpretationEvent} from "../../../../domain/intent/readinessTransition.ts";
+import {intentSnapshotService} from "../../../../services/intentPersistence/intentSnapshot.service.ts";
 
 export function useAttributeLayerController({
      intent,
@@ -35,31 +37,31 @@ export function useAttributeLayerController({
     }, [intentState.status]);
 
     // --- restore session suggestions
-    useEffect(() => {
-        if (
-            intentState.status === "suggestionLoaded" ||
-            intentState.status === "readyToApplyFilters"
-        ) return;
+    const hasRestored = useRef(false);
 
-        const stored = sessionStorage.getItem("reactedge:suggestions");
-        if (!stored) return;
+    useEffect(() => {
+        if (hasRestored.current) return;
 
         try {
-            const parsed = JSON.parse(stored);
-            const currentHash = getFiltersHash(intentState.attributeScore);
+            const snapshot = intentSnapshotService.load();
+            if (!snapshot) return;
 
-            if (parsed.filtersHash === currentHash) {
+            if (isSnapshotCompatible(snapshot, intentState)) {
                 dispatch({
                     type: "SUGGESTION_LOAD",
-                    recommendations: parsed.recommendations,
-                    filters: parsed.filters,
-                    intent: parsed.intent
+                    recommendations: snapshot.recommendations,
+                    filters: JSON.parse(snapshot.filtersHash),
+                    intent: snapshot.intentText
                 });
+
+                hasRestored.current = true; // ✅ lock after success
+            } else {
+                //intentSnapshotService.clear();
             }
         } catch {
             // silent
         }
-    }, [intentState.status, intentState.attributeScore]);
+    }, [intentState.attributeScore]);
 
     // --- threshold crossing detection
     const prevRemaining = useRef<number | null>(null);
@@ -68,24 +70,17 @@ export function useAttributeLayerController({
         const prev = prevRemaining.current;
         const current = intent.remainingChars;
 
-        if (prev !== null) {
-            // became ready
-            if (prev > 0 && current <= 0) {
-                dispatch({ type: "INTERPRETATION_READY" });
-            }
-
-            // became not ready again (user removed characters)
-            if (prev <= 0 && current > 0) {
-                dispatch({ type: "INTERPRETATION_STARTED" });
-            }
-        }
+        const event = getInterpretationEvent(prev, current, intent.text);
+        if (event) dispatch(event);
 
         prevRemaining.current = current;
     }, [intent.remainingChars]);
 
-    // --- user action
     const handleAsk = () => {
-        dispatch({ type: "INTERPRETATION_READY" });
+        dispatch({
+            type: "INTERPRETATION_READY",
+            payload: { intent: intent.text }
+        });
         askAi();
     };
 

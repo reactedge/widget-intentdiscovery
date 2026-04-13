@@ -12,8 +12,10 @@ import type {IntentDiscoveryDataConfig} from "../../domain/intent-discovery.type
 import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNavigation.tsx";
 import {activity} from "../../activity";
 import {parseFiltersFromUrl} from "../../controller/load.ts";
-import {getFiltersHash} from "../../lib/attributes.ts";
 import {intentPersistence} from "../../services/intentPersistence/intentPersistence.service.ts";
+import {computeAiReadiness} from "../../domain/intent/readiness.ts";
+import {intentReducer} from "./intent.reducer.ts";
+import {runIntentEffects} from "./intent.effects.ts";
 
 interface IntentStateProviderProps {
     children: ReactNode;
@@ -29,115 +31,7 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
 
     function getAiReadiness(attributeLayerData: MagentoLayeredNavigation) {
         const threshold = config.ai?.matchThreshold ?? MIN_TEXT_LENGTH
-
-        const base = attributeLayerData.baseTotalCount ?? 0
-        const filtered = attributeLayerData.totalCount ?? 0
-
-        if (!base || !filtered || base === filtered) {
-            return 0
-        }
-
-        const fullCoverage = base - threshold
-        const currentCoverage = filtered - threshold
-
-        if (currentCoverage < 0) {
-            return 100
-        }
-
-        const coverage = (currentCoverage) / fullCoverage
-        const coveragePct = Math.round(coverage * 100)
-        return coveragePct
-    }
-
-    function transition(state: IntentEngineState, event: IntentEvent): IntentEngineState {
-        switch (event.type) {
-            case "INTERPRETATION_STARTED":
-                return { ...state,
-                    intentInterpretationReady: false,
-                    status: "idle"
-                };
-            case "INTERPRETATION_READY":
-                return { ...state,
-                    intentInterpretationReady: true,
-                    status: "canBeInterpreted"
-                };
-
-            case "INTERPRETATION_PROCESSING":
-                return { ...state,
-                    intentInterpreted: true,
-                    status: "suggestionProcessing" };
-
-            case "INTERPRETATION_DONE":
-                return { ...state,
-                    intentInterpreted: true,
-                    status: "readyToRecommend"
-                };
-
-            case "FILTER_CHANGED":
-                window.dispatchEvent(
-                    new CustomEvent("reactedge:filter", {
-                        detail: event
-                    })
-                )
-
-                return { ...state,
-                    status: "filterChanged" };
-
-            case "SUGGEST_CLICKED":
-                if (state.resultCount === 0) return state;
-                return { ...state, status: "suggestionProcessing" };
-
-            case "SUGGESTION_SUCCESS":
-                window.dispatchEvent(
-                    new CustomEvent("reactedge:syncfilters", {
-                        detail: event
-                    })
-                )
-
-                sessionStorage.setItem("reactedge:suggestions", JSON.stringify({
-                    intent: intentState.intentText,
-                    filtersHash: getFiltersHash(event.filters),
-                    recommendations: event.recommendations
-                }));
-
-                return {
-                    ...state
-                };
-
-            case "SUGGESTION_LOAD":
-                activity('recommendations-loaded', 'Recommendations Loaded', event.recommendations);
-                window.dispatchEvent(new CustomEvent('reactedge:recommendations', {
-                    detail: { recommendations: event.recommendations }
-                }))
-
-                return {
-                    ...state,
-                    status: "suggestionSent",
-                    recommendations: event.recommendations,
-                };
-                break;
-
-            case "BOOTSTRAP_FROM_PERSISTED_INTENT":
-                return {
-                    ...state,
-                    attributeScore: event.payload.attributeScore,
-                    categoryScore: event.payload.categoryScore,
-                    intentInterpreted: true,
-                    intentInterpretationReady: true,
-                    searchReady: true,
-                    status: "readyToApplyFilters",
-                };
-                break;
-
-            case "SEARCH_PROCESSING":
-                return { ...state, status: "suggestionProcessing", recommendations: [] };
-
-            case "SUGGESTION_EMPTY":
-                return { ...state, status: "noSuggestionFound", recommendations: [] };
-
-            default:
-                return state;
-        }
+        return computeAiReadiness(attributeLayerData, threshold)
     }
 
     const setPreference = (attributeCode: string, optionValue: string) => {
@@ -191,7 +85,11 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
     }
 
     const dispatch = useCallback((event: IntentEvent) => {
-        setIntentState((prev) => transition(prev, event));
+        setIntentState(prev => {
+            const next = intentReducer(prev, event);
+            runIntentEffects(event);
+            return next;
+        });
     }, []);
 
     useEffect(() => {
