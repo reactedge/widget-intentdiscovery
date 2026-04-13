@@ -1,6 +1,5 @@
 import type {IntentEvent} from "../../integration/intent/types.ts";
 import {getFiltersHash} from "../../lib/attributes.ts";
-import {activity} from "../../activity";
 import {intentSnapshotService} from "../../services/intentPersistence/intentSnapshot.service.ts";
 
 export function runIntentEffects(
@@ -35,9 +34,7 @@ export function runIntentEffects(
             });
             break;
 
-        case "SUGGESTION_LOAD":
-            activity('recommendations-loaded', 'Recommendations Loaded', event.recommendations);
-
+        case "SUGGESTION_PROPAGATE":
             window.dispatchEvent(
                 new CustomEvent("reactedge:recommendations", {
                     detail: { recommendations: event.recommendations }

@@ -9,12 +9,23 @@ export function mapProduct(p: GraphqlProduct, optionLabelMap: OptionLabelMap): B
         sku: p.sku,
         title: p.name,
         description: stripHtml(p.short_description?.html),
-        url: `/${p.url_key}`,
+        url: `/${getProductUrl(p)}`,
         imageUrl: p.matched_variant_image?.url?? p.small_image.url,
         price: p.price_range.minimum_price?.final_price,
         attributes: extractAttributes(p, optionLabelMap)
     }
 }
+
+const getProductUrl = (product: GraphqlProduct) => {
+    if (!product.url_rewrites?.length) return null;
+
+    // Prefer canonical (no category path)
+    const canonical = product.url_rewrites.find(
+        r => !r.url.includes('/')
+    );
+
+    return canonical?.url || product.url_rewrites[0].url;
+};
 
 function extractAttributes(
     p: GraphqlProduct,

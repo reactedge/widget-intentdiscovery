@@ -20,7 +20,9 @@ export type MagentoProduct = {
     small_image: {
         url: string
     }
-    url_key: string
+    url_rewrites: [{
+        url: string
+    }]
     matched_variant_image: {
         url: string
     }

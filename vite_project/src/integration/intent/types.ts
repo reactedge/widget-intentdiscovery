@@ -66,6 +66,6 @@ export type IntentEvent =
     | { type: "INTERPRETATION_DONE" }//; filters: AttributeFilter[], intent: string  }
     | { type: "SUGGEST_CLICKED" }
     | { type: "SUGGESTION_SUCCESS"; recommendations: EnrichedSuggestion[], filters: AttributeFilters, intent: string }
-    | { type: "SUGGESTION_LOAD"; recommendations: EnrichedSuggestion[], filters: AttributeFilters, intent: string }
+    | { type: "SUGGESTION_PROPAGATE"; recommendations: EnrichedSuggestion[], filters: AttributeFilters, intent: string }
     | { type: "SEARCH_PROCESSING" }
     | { type: "SUGGESTION_EMPTY" };

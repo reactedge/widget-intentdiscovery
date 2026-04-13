@@ -14,6 +14,12 @@ export const IntentLookup = ({ config, host }: Props) => {
     useLayoutEffect(() => {
         if (!category) return
 
+        window.dispatchEvent(
+            new CustomEvent('reactedge:widget-rendered', {
+                detail: { widget: 'intentdiscovery' }
+            })
+        );
+
         addCss(host);
     }, [host, category]);
 

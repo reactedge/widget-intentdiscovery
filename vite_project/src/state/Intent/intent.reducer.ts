@@ -48,14 +48,14 @@ export function intentReducer(
 
         case "SUGGESTION_SUCCESS":
             return {
-                ...state
+                ...state,
+                recommendations: event.recommendations,
+                status: "suggestionSent"
             };
 
-        case "SUGGESTION_LOAD":
+        case "SUGGESTION_PROPAGATE":
             return {
-                ...state,
-                status: "suggestionSent",
-                recommendations: event.recommendations
+                ...state
             };
 
         case "BOOTSTRAP_FROM_PERSISTED_INTENT":

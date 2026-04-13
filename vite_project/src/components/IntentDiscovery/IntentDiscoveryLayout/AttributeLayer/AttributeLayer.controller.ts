@@ -40,6 +40,27 @@ export function useAttributeLayerController({
     const hasRestored = useRef(false);
 
     useEffect(() => {
+        function handleRequest() {
+            const snapshot = intentSnapshotService.load();
+            if (!snapshot || !snapshot.recommendations?.length) return;
+
+            window.dispatchEvent(
+                new CustomEvent('reactedge:recommendations', {
+                    detail: {
+                        recommendations: snapshot.recommendations
+                    }
+                })
+            );
+        }
+
+        window.addEventListener('reactedge:request-recommendations', handleRequest);
+
+        return () => {
+            window.removeEventListener('reactedge:request-recommendations', handleRequest);
+        };
+    }, [intentState.recommendations]);
+
+    useEffect(() => {
         if (hasRestored.current) return;
 
         try {
@@ -48,7 +69,7 @@ export function useAttributeLayerController({
 
             if (isSnapshotCompatible(snapshot, intentState)) {
                 dispatch({
-                    type: "SUGGESTION_LOAD",
+                    type: "SUGGESTION_PROPAGATE",
                     recommendations: snapshot.recommendations,
                     filters: JSON.parse(snapshot.filtersHash),
                     intent: snapshot.intentText

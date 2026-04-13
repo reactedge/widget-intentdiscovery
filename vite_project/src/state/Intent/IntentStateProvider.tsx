@@ -132,6 +132,26 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
     }, [intentEngine]);
 
     useEffect(() => {
+        function handleRefresh() {
+            if (!intentState.recommendations?.length) return;
+
+            window.dispatchEvent(
+                new CustomEvent('reactedge:recommendations', {
+                    detail: {
+                        recommendations: intentState.recommendations
+                    }
+                })
+            );
+        }
+
+        window.addEventListener('reactedge:refresh', handleRefresh);
+
+        return () => {
+            window.removeEventListener('reactedge:refresh', handleRefresh);
+        };
+    }, [intentState.recommendations]);
+
+    useEffect(() => {
         activity('intent-state', 'Intent State Update', intentState);
     }, [intentState.status])
 
