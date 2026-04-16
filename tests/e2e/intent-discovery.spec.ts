@@ -140,4 +140,36 @@ test.describe('Intent Discovery Widget', () => {
         await widget.expectSuccess();
         await widget.expectRecommendationsVisible();
     });
+
+    test('Invalid event payload does not break system', async ({ page }) => {
+        await page.evaluate(() => {
+            window.dispatchEvent(new CustomEvent('reactedge:filter', {
+                detail: null
+            }));
+        });
+
+        await widget.expectSafeInitialState();
+    });
+
+    test('Widget mounts but does not render when category is not enabled', async ({ page }) => {
+        await page.goto('/category-not-enabled.html');
+
+        const widget = page.locator('intentdiscovery-widget');
+        await expect(widget).toHaveCount(1);
+
+        const shadowContent = await page.evaluate(() => {
+            const el = document.querySelector('intentdiscovery-widget');
+            if (!el || !el.shadowRoot) return null;
+
+            return {
+                childCount: el.shadowRoot.children.length,
+                hasContainer: !!el.shadowRoot.querySelector('.intent-widget-container'),
+                styleCount: el.shadowRoot.querySelectorAll('style').length
+            };
+        });
+
+        expect(shadowContent).not.toBeNull();
+        expect(shadowContent.childCount).toBeLessThanOrEqual(1); // allow minimal runtime node
+        expect(shadowContent.styleCount).toBe(0);
+    });
 });

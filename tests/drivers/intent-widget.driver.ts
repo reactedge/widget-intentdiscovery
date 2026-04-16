@@ -88,8 +88,17 @@ export class IntentWidgetDriver {
         await expect(this.warningBanner()).toBeVisible();
     }
 
-    async reload() {
-        await this.page.reload();
+    async reload(params?: Record<string, string>) {
+        await this.page.evaluate((params) => {
+            const searchParams = new URLSearchParams(params || {});
+            const url = `${window.location.pathname}?${searchParams.toString()}`;
+
+            // simulate navigation without reload
+            window.history.pushState({}, '', url);
+
+            // simulate content lifecycle completion
+            window.dispatchEvent(new CustomEvent('reactedge:content-updated'));
+        }, params);
     }
 
     // --- assertions (high value)
@@ -111,5 +120,18 @@ export class IntentWidgetDriver {
 
     async expectLoaderVisible() {
         await expect(this.loader()).toBeVisible();
+    }
+
+    async expectNoRecommendations() {
+        await expect(this.recommendationCards()).toHaveCount(0);
+    }
+
+    async expectSafeInitialState() {
+        await this.expectNoRecommendations();
+        await this.expectNotReady();
+        await this.expectWarningVisible();
+
+        const intentInput = this.page.getByRole('textbox');
+        await expect(intentInput).toHaveValue('');
     }
 }
