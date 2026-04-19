@@ -11,7 +11,7 @@ export default defineConfig({
     manifestPlugin({ widgetName }),
   ],
   define: {
-    'process.env': {}
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production')
   },
   build: {
     outDir: "../www",
