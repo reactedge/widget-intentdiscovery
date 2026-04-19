@@ -1,9 +1,13 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
-import pkg from './package.json';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react-swc'
+import pkg from './package.json'
+import { manifestPlugin } from './manifestPlugin'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    manifestPlugin({ widgetName: 'intentdiscovery' })
+  ],
   define: {
     'process.env': {},
   },
