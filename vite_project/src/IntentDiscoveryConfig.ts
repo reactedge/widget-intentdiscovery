@@ -1,5 +1,4 @@
 import { activity } from "./activity";
-import { loadContract } from "./widget-runtime/lib/contractLoader.ts";
 import type {
     IntentDiscoveryDataConfig,
     MagentoIntegrationName,
@@ -22,20 +21,17 @@ export interface IntentDiscoveryWidgetConfig {
     };
 }
 
-export async function readWidgetConfig(
-    hostElement: HTMLElement
-): Promise<ResolvedIntentDiscoveryConfig> {
-
-    const {storeCode, json: contract} = await loadContract(hostElement);
-
+export function readWidgetConfig(
+    rawConfig: IntentDiscoveryWidgetConfig,
+    storeCode: string
+): ResolvedIntentDiscoveryConfig {
     const runtime = readIntegrationConfig();
-    const resolved = resolveIntentDiscoveryConfig(contract, runtime, storeCode);
+    const resolved = resolveIntentDiscoveryConfig(rawConfig, runtime, storeCode);
 
     activity('bootstrap', 'Config resolved', {
         data: resolved.data,
         integrations: resolved.integrations,
-        translations: resolved.translations,
-        storeCode
+        translations: resolved.translations
     });
 
     return Object.freeze(resolved);

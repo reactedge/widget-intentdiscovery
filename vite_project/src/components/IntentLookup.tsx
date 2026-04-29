@@ -11,6 +11,8 @@ export interface Props {
 export const IntentLookup = ({ config, host }: Props) => {
     const category = useCurrentIntentCategory(config.data.enabledCategories);
 
+    console.log('category', category)
+
     useLayoutEffect(() => {
         if (!category) return
 

@@ -1,9 +1,12 @@
-import { mountWidget } from "./mountWidget";
+import {mountWidget, WIDGET_ID} from "./mountWidget";
+import type {IntentDiscoveryWidgetConfig} from "./IntentDiscoveryConfig.ts";
 
-class IntentDiscoveryWidget extends HTMLElement {
-    connectedCallback() {
-        mountWidget(this);
-    }
+const mount = async (el: HTMLElement, config: IntentDiscoveryWidgetConfig, storeCode: string = 'default') => {
+    await mountWidget(el, config, storeCode)
 }
 
-customElements.define("intentdiscovery-widget", IntentDiscoveryWidget);
+const api = { mount };
+
+(window as any)[`ReactEdge_${WIDGET_ID}`] = api;
+
+export { mount };
