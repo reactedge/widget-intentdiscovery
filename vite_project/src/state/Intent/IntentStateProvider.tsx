@@ -1,3 +1,4 @@
+import React from "react";
 import {type ReactNode, useCallback, useEffect, useState} from "react";
 import {loadIntentState, LocalIntentStateContext} from "./IntentState.tsx";
 

@@ -1,16 +1,14 @@
 import {createRoot} from "react-dom/client";
 import {IntentDiscoveryWidgetWrapper} from "./IntentDiscoveryWidgetWrapper.tsx";
 import {activity} from "./activity";
-import {getMountedHost} from "./widget-runtime/lib/hostReader.ts";
-import type {IntentDiscoveryWidgetConfig} from "./IntentDiscoveryConfig.ts";
+import type {WidgetConfig} from "./IntentDiscoveryConfig.ts";
+import type {ReactEdgeRuntimeConfig} from "./domain/intent-discovery.types.ts";
 
-export const WIDGET_ID = 'intentdiscovery';
-
-export function mountWidget(hostElement: HTMLElement, config: IntentDiscoveryWidgetConfig, storeCode: string) {
-    const mountedHost = getMountedHost(hostElement);
+export function mountWidget(hostElement: HTMLElement, config: WidgetConfig, runtimeConfig: ReactEdgeRuntimeConfig) {
+    const mountedHost = hostElement;
 
     activity('bootstrap', 'Widget mounted', hostElement);
 
     const root = createRoot(mountedHost);
-    root.render(<IntentDiscoveryWidgetWrapper host={hostElement} rawConfig={config} storeCode={storeCode} />);
+    root.render(<IntentDiscoveryWidgetWrapper rawConfig={config} runtimeConfig={runtimeConfig} />);
 }

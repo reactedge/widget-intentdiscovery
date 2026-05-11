@@ -6,6 +6,7 @@ import type {MergedAttribute} from "../infra/useMagentoLayeredData.tsx";
 import {useSystemState} from "../../state/System/useSystemState.ts";
 import {getError} from "../../lib/error.ts";
 import type {IntentDiscoveryDataConfig} from "../../domain/intent-discovery.types.ts";
+import type {BootstrapData} from "../../ssr/entry.tsx";
 
 export type MagentoLayeredNavigation = {
     attributes: MergedAttribute[] | null
@@ -25,7 +26,11 @@ export const useLayeredNavigation = (
     intentState: IntentEngineState,
     config: IntentDiscoveryDataConfig
 ): UseLayeredNavigationResult => {
-    const { graphqlClient } = useSystemState()
+    const { graphqlClient, bootstrap } = useSystemState()
+    const initialData = bootstrap?.layeredData
+
+    const shouldFetch =
+        !initialData;
 
     const [data, setData] = useState<MagentoLayeredNavigation | null>(null);
     const [loading, setLoading] = useState(false);
@@ -38,9 +43,9 @@ export const useLayeredNavigation = (
 
             const data = await getLayeredNavigation(
                 categoryData,
-                intentState,
                 graphqlClient,
-                config
+                config,
+                intentState
             )
 
             if (isCancelled?.()) return
@@ -59,6 +64,8 @@ export const useLayeredNavigation = (
     useEffect(() => {
         let cancelled = false
 
+        if (!shouldFetch) return ;
+
         ;(async () => {
             await execute(() => cancelled)
         })()
@@ -71,7 +78,7 @@ export const useLayeredNavigation = (
     const refetch = () => execute()
 
     return {
-        attributeLayerData: data,
+        attributeLayerData: initialData ?? data,
         attributeLayerLoading: loading,
         attributeLayerError: error,
         refetch

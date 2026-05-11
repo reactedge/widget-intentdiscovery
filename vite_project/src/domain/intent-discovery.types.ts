@@ -4,6 +4,8 @@
 
 export interface ReactEdgeRuntimeConfig {
     readonly integrations: ReactEdgeRuntimeIntegrations;
+    category: string;
+    storeCode: string;
 }
 
 export interface ReactEdgeRuntimeIntegrations {
@@ -21,9 +23,14 @@ export interface ReactEdgeRuntimeIntegrations {
 
 export interface ResolvedIntentDiscoveryConfig {
     readonly data: IntentDiscoveryDataConfig;
+    readonly runtime: ResolvedRuntimeConfig;
     readonly integrations: ReactEdgeRuntimeIntegrations;
     readonly translations: IntentDiscoveryTranslationsConfig
-    readonly storeCode: string
+}
+
+export interface ResolvedRuntimeConfig {
+    category: string;
+    storeCode: string;
 }
 
 export type IntentDiscoveryTranslationsConfig = Record<string, string> | undefined;

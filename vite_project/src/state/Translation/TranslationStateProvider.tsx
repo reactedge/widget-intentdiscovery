@@ -1,3 +1,4 @@
+import React from "react";
 import {type ReactNode, useMemo} from "react";
 import {LocalTranslationStateContext} from "./TranslationState.tsx";
 import {createTranslator} from "../../lib/translate.ts";

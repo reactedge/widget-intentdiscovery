@@ -1,3 +1,4 @@
+import React from "react";
 import type {MagentoLayeredNavigation} from "../../../../../hooks/domain/useLayeredNavigation.tsx";
 import {useIntentState} from "../../../../../state/Intent/useIntentState.ts";
 import {NoResult} from "./IntentReadiness/NoResult.tsx";

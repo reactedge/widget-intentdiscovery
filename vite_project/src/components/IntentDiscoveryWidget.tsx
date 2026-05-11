@@ -1,3 +1,4 @@
+import React from "react";
 import type { ResolvedIntentDiscoveryConfig } from "../domain/intent-discovery.types.ts";
 import { useCategory } from "../hooks/domain/useCategory.tsx";
 import {IntentDiscoveryLoader} from "./IntentDiscovery/IntentDiscoveryLoader.tsx";

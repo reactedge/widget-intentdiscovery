@@ -55,6 +55,14 @@ npm install
 npm run dev
 ```
 
+To run the widget in SSR mode:
+
+```bash
+cd widget-intentdiscovery
+npm install
+NODE_TLS_REJECT_UNAUTHORIZED=0 npx tsx scripts/render-page.ts ../widgets-cdn/www/intentdiscovery/contracts/default.json
+```
+
 ------------------------------------------------------------------------
 
 ## Runtime Integration Configuration

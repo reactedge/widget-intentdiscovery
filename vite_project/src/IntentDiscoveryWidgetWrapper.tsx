@@ -4,17 +4,17 @@ import {TranslationStateProvider} from "./state/Translation/TranslationStateProv
 import {SpinnerOverlay} from "./components/global/SpinnerOverlay.tsx";
 import {IntentStateProvider} from "./state/Intent/IntentStateProvider.tsx";
 import {useEffect, useState} from "react";
-import {type IntentDiscoveryWidgetConfig, readWidgetConfig} from "./IntentDiscoveryConfig.ts";
+import {type WidgetConfig, readWidgetConfig} from "./IntentDiscoveryConfig.ts";
+import type {ReactEdgeRuntimeConfig} from "./domain/intent-discovery.types.ts";
 
 type Props = {
-    host: HTMLElement;
-    rawConfig: IntentDiscoveryWidgetConfig;
-    storeCode: string
+    rawConfig: WidgetConfig;
+    runtimeConfig: ReactEdgeRuntimeConfig;
 };
 
-export const IntentDiscoveryWidgetWrapper = ({ host, rawConfig, storeCode }: Props) => {
+export const IntentDiscoveryWidgetWrapper = ({ rawConfig, runtimeConfig }: Props) => {
     const [bootReady, setBootReady] = useState(false);
-    const config = readWidgetConfig(rawConfig, storeCode);
+    const config = readWidgetConfig(rawConfig, runtimeConfig);
 
     useEffect(() => {
         if (!config) return;
@@ -27,13 +27,13 @@ export const IntentDiscoveryWidgetWrapper = ({ host, rawConfig, storeCode }: Pro
 
     if (!config) return null;
 
-    return  <SystemStateProvider config={config.integrations} store={config.storeCode}>
+    return  <SystemStateProvider config={config.integrations} runtimeConfig={config.runtime}>
                 <IntentStateProvider config={config.data}>
                     <TranslationStateProvider translations={config.translations}>
                         <div className="intent-widget-container">
                             {!bootReady
                                 ? <SpinnerOverlay/>
-                                : <IntentLookup config={config} host={host}/>
+                                : <IntentLookup config={config} />
                             }
                         </div>
                     </TranslationStateProvider>

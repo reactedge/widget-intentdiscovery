@@ -1,3 +1,4 @@
+import React from "react";
 import {type ReactNode} from "react";
 import { LocalInteractionStateContext, readInteraction } from "./InteractionState.tsx";
 import type { InteractionInfoState } from "./type.ts";

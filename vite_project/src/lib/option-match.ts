@@ -18,7 +18,11 @@ export function enrichWithIntent(attribute: any, intent: IntentEngineState) {
     };
 }
 
-export function intentToFilter(intentState: IntentEngineState) {
+export function intentToFilter(intentState?: IntentEngineState) {
+    if (intentState === undefined) {
+        return {}
+    }
+
     const { attributeScore } = intentState;
 
     const filter: Record<string, string[]> = {};
