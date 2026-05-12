@@ -1,5 +1,12 @@
-import {type ReactNode, useCallback, useEffect, useState} from "react";
-import {loadIntentState, LocalIntentStateContext} from "./IntentState.tsx";
+import React from "react";
+import { type ReactNode, useCallback, useEffect, useState } from "react";
+import {
+    initialState,
+    loadIntentState,
+    LocalIntentStateContext,
+    reseIntentState,
+    saveIntentContext
+} from "./IntentState.tsx";
 
 import type {
     IntentSignal,
@@ -7,15 +14,15 @@ import type {
     IntentStatus,
     IntentEvent
 } from "../../integration/intent/types.ts";
-import {useSystemState} from "../System/useSystemState.ts";
-import type {IntentDiscoveryDataConfig} from "../../domain/intent-discovery.types.ts";
-import type {MagentoLayeredNavigation} from "../../hooks/domain/useLayeredNavigation.tsx";
-import {activity} from "../../activity";
-import {parseFiltersFromUrl} from "../../controller/load.ts";
-import {intentPersistence} from "../../services/intentPersistence/intentPersistence.service.ts";
-import {computeAiReadiness} from "../../domain/intent/readiness.ts";
-import {intentReducer} from "./intent.reducer.ts";
-import {runIntentEffects} from "./intent.effects.ts";
+import { useSystemState } from "../System/useSystemState.ts";
+import type { IntentDiscoveryDataConfig } from "../../domain/intent-discovery.types.ts";
+import type { MagentoLayeredNavigation } from "../../hooks/domain/useLayeredNavigation.tsx";
+import { activity } from "../../activity";
+import { parseFiltersFromUrl } from "../../controller/load.ts";
+import { intentPersistence } from "../../services/intentPersistence/intentPersistence.service.ts";
+import { computeAiReadiness } from "../../domain/intent/readiness.ts";
+import { intentReducer } from "./intent.reducer.ts";
+import { runIntentEffects } from "./intent.effects.ts";
 
 interface IntentStateProviderProps {
     children: ReactNode;
@@ -75,6 +82,11 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
             ...prev,
             status
         }))
+    }
+
+    const resetIntent = () => {
+        reseIntentState()
+        setIntentState(initialState)
     }
 
     const setIntentText = (text: string) => {
@@ -155,6 +167,14 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
         activity('intent-state', 'Intent State Update', intentState);
     }, [intentState.status])
 
+    useEffect(() => {
+        saveIntentContext(intentState);
+    }, [
+        intentState.intentText,
+        intentState.attributeScore,
+        intentState.categoryScore
+    ]);
+
     return (
         <LocalStateProvider
             value={{
@@ -164,7 +184,8 @@ export const IntentStateProvider: React.FC<IntentStateProviderProps> = ({ childr
                 setIntentText,
                 setIntentStatus,
                 setPreference,
-                resetPreference
+                resetPreference,
+                resetIntent
             }}
         >
             {children}

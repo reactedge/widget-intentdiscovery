@@ -1,5 +1,5 @@
-import type {IntentEngineState, IntentSignal} from "./types.ts";
-import type {IntentApiClient} from "./intentApiClient.ts";
+import type { IntentEngineState, IntentSignal } from "./types.ts";
+import type { IntentApiClient } from "./intentApiClient.ts";
 
 type Listener = (state: IntentEngineState) => void;
 
@@ -28,6 +28,10 @@ export class IntentEngine {
     }
 
     private resolveUrl() {
+        if (typeof window === 'undefined') {
+            return;
+        }
+
         const path = window.location.pathname;
         const segments = path.split("/").filter(Boolean);
         let lastSegment = segments[segments.length - 1];

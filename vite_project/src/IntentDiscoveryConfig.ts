@@ -5,11 +5,12 @@ import type {
     ReactEdgeRuntimeConfig,
     ResolvedIntentDiscoveryConfig
 } from "./domain/intent-discovery.types.ts";
-import { WIDGET_ID } from "./mountWidget.tsx";
+
+export const WIDGET_ID = 'intentdiscovery';
 
 export type IntentDiscoveryTranslationsConfig = Record<string, string> | undefined;
 
-export interface IntentDiscoveryWidgetConfig {
+export interface WidgetConfig {
     /**
      * Structured banner payload.
      * Shape is banner-owned and opaque to the platform.
@@ -22,14 +23,14 @@ export interface IntentDiscoveryWidgetConfig {
 }
 
 export function readWidgetConfig(
-    rawConfig: IntentDiscoveryWidgetConfig,
-    storeCode: string
+    rawConfig: WidgetConfig,
+    runtimeConfig: ReactEdgeRuntimeConfig
 ): ResolvedIntentDiscoveryConfig {
-    const runtime = readIntegrationConfig();
-    const resolved = resolveIntentDiscoveryConfig(rawConfig, runtime, storeCode);
+    const resolved = resolveIntentDiscoveryConfig(rawConfig, runtimeConfig);
 
     activity('bootstrap', 'Config resolved', {
         data: resolved.data,
+        runtime: resolved.runtime,
         integrations: resolved.integrations,
         translations: resolved.translations
     });
@@ -37,7 +38,7 @@ export function readWidgetConfig(
     return Object.freeze(resolved);
 }
 
-export function readIntegrationConfig(): ReactEdgeRuntimeConfig {
+export function readIntegrationConfig(storeCode: string, category: string): ReactEdgeRuntimeConfig {
     const configScript = document.getElementById('reactedge-runtime');
 
     if (!configScript) {
@@ -59,13 +60,15 @@ export function readIntegrationConfig(): ReactEdgeRuntimeConfig {
         throw new Error(`${WIDGET_ID}: intentApi baseUrl missing in reactedge-runtime`);
     }
 
+    config.storeCode = storeCode
+    config.category = category
+
     return config;
 }
 
 export function resolveIntentDiscoveryConfig(
-    widget: IntentDiscoveryWidgetConfig,
-    runtime: ReactEdgeRuntimeConfig,
-    storeCode: string
+    widget: WidgetConfig,
+    runtime: ReactEdgeRuntimeConfig
 ): ResolvedIntentDiscoveryConfig {
 
     if (
@@ -77,11 +80,14 @@ export function resolveIntentDiscoveryConfig(
 
     return {
         data: widget.data,
+        runtime: {
+            storeCode: runtime.storeCode,
+            category: runtime.category
+        },
         integrations: {
             magentoGraphql: runtime.integrations?.magentoGraphql,
             intentApi: runtime.integrations.intentApi
         },
-        translations: widget.translations,
-        storeCode
+        translations: widget.translations
     };
 }

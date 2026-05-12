@@ -1,3 +1,4 @@
+import React from "react";
 import {Icon} from "./Icon.tsx";
 import {decodeHtmlEntities} from "../../../../lib/string.ts";
 import type {MergedAttribute} from "../../../../hooks/infra/useMagentoLayeredData.tsx";

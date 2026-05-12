@@ -1,15 +1,14 @@
+import React from "react";
 import type {ResolvedIntentDiscoveryConfig} from "../domain/intent-discovery.types.ts";
-import {useCurrentIntentCategory} from "../hooks/domain/useCurrentIntentCategory.tsx";
 import {IntentDiscoveryWidget} from "./IntentDiscoveryWidget.tsx";
-import {addCss} from "../widget-runtime/lib/hostReader.ts";
 import {useLayoutEffect} from "react";
+import {resolveIntentCategory} from "../lib/category.ts";
 
 export interface Props {
     config: ResolvedIntentDiscoveryConfig
-    host: HTMLElement
 }
-export const IntentLookup = ({ config, host }: Props) => {
-    const category = useCurrentIntentCategory(config.data.enabledCategories);
+export const IntentLookup = ({ config }: Props) => {
+    const category = resolveIntentCategory(config.runtime.category, config.data.enabledCategories);
 
     useLayoutEffect(() => {
         if (!category) return
@@ -19,9 +18,7 @@ export const IntentLookup = ({ config, host }: Props) => {
                 detail: { widget: 'intentdiscovery' }
             })
         );
-
-        addCss(host);
-    }, [host, category]);
+    }, [category]);
 
     if (!category) return null;
 

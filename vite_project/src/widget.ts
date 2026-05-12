@@ -1,8 +1,13 @@
-import {mountWidget, WIDGET_ID} from "./mountWidget";
-import type {IntentDiscoveryWidgetConfig} from "./IntentDiscoveryConfig.ts";
+import {type WidgetConfig, WIDGET_ID} from "./IntentDiscoveryConfig.ts";
+import {mountWidget} from "./mountWidget.tsx";
+import type {ReactEdgeRuntimeConfig} from "./domain/intent-discovery.types.ts";
 
-const mount = async (el: HTMLElement, config: IntentDiscoveryWidgetConfig, storeCode: string = 'default') => {
-    await mountWidget(el, config, storeCode)
+const mount = async (
+    el: HTMLElement,
+    config: WidgetConfig,
+    runtimeConfig: ReactEdgeRuntimeConfig
+) => {
+    await mountWidget(el, config, runtimeConfig)
 }
 
 const api = { mount };

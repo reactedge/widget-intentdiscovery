@@ -1,26 +1,37 @@
+import React from "react";
 import {type ReactNode, useMemo} from "react";
 import {LocalSystemStateContext} from "./SystemState.tsx";
-import type {ReactEdgeRuntimeIntegrations} from "../../domain/intent-discovery.types.ts";
+import type {
+    ReactEdgeRuntimeIntegrations,
+    ResolvedRuntimeConfig
+} from "../../domain/intent-discovery.types.ts";
 import {createIntentEngine} from "../../integration/intent/IntentEngine.ts";
 import {createIntentApiClient} from "../../integration/intent/intentApiClient.ts";
 import {createGraphqlService} from "../../services/graphql/graphql.service.ts";
+import type {BootstrapData} from "../../ssr/entry.tsx";
 
 interface SystemStateProviderProps {
     children: ReactNode;
     config: ReactEdgeRuntimeIntegrations;
-    store: string
+    runtimeConfig: ResolvedRuntimeConfig;
+    bootstrap?: BootstrapData
 }
 
 const LocalStateProvider = LocalSystemStateContext.Provider;
 
-export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ children, config, store }) => {
+export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({
+    children,
+    config,
+    runtimeConfig,
+    bootstrap
+}) => {
     if (!config?.magentoGraphql?.api) {
         throw new Error('GraphQL client cannot be created without API endpoint');
     }
 
     const graphqlClient = useMemo(
-        () => createGraphqlService(config.magentoGraphql.api, store),
-        [config.magentoGraphql?.api, store]
+        () => createGraphqlService(config.magentoGraphql.api, runtimeConfig.storeCode),
+        [config.magentoGraphql?.api, runtimeConfig.storeCode]
     );
 
     const intentApi = config.intentApi;
@@ -32,11 +43,11 @@ export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ childr
     const intentApiClient = useMemo(() => {
         return createIntentApiClient({
             baseUrl: intentApi.baseUrl,
-            store
+            store: runtimeConfig.storeCode
         });
     }, [
         intentApi.baseUrl,
-        store
+        runtimeConfig.storeCode
     ]);
 
     // ✅ One single engine instance
@@ -51,7 +62,8 @@ export const SystemStateProvider: React.FC<SystemStateProviderProps> = ({ childr
         <LocalStateProvider
             value={{
                 graphqlClient,
-                intentEngine
+                intentEngine,
+                bootstrap
             }}
         >
             {children}

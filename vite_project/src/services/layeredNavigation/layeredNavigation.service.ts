@@ -14,15 +14,15 @@ import type {GraphqlClient} from "../graphql/graphqlClient.ts";
 
 export async function getLayeredNavigation(
     categoryData: CategoryData,
-    intentState: IntentEngineState,
     graphqlClient: GraphqlClient,
-    config: IntentDiscoveryDataConfig
+    config: IntentDiscoveryDataConfig,
+    intentState?: IntentEngineState
 ): Promise<MagentoLayeredNavigation> {
     const categoryIds = categoryLayereIds(categoryData)
 
     const [base, filtered] = await Promise.all([
         fetchBase(categoryIds, graphqlClient),
-        fetchFiltered(categoryIds, intentState, graphqlClient)
+        fetchFiltered(categoryIds, graphqlClient, intentState)
     ])
 
     const merged = mergeLayerData(base, filtered)

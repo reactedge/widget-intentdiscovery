@@ -3,6 +3,10 @@
 const TTL = 60 * 60 * 1000;
 
 export function getCache(key: string, ttl: number = TTL) {
+    if (typeof sessionStorage === 'undefined') {
+        return null;
+    }
+
     const raw = sessionStorage.getItem(key);
     if (!raw) return null;
 
@@ -16,6 +20,10 @@ export function getCache(key: string, ttl: number = TTL) {
 }
 
 export function setCache(key: string, data: any) {
+    if (typeof sessionStorage === 'undefined') {
+        return;
+    }
+
     sessionStorage.setItem(
         key,
         JSON.stringify({

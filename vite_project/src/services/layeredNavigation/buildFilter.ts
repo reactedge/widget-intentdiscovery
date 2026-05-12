@@ -12,7 +12,7 @@ export const getCategoryFilter = (categoryIds: number[]) => {
     return filter
 }
 
-export const getAttributesFilter = (categoryIds: number[], intentState: IntentEngineState) => {
+export const getAttributesFilter = (categoryIds: number[], intentState?: IntentEngineState) => {
     const filter = getCategoryFilter(categoryIds)
     const intentFilter = intentToFilter(intentState);
 

@@ -1,5 +1,6 @@
+import React from "react";
 import {type ReactNode} from "react";
-import { LocalInteractionStateContext, readInteraction } from "./InteractionState.tsx";
+import {LocalInteractionStateContext, readInteraction, INTERACTION_STORAGE_KEY} from "./InteractionState.tsx";
 import type { InteractionInfoState } from "./type.ts";
 import {useImmer} from "use-immer";
 
@@ -18,6 +19,13 @@ export const InteractionStateProvider: React.FC<InteractionStateProviderProps> =
         setInteractionState(draft => {
             draft.navigation.activeAttribute = attributeCode;
         });
+
+        localStorage.setItem(
+            INTERACTION_STORAGE_KEY,
+            JSON.stringify({
+                activeAttribute: attributeCode
+            })
+        );
     };
 
     const setFocusedOption = (code: string) => {

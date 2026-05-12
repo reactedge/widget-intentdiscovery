@@ -1,8 +1,12 @@
-import {WIDGET_ID} from "../mountWidget.tsx";
+import {WIDGET_ID} from "../IntentDiscoveryConfig.ts";
 
 const debugTargets = getDebugTargets();
 
 function getDebugTargets(): string[] | null {
+    if (typeof window === 'undefined') {
+        return [];
+    }
+
     const params = new URLSearchParams(window.location.search);
     const value = params.get('re-debug');
 

@@ -1,10 +1,10 @@
-import {createContext} from "react";
-import type {IntentState} from "./type.ts";
-import type {IntentEngineState} from "../../integration/intent/types.ts";
+import { createContext } from "react";
+import type { IntentState } from "./type.ts";
+import type { IntentEngineState } from "../../integration/intent/types.ts";
 
-const STORAGE_KEY = "reactedge.intentengine.v1"
+export const ENGINE_STORAGE_KEY = 'intent-discovery-state';
 
-const initialState: IntentEngineState = {
+export const initialState: IntentEngineState = {
     intentText: '',
     categoryScore: {},
     attributeScore: {},
@@ -17,13 +17,38 @@ const initialState: IntentEngineState = {
     intentInterpretationReady: false,
     searchReady: false
 };
+
 export function loadIntentState(): IntentEngineState {
     try {
-        const raw = localStorage.getItem(STORAGE_KEY)
-        return raw ? JSON.parse(raw) : initialState;
+        const raw = localStorage.getItem(ENGINE_STORAGE_KEY);
+
+        if (!raw) {
+            return initialState;
+        }
+
+        return {
+            ...initialState,
+            ...JSON.parse(raw)
+        };
     } catch {
-        return initialState
+        return initialState;
     }
+}
+
+export function reseIntentState() {
+    saveIntentContext(initialState)
+}
+
+export function saveIntentContext(context: IntentEngineState) {
+    localStorage.setItem(
+        ENGINE_STORAGE_KEY,
+        JSON.stringify({
+            intentText: context.intentText,
+            categoryScore: context.categoryScore,
+            attributeScore: context.attributeScore,
+            priceAffinity: context.priceAffinity
+        })
+    );
 }
 
 export const LocalIntentStateContext = createContext<IntentState | undefined>(undefined);

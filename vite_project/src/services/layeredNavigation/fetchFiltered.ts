@@ -10,8 +10,8 @@ const filteredCache = new Map()
 
 export async function fetchFiltered(
     categoryIds: number[],
-    intentState: IntentEngineState,
-    graphqlClient: GraphqlClient
+    graphqlClient: GraphqlClient,
+    intentState?: IntentEngineState
 ): Promise<MagentoProducts> {
     const key = JSON.stringify({
         categoryIds,

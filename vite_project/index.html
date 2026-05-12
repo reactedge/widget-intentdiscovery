@@ -1,62 +1,29 @@
 <!DOCTYPE html>
 <html>
-<body>
+<head>
+    <link rel="stylesheet" href="https://widgets-cdn.co.uk:8459/intentdiscovery/styles/intent-discovery.css">
+</head>
+<body style="background: wheat">
 
 <h2>intentdiscovery x2 Test</h2>
-
-
 <script type="module">
-    const manifest = await fetch('/cdn/index.json').then(r => r.json());
-
     import { mount } from './src/widget.ts';
+    import {loadContract} from "./src/lib/contract-resolver.js";
+    import {readIntegrationConfig} from "./src/IntentDiscoveryConfig.js"
+    const config = await loadContract('default.json')
+    const storeCode = 'default'
+    const category = 'tops-men'
+    const element = document.querySelector('intentdiscovery-widget');
 
-    const configs = await Promise.all(
-        manifest.contracts.map(url => fetch(url).then(r => r.json()))
-    );
+    const runtimeConfig = readIntegrationConfig(storeCode, category);
 
-    function pickRandom(arr) {
-        return arr[Math.floor(Math.random() * arr.length)];
-    }
-
-    const widths = [280, 320, 480, 768, 1024, 1440];
-
-    const root = document.getElementById('root');
-
-    const instances = 10 + Math.floor(Math.random() * 10);
-
-    for (let i = 0; i < instances; i++) {
-        const container = document.createElement('div');
-
-        const width = pickRandom(widths);
-        container.style.width = width + 'px';
-        container.style.margin = '10px';
-        container.style.border = '1px dashed #ccc';
-
-        const el = document.createElement('intentdiscovery-widget');
-        container.appendChild(el);
-        root.appendChild(container);
-    }
-
-    const elements = Array.from(document.querySelectorAll('intentdiscovery-widget'));
-
-    function delay(ms) {
-        return new Promise(r => setTimeout(r, ms));
-    }
-
-    await Promise.all(
-        elements.map(async (el) => {
-            const config = pickRandom(configs);
-
-            await delay(Math.random() * 300);
-
-            requestAnimationFrame(() => {
-                mount(el, config);
-            });
-        })
-    );
+    await requestAnimationFrame(() => {
+        mount(element, config, runtimeConfig);
+    })
 </script>
 
-<div id="root"></div>
+
+<intentdiscovery-widget></intentdiscovery-widget>
 
 <script type="application/json" id="reactedge-runtime">
     {

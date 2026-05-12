@@ -1,3 +1,4 @@
+import React from "react";
 import type {MagentoLayeredNavigation} from "../../../../../hooks/domain/useLayeredNavigation.tsx";
 import {useIntentState} from "../../../../../state/Intent/useIntentState.ts";
 import {NoResult} from "./IntentReadiness/NoResult.tsx";
@@ -18,17 +19,22 @@ export const IntentReadiness = ({
      canInterpretOrSuggest,
      remainingChars
 }: Props) => {
-    const { intentState } = useIntentState()
+    const { intentState, resetIntent } = useIntentState()
+
+    const resetClick = () => {
+        resetIntent()
+    }
 
     if (intentState.status === "noSuggestionFound") return <NoResult />
 
     if (intentState.status === "suggestionSent") return <Success />
 
-    if (canInterpretOrSuggest) return <Ready attributeLayerData={attributeLayerData} />
+    if (canInterpretOrSuggest) return <Ready attributeLayerData={attributeLayerData} resetClick={resetClick} />
 
     return <Warning
                 attributeLayerData={attributeLayerData}
                 intentStarted={intentStarted}
                 remainingChars={remainingChars}
+                resetClick={resetClick}
     />
 }
