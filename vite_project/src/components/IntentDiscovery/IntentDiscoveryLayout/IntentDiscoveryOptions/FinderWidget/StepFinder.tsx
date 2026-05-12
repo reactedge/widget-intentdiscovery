@@ -1,10 +1,10 @@
-import type {MagentoLayeredNavigation} from "../../../../../hooks/domain/useLayeredNavigation.tsx";
-import {useInteractionState} from "../../../../../state/Interaction/useInteractionState.ts";
-import {useFindAttributeOptionsByCode} from "../../../../../hooks/domain/useFindAttributeOptionsByCode.tsx";
-import {useIntentState} from "../../../../../state/Intent/useIntentState.ts";
-import type {MergedAttributeOption} from "../../../../../hooks/infra/useMagentoLayeredData.tsx";
-import {activity} from "../../../../../activity";
-import {unescapeHtml} from "../../../../../lib/string.ts";
+import type { MagentoLayeredNavigation } from "../../../../../hooks/domain/useLayeredNavigation.tsx";
+import { useInteractionState } from "../../../../../state/Interaction/useInteractionState.ts";
+import { useFindAttributeOptionsByCode } from "../../../../../hooks/domain/useFindAttributeOptionsByCode.tsx";
+import { useIntentState } from "../../../../../state/Intent/useIntentState.ts";
+import type { MergedAttributeOption } from "../../../../../hooks/infra/useMagentoLayeredData.tsx";
+import { activity } from "../../../../../activity";
+import { unescapeHtml } from "../../../../../lib/string.ts";
 
 interface StepFinderProps {
     optionCode: string
@@ -20,9 +20,9 @@ export const StepFinder: React.FC<StepFinderProps> = ({ optionCode, attributeLay
         setActiveAttribute(optionCode);
         setPreference(optionCode, option.value)
         setFocusedOption(option.value)
-        dispatch({type: "FILTER_CHANGED", attributeCode: optionCode, optionValue: option.value})
+        dispatch({ type: "FILTER_CHANGED", attributeCode: optionCode, optionValue: option.value })
 
-        activity('intent-discovery-option', 'Intent Option Selection', {intentState, optionCode, value: option.value});
+        activity('intent-discovery-option', 'Intent Option Selection', { intentState, optionCode, value: option.value });
     };
 
     const selectedMap = intentState.attributeScore?.[optionCode] || {};
@@ -37,7 +37,7 @@ export const StepFinder: React.FC<StepFinderProps> = ({ optionCode, attributeLay
             return (
                 <span
                     className="swatch swatch--color"
-                    style={{backgroundColor: value}}
+                    style={{ backgroundColor: value }}
                 />
             )
         }
@@ -46,31 +46,31 @@ export const StepFinder: React.FC<StepFinderProps> = ({ optionCode, attributeLay
     }
 
     return (
-            <div className="step-finder">
-                {attributeData?.options.map((option: MergedAttributeOption) => (
-                    <label
-                        key={option.value}
-                        className="choice-tile"
-                        data-intent-option={option.label}
-                        data-intent-selected={isOptionSelected(option.value)}
-                        data-intent-count={option.filteredCount}
-                    >
-                        <input
-                            type="radio"
-                            name="preference"
-                            checked={isOptionSelected(option.value)}
-                            value={option.value}
-                            onClick={() => handleOnClick(option)}
-                            readOnly
-                        />
+        <div className="step-finder">
+            {attributeData?.options.map((option: MergedAttributeOption) => (
+                <label
+                    key={option.value}
+                    className="choice-tile"
+                    data-intent-option={option.label}
+                    data-intent-selected={isOptionSelected(option.value)}
+                    data-intent-count={option.filteredCount}
+                >
+                    <input
+                        type="radio"
+                        name="preference"
+                        checked={isOptionSelected(option.value)}
+                        value={option.value}
+                        onClick={() => handleOnClick(option)}
+                        readOnly
+                    />
 
-                        {renderOptionVisual(option)}
+                    {renderOptionVisual(option)}
 
-                        <span className={`choice-tile__label ${isOptionSelected(option.value) ? 'choice-tile__label--active' : ''}`}>
-                            {unescapeHtml(option.label)} ({option.filteredCount})
-                        </span>
-                    </label>
-                ))}
-            </div>
+                    <span className={`choice-tile__label ${isOptionSelected(option.value) ? 'choice-tile__label--active' : ''}`}>
+                        {unescapeHtml(option.label)} ({option.filteredCount})
+                    </span>
+                </label>
+            ))}
+        </div>
     );
 };

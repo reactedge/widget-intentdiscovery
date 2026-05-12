@@ -18,3 +18,5 @@ export const renderHtml = (config: WidgetConfig, runtimeConfig: ReactEdgeRuntime
         </div>
     );
 };
+
+export { buildBootstrap } from './bootstrap';

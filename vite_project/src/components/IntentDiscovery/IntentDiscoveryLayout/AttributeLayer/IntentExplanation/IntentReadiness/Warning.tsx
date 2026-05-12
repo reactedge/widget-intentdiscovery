@@ -7,13 +7,15 @@ type Props = {
     attributeLayerData: MagentoLayeredNavigation
     intentStarted: boolean;
     remainingChars: number;
+    resetClick: () => void;
 }
 
 export const Warning = ({
-        attributeLayerData,
-        intentStarted,
-        remainingChars
-    }: Props) => {
+    attributeLayerData,
+    intentStarted,
+    remainingChars,
+    resetClick
+}: Props) => {
     const {t} = useTranslationState()
     const { intentState, getAiReadiness } = useIntentState()
     const gap = getAiReadiness(attributeLayerData)
@@ -30,8 +32,11 @@ export const Warning = ({
 
     return (
         <div className={`intent-ai-threshold ${gap === 100 ? "ready" : ""}`} data-state="warning">
-            <div className="confidence">
-                {t("Ready to suggest")}
+            <div className="intent-ai-left">
+                <div className="confidence">
+                    {t("Ready to suggest")}
+                </div>
+                <div><button className="intent-reset" onClick={resetClick}>{t('Reset Filters')}</button></div>
             </div>
             <div className="help" data-readiness-hint>
                 {t(getAiReadinessMessage(), remainingChars, gap)}

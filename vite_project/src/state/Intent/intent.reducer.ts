@@ -39,6 +39,12 @@ export function intentReducer(
                 status: "filterChanged"
             };
 
+        case "FILTER_RESET":
+            return {
+                ...state,
+                status: "filterReset"
+            };
+
         case "SUGGEST_CLICKED":
             if (state.resultCount === 0) return state;
             return {

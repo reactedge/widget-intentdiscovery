@@ -30,6 +30,6 @@ export default defineConfig({
       },
     },
     minify: true,
-    sourcemap: false
+    sourcemap: true
   }
 })

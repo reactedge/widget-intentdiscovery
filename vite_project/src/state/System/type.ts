@@ -5,5 +5,5 @@ import type {BootstrapData} from "../../ssr/entry.tsx";
 export interface SystemState {
     graphqlClient: GraphqlClient;
     intentEngine: IntentEngine;
-    bootstrap: BootstrapData
+    bootstrap?: BootstrapData
 }

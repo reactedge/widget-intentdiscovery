@@ -14,7 +14,7 @@ interface SystemStateProviderProps {
     children: ReactNode;
     config: ReactEdgeRuntimeIntegrations;
     runtimeConfig: ResolvedRuntimeConfig;
-    bootstrap: BootstrapData
+    bootstrap?: BootstrapData
 }
 
 const LocalStateProvider = LocalSystemStateContext.Provider;

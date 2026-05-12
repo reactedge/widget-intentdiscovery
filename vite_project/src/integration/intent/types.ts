@@ -45,6 +45,7 @@ export type IntentStatus =
     | "idle"
     | "ready"
     | "filterChanged"
+    | "filterReset"
     | "filtersUpdated"
     | "readyToApplyFilters"
     | "canBeInterpreted"
@@ -58,6 +59,7 @@ export type IntentStatus =
 export type IntentEvent =
     | { type: "RESULTS_UPDATED"; totalFiltered: number }
     | { type: "FILTER_CHANGED"; attributeCode:string, optionValue:string }
+    | { type: "FILTER_RESET" }
     | { type: "INTERPRETATION_STARTED" }
     | { type: "INTERPRETATION_PROCESSING" }
     | { type: "BOOTSTRAP_FROM_PERSISTED_INTENT", payload: PersistedIntentV1 }

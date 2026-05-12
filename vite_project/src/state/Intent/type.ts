@@ -9,4 +9,5 @@ export interface IntentState {
     setPreference: (attributeCode: string, optionValue: string) => void,
     resetPreference: () => void,
     dispatch: (event: IntentEvent) => void
+    resetIntent: () => void,
 }

@@ -4,7 +4,6 @@ import type {IntentDiscoveryDataConfig} from "../../domain/intent-discovery.type
 import type {CategoryData} from "../../types/infra/magento/category.types.ts";
 import {activity} from "../../activity";
 import {IntentDiscoveryLayout} from "./IntentDiscoveryLayout.tsx";
-import {SpinnerOverlay} from "../global/SpinnerOverlay.tsx";
 import {InteractionStateProvider} from "../../state/Interaction/InteractionStateProvider.tsx";
 import {useIntentState} from "../../state/Intent/useIntentState.ts";
 import {type MagentoLayeredNavigation, useLayeredNavigation} from "../../hooks/domain/useLayeredNavigation.tsx";
@@ -19,10 +18,9 @@ export const IntentDiscoveryLoader = ({ config, categoryData }: LoaderProps) => 
 
     const {
         attributeLayerData,
-        attributeLayerLoading, attributeLayerError
+        attributeLayerError
     } = useLayeredNavigation(categoryData, intentState, config)
 
-    if (attributeLayerLoading) return <SpinnerOverlay />
     if (attributeLayerError) return <ErrorState error={attributeLayerError} />
     if (!attributeLayerData) return null
 

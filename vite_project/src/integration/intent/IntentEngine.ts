@@ -1,5 +1,5 @@
-import type {IntentEngineState, IntentSignal} from "./types.ts";
-import type {IntentApiClient} from "./intentApiClient.ts";
+import type { IntentEngineState, IntentSignal } from "./types.ts";
+import type { IntentApiClient } from "./intentApiClient.ts";
 
 type Listener = (state: IntentEngineState) => void;
 
