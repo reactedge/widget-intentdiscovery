@@ -7,10 +7,7 @@ export async function buildBootstrap(
     config: IntentDiscoveryDataConfig,
     runtimeConfig: ReactEdgeRuntimeConfig
 ) {
-    const graphqlApi =
-        typeof window === 'undefined'
-            ? runtimeConfig.integrations.magentoGraphql.internalApi
-            : runtimeConfig.integrations.magentoGraphql.api;
+    const graphqlApi = getGraphqQlAPI(runtimeConfig);
 
     const graphqlClient = createGraphqlService(
         graphqlApi as string,
@@ -34,4 +31,25 @@ export async function buildBootstrap(
         categoryData,
         layeredData
     };
+}
+
+function getGraphqQlAPI(runtimeConfig: ReactEdgeRuntimeConfig) {
+    const magentoGraphql =
+        runtimeConfig.integrations.magentoGraphql;
+
+    const graphqlApi =
+        typeof window === 'undefined'
+            ? (
+                magentoGraphql.internalApi
+                ?? magentoGraphql.api
+            )
+            : magentoGraphql.api;
+
+    if (!graphqlApi) {
+        throw new Error(
+            'No Magento GraphQL endpoint configured'
+        );
+    }
+
+    return graphqlApi
 }
