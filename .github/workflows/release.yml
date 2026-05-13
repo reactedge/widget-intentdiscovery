@@ -71,14 +71,8 @@ jobs:
             ${{ secrets.WIDGET_SSH_USER }}@${{ secrets.WIDGET_SSH_HOST }}:$DEST/
 
       - name: Publish SSR widget source
+        env:
+          SSH_USER: ${{ secrets.WIDGET_SSH_USER }}
+          SSH_HOST: ${{ secrets.WIDGET_SSH_HOST }}
         run: |
-
-          DEST="/var/www/widgets_src/widget-${WIDGET_NAME}"
-
-          ssh ${{ secrets.WIDGET_SSH_USER }}@${{ secrets.WIDGET_SSH_HOST }} \
-          "mkdir -p $DEST/vite_project/src"
-
-          rsync -av \
-            --delete \
-            vite_project/src/ \
-            ${{ secrets.WIDGET_SSH_USER }}@${{ secrets.WIDGET_SSH_HOST }}:$DEST/vite_project/src/
+          bash scripts/deploy-ssr-widget.sh $WIDGET_NAME
