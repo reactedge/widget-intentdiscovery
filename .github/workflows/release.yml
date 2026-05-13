@@ -28,7 +28,9 @@ jobs:
 
       - name: Build widget
         working-directory: vite_project
-        run: npm run build
+        run: |
+          mkdir -p ../www
+          npm run build
 
       - name: Setup SSH
         run: |
@@ -67,7 +69,16 @@ jobs:
             "$FILE" \
             "www/widget-${WIDGET_NAME}.manifest.json" \
             ${{ secrets.WIDGET_SSH_USER }}@${{ secrets.WIDGET_SSH_HOST }}:$DEST/
-          
-          rsync -avz \
-            www/cdn/ \
-            ${{ secrets.WIDGET_SSH_USER }}@${{ secrets.WIDGET_SSH_HOST }}:$DEST/cdn/
+
+      - name: Publish SSR widget source
+        run: |
+
+          DEST="/var/www/widgets_src/widget-${WIDGET_NAME}"
+
+          ssh ${{ secrets.WIDGET_SSH_USER }}@${{ secrets.WIDGET_SSH_HOST }} \
+          "mkdir -p $DEST/vite_project/src"
+
+          rsync -av \
+            --delete \
+            vite_project/src/ \
+            ${{ secrets.WIDGET_SSH_USER }}@${{ secrets.WIDGET_SSH_HOST }}:$DEST/vite_project/src/

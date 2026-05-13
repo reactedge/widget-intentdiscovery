@@ -44,7 +44,7 @@ export function saveContext(context: IntentEngineState) {
     if (typeof window === 'undefined') {
         return;
     }
-    
+
     localStorage.setItem(INTERACTION_STORAGE_KEY, JSON.stringify(context))
 }
 
