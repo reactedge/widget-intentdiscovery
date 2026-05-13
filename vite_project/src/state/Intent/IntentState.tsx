@@ -19,6 +19,11 @@ export const initialState: IntentEngineState = {
 };
 
 export function loadIntentState(): IntentEngineState {
+    // SSR guard
+    if (typeof window === 'undefined') {
+        return initialState;
+    }
+
     try {
         const raw = localStorage.getItem(ENGINE_STORAGE_KEY);
 
@@ -40,6 +45,10 @@ export function reseIntentState() {
 }
 
 export function saveIntentContext(context: IntentEngineState) {
+    if (typeof window === 'undefined') {
+        return;
+    }
+
     localStorage.setItem(
         ENGINE_STORAGE_KEY,
         JSON.stringify({
