@@ -4,7 +4,6 @@ import pkg from './package.json'
 import { manifestPlugin } from './manifestPlugin'
 
 const widgetName = 'intentdiscovery';
-
 export default defineConfig({
   plugins: [
     react(),
@@ -14,8 +13,8 @@ export default defineConfig({
     'process.env': {}
   },
   build: {
-    outDir: "../www",
-    cssCodeSplit: true,
+    outDir: `../../widgets/${widgetName}/`,
+    cssCodeSplit: false,
     emptyOutDir: false,
     lib: {
       entry: "src/widget.ts",
@@ -30,6 +29,6 @@ export default defineConfig({
       },
     },
     minify: true,
-    sourcemap: true
+    sourcemap: false
   }
 })
