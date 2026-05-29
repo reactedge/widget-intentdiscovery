@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "analyze": "ANALYZE=true vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "version": "npm run build"
@@ -14,6 +15,7 @@
     "@react-google-maps/api": "^2.20.7",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "rollup-plugin-visualizer": "^7.0.1",
     "use-immer": "^0.11.0"
   },
   "devDependencies": {

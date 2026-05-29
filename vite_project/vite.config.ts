@@ -2,18 +2,27 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import pkg from './package.json'
 import { manifestPlugin } from './manifestPlugin'
+import { visualizer } from 'rollup-plugin-visualizer';
+
+const isAnalyze = process.env.ANALYZE === 'true';
 
 const widgetName = 'intentdiscovery';
 export default defineConfig({
   plugins: [
     react(),
+    isAnalyze && visualizer({
+      open: true,
+      gzipSize: true,
+      brotliSize: true,
+      filename: 'stats.html'
+    }),
     manifestPlugin({ widgetName }),
   ],
   define: {
-    'process.env': {}
+    'process.env.NODE_ENV': JSON.stringify('production')
   },
   build: {
-    outDir: `../../widgets/${widgetName}/`,
+    outDir: `../../widgets-cdn/www/${widgetName}/src/`,
     cssCodeSplit: false,
     emptyOutDir: false,
     lib: {
