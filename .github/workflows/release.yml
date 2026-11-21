@@ -1,0 +1,104 @@
+name: Build release artifact
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout ReactEdge shared resources
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone \
+            --filter=blob:none \
+            --no-checkout \
+            https://github.com/reactedge/platform.git \
+            platform
+          cd platform
+          git sparse-checkout init --cone
+          git sparse-checkout set packages/widget-build/shared-resources
+          git checkout --detach 'widget-build@1.0.0'
+
+      - name: Isolate widget from platform npm workspace
+        shell: bash
+        run: |
+          rm -f platform/package.json
+          rm -f platform/package-lock.json
+
+      - name: Checkout widget
+        uses: actions/checkout@v4
+        with:
+          path: platform/widgets/intentdiscovery
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: platform/widgets/intentdiscovery/package-lock.json
+
+      - name: Install dependencies
+        working-directory: platform/widgets/intentdiscovery
+        run: npm ci
+
+      - name: Expose widget dependencies to shared build tooling
+        shell: bash
+        run: |
+          ln -s widgets/intentdiscovery/node_modules platform/node_modules
+
+      - name: Build with existing Vite manifest plugin
+        working-directory: platform/widgets/intentdiscovery
+        run: |
+          mkdir -p ../../workspace/release/source/intentdiscovery
+          npm run build
+
+      - name: Verify emitted manifest and bundle
+        working-directory: platform/widgets/intentdiscovery
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync, existsSync } from 'node:fs';
+          import { createHash } from 'node:crypto';
+          import { resolve, dirname } from 'node:path';
+          const dir = resolve('../../workspace/release/source/intentdiscovery');
+          const manifest = JSON.parse(readFileSync(resolve(dir, 'widget-intentdiscovery.manifest.json'), 'utf8'));
+          if (manifest.widget !== 'intentdiscovery') throw new Error('Unexpected widget');
+          const file = resolve(dir, manifest.filename);
+          if (dirname(file) !== dir || !existsSync(file)) throw new Error('Missing or unsafe bundle filename');
+          const digest = createHash('sha256').update(readFileSync(file)).digest('base64url');
+          if (digest !== manifest.hash) throw new Error('Manifest hash does not match emitted bundle');
+          if (manifest.cssFilename && !existsSync(resolve(dir, manifest.cssFilename))) {
+            throw new Error('Manifest CSS file is missing');
+          }
+          console.log('Verified emitted bundle SHA-256 against manifest:', manifest.filename);
+          NODE
+
+      - name: Upload downloadable build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: widget-intentdiscovery-${{ github.ref_type == 'tag' && github.ref_name || github.sha }}
+          path: platform/workspace/release/source/intentdiscovery/
+          if-no-files-found: error
+
+      - name: Publish immutable tag release assets
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release create "${GITHUB_REF_NAME}" platform/workspace/release/source/intentdiscovery/* \
+            --title "INTENTDISCOVERY ${GITHUB_REF_NAME}" \
+            --generate-notes \
+            --verify-tag
