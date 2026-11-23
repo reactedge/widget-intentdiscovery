@@ -4,11 +4,18 @@ import pkg from './package.json'
 import { manifestPlugin } from './manifestPlugin'
 
 const widgetName = 'intentdiscovery';
+const version = pkg.version;
+const reactGlobals = {
+  'react': 'ReactEdgeSharedReact.React',
+  'react-dom': 'ReactEdgeSharedReact.ReactDOM',
+  'react-dom/client': 'ReactEdgeSharedReact.ReactDOMClient',
+  'react/jsx-runtime': 'ReactEdgeSharedReact.JSXRuntime',
+};
 
 export default defineConfig({
   plugins: [
     react(),
-    manifestPlugin({ widgetName }),
+    manifestPlugin({ widgetName, version }),
   ],
   define: {
     'process.env': {}
@@ -20,11 +27,13 @@ export default defineConfig({
     lib: {
       entry: "src/widget.ts",
       name: `ReactEdge_${widgetName}`,
-      fileName: () => `widget-${widgetName}@${pkg.version}.iife.js`,
+      fileName: () => `widget-${widgetName}@${version}.iife.js`,
       formats: ["iife"],
     },
     rollupOptions: {
+      external: Object.keys(reactGlobals),
       output: {
+        globals: reactGlobals,
         inlineDynamicImports: true,
         assetFileNames: `widget-${widgetName}.[ext]`,
       },
